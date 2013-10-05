@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+	<ProductVersion>10.0.20506</ProductVersion>
+	<SchemaVersion>2.0</SchemaVersion>
+	<ProjectGuid>{59432F05-E2B9-C715-58AF-ABC2D688498C}</ProjectGuid>
+	<OutputType>Library</OutputType>
+	<AppDesignerFolder>Properties</AppDesignerFolder>
+	<RootNamespace></RootNamespace>
+	<AssemblyName>Assembly-UnityScript</AssemblyName>
+	<TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+	<FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+	<DebugSymbols>true</DebugSymbols>
+	<DebugType>full</DebugType>
+	<Optimize>false</Optimize>
+	<OutputPath>Temp\bin\Debug\</OutputPath>
+	<DefineConstants>DEBUG;TRACE;UNITY_STANDALONE_WIN;ENABLE_MICROPHONE;ENABLE_TEXTUREID_MAP;ENABLE_AUDIO_FMOD;UNITY_STANDALONE;ENABLE_MONO;ENABLE_TERRAIN;ENABLE_SUBSTANCE;ENABLE_GENERICS;ENABLE_MOVIES;ENABLE_WWW;ENABLE_IMAGEEFFECTS;ENABLE_WEBCAM;RENDER_SOFTWARE_CURSOR;ENABLE_NETWORK;ENABLE_PHYSICS;ENABLE_CACHING;ENABLE_CLOTH;ENABLE_SHADOWS;ENABLE_AUDIO;ENABLE_DUCK_TYPING;ENABLE_SINGLE_INSTANCE_BUILD_SETTING;UNITY_4_2_1;UNITY_4_2;ENABLE_PROFILER;UNITY_EDITOR;UNITY_EDITOR_WIN</DefineConstants>
+	<ErrorReport>prompt</ErrorReport>
+	<WarningLevel>4</WarningLevel>
+	<NoWarn>0169</NoWarn>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+	<DebugType>pdbonly</DebugType>
+	<Optimize>true</Optimize>
+	<OutputPath>Temp\bin\Release\</OutputPath>
+	<DefineConstants>TRACE</DefineConstants>
+	<ErrorReport>prompt</ErrorReport>
+	<WarningLevel>4</WarningLevel>
+	<NoWarn>0169</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+	<Reference Include="System" />
+    <Reference Include="System.XML" />
+	<Reference Include="System.Core" />
+	<Reference Include="UnityEngine">
+	  <HintPath>C:/Program Files (x86)/Unity/Editor/Data/Managed/UnityEngine.dll</HintPath>
+	</Reference>
+	<Reference Include="UnityEditor">
+	  <HintPath>C:/Program Files (x86)/Unity/Editor/Data/Managed/UnityEditor.dll</HintPath>
+	</Reference>
+  </ItemGroup>
+  <ItemGroup>
+     <Compile Include="Assets\LeapDeveloperKit\Examples\UnitySandbox\Assets\Scripts\Camera Scripts\MouseOrbit.js" />
+     <Compile Include="Assets\LeapDeveloperKit\Examples\UnitySandbox\Assets\Scripts\RetinaHack.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\C++\API\annotated.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\C++\API\class_leap_1_1_circle_gesture.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\C++\API\class_leap_1_1_config.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\C++\API\class_leap_1_1_controller.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\C++\API\class_leap_1_1_device.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\C++\API\class_leap_1_1_device_list.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\C++\API\class_leap_1_1_finger.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\C++\API\class_leap_1_1_finger_list.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\C++\API\class_leap_1_1_frame.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\C++\API\class_leap_1_1_gesture.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\C++\API\class_leap_1_1_gesture_list.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\C++\API\class_leap_1_1_hand.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\C++\API\class_leap_1_1_hand_list.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\C++\API\class_leap_1_1_interaction_box.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\C++\API\class_leap_1_1_key_tap_gesture.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\C++\API\class_leap_1_1_listener.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\C++\API\class_leap_1_1_pointable.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\C++\API\class_leap_1_1_pointable_list.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\C++\API\class_leap_1_1_screen.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\C++\API\class_leap_1_1_screen_list.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\C++\API\class_leap_1_1_screen_tap_gesture.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\C++\API\class_leap_1_1_swipe_gesture.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\C++\API\class_leap_1_1_tool.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\C++\API\class_leap_1_1_tool_list.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\C++\API\dynsections.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\C++\API\functions_dup.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\C++\API\functions_func.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\C++\API\hierarchy.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\C++\API\jquery.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\C++\API\navtree.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\C++\API\navtreeindex0.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\C++\API\navtreeindex1.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\C++\API\resize.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\C++\API\struct_leap_1_1_float_array.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\C++\API\struct_leap_1_1_matrix.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\C++\API\struct_leap_1_1_vector.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\CSharpandUnity\API\annotated.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\CSharpandUnity\API\class_leap_1_1_circle_gesture.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\CSharpandUnity\API\class_leap_1_1_config.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\CSharpandUnity\API\class_leap_1_1_controller.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\CSharpandUnity\API\class_leap_1_1_device.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\CSharpandUnity\API\class_leap_1_1_device_list.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\CSharpandUnity\API\class_leap_1_1_finger.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\CSharpandUnity\API\class_leap_1_1_finger_list.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\CSharpandUnity\API\class_leap_1_1_frame.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\CSharpandUnity\API\class_leap_1_1_gesture.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\CSharpandUnity\API\class_leap_1_1_gesture_list.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\CSharpandUnity\API\class_leap_1_1_hand.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\CSharpandUnity\API\class_leap_1_1_hand_list.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\CSharpandUnity\API\class_leap_1_1_interaction_box.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\CSharpandUnity\API\class_leap_1_1_key_tap_gesture.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\CSharpandUnity\API\class_leap_1_1_listener.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\CSharpandUnity\API\class_leap_1_1_matrix.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\CSharpandUnity\API\class_leap_1_1_pointable.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\CSharpandUnity\API\class_leap_1_1_pointable_list.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\CSharpandUnity\API\class_leap_1_1_screen.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\CSharpandUnity\API\class_leap_1_1_screen_list.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\CSharpandUnity\API\class_leap_1_1_screen_tap_gesture.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\CSharpandUnity\API\class_leap_1_1_swipe_gesture.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\CSharpandUnity\API\class_leap_1_1_tool.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\CSharpandUnity\API\class_leap_1_1_tool_list.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\CSharpandUnity\API\class_leap_1_1_vector.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\CSharpandUnity\API\dynsections.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\CSharpandUnity\API\functions_dup.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\CSharpandUnity\API\hierarchy.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\CSharpandUnity\API\jquery.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\CSharpandUnity\API\namespace_leap.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\CSharpandUnity\API\namespaces.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\CSharpandUnity\API\navtree.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\CSharpandUnity\API\navtreeindex0.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\CSharpandUnity\API\navtreeindex1.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\CSharpandUnity\API\resize.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\Java\API\annotated.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\Java\API\classcom_1_1leapmotion_1_1leap_1_1_circle_gesture.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\Java\API\classcom_1_1leapmotion_1_1leap_1_1_config.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\Java\API\classcom_1_1leapmotion_1_1leap_1_1_controller.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\Java\API\classcom_1_1leapmotion_1_1leap_1_1_device.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\Java\API\classcom_1_1leapmotion_1_1leap_1_1_device_list.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\Java\API\classcom_1_1leapmotion_1_1leap_1_1_finger.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\Java\API\classcom_1_1leapmotion_1_1leap_1_1_finger_list.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\Java\API\classcom_1_1leapmotion_1_1leap_1_1_frame.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\Java\API\classcom_1_1leapmotion_1_1leap_1_1_gesture.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\Java\API\classcom_1_1leapmotion_1_1leap_1_1_gesture_list.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\Java\API\classcom_1_1leapmotion_1_1leap_1_1_hand.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\Java\API\classcom_1_1leapmotion_1_1leap_1_1_hand_list.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\Java\API\classcom_1_1leapmotion_1_1leap_1_1_interaction_box.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\Java\API\classcom_1_1leapmotion_1_1leap_1_1_key_tap_gesture.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\Java\API\classcom_1_1leapmotion_1_1leap_1_1_listener.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\Java\API\classcom_1_1leapmotion_1_1leap_1_1_matrix.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\Java\API\classcom_1_1leapmotion_1_1leap_1_1_pointable.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\Java\API\classcom_1_1leapmotion_1_1leap_1_1_pointable_list.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\Java\API\classcom_1_1leapmotion_1_1leap_1_1_screen.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\Java\API\classcom_1_1leapmotion_1_1leap_1_1_screen_list.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\Java\API\classcom_1_1leapmotion_1_1leap_1_1_screen_tap_gesture.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\Java\API\classcom_1_1leapmotion_1_1leap_1_1_swipe_gesture.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\Java\API\classcom_1_1leapmotion_1_1leap_1_1_tool.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\Java\API\classcom_1_1leapmotion_1_1leap_1_1_tool_list.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\Java\API\classcom_1_1leapmotion_1_1leap_1_1_vector.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\Java\API\dynsections.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\Java\API\enumcom_1_1leapmotion_1_1leap_1_1_config_1_1_value_type.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\Java\API\enumcom_1_1leapmotion_1_1leap_1_1_controller_1_1_policy_flag.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\Java\API\enumcom_1_1leapmotion_1_1leap_1_1_gesture_1_1_state.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\Java\API\enumcom_1_1leapmotion_1_1leap_1_1_gesture_1_1_type.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\Java\API\enumcom_1_1leapmotion_1_1leap_1_1_pointable_1_1_zone.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\Java\API\functions_dup.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\Java\API\functions_func.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\Java\API\hierarchy.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\Java\API\jquery.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\Java\API\navtree.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\Java\API\navtreeindex0.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\Java\API\navtreeindex1.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\Java\API\navtreeindex2.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\Java\API\resize.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\JavaScript\API\scripts\prettify\lang-css.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\JavaScript\API\scripts\prettify\prettify.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\Python\API\_static\doctools.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\Python\API\_static\jquery.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\Python\API\_static\searchtools.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\Python\API\_static\underscore.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\Python\API\_static\websupport.js" />
+     <Compile Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\Python\API\searchindex.js" />
+     <None Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\Python\API\_sources\Leap_Pyauto.txt" />
+     <None Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\Python\API\_sources\pydoc\Leap.Matrix.txt" />
+     <None Include="Assets\LeapDeveloperKit\Examples\ThirdParty\JUCE\README.txt" />
+     <None Include="Assets\LeapDeveloperKit\Examples\ThirdParty\JUCE\extras\the jucer\Jucer To Do list.txt" />
+     <None Include="Assets\LeapDeveloperKit\Examples\FlockingDemo\README.txt" />
+     <None Include="Assets\LeapDeveloperKit\LeapSDK\version.txt" />
+     <None Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\Python\API\_sources\pydoc\Leap.Gesture.txt" />
+     <None Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\Python\API\_sources\pydoc\Leap.HandList.txt" />
+     <None Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\Python\API\_sources\pydoc\Leap.Vector.txt" />
+     <None Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\Python\API\_sources\pydoc\Leap.Frame.txt" />
+     <None Include="Assets\LeapDeveloperKit\Examples\ThirdParty\JUCE\modules\juce_audio_formats\codecs\oggvorbis\Ogg Vorbis Licence.txt" />
+     <None Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\Python\API\_sources\pydoc\Leap.SwipeGesture.txt" />
+     <None Include="Assets\LeapDeveloperKit\Examples\ThirdParty\JUCE\modules\juce_browser_plugin\How to build a browser plugin.txt" />
+     <None Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\Python\API\_sources\pydoc\Leap.KeyTapGesture.txt" />
+     <None Include="Assets\LeapDeveloperKit\Examples\ThirdParty\JUCE\extras\audio plugin demo\JuceLibraryCode\ReadMe.txt" />
+     <None Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\Python\API\_sources\pydoc\Leap.GestureList.txt" />
+     <None Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\Python\API\_sources\pydoc\Leap.ScreenList.txt" />
+     <None Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\Python\API\_sources\pydoc\Leap.Finger.txt" />
+     <None Include="Assets\LeapDeveloperKit\Examples\ThirdParty\JUCE\extras\Introjucer\JuceLibraryCode\ReadMe.txt" />
+     <None Include="Assets\LeapDeveloperKit\Examples\README.txt" />
+     <None Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\Python\API\_sources\pydoc\Leap.Listener.txt" />
+     <None Include="Assets\LeapDeveloperKit\Examples\UnitySandbox\UnitySandbox_Data\output_log.txt" />
+     <None Include="Assets\LeapDeveloperKit\Examples\ThirdParty\JUCE\extras\windows dll\JuceLibraryCode\ReadMe.txt" />
+     <None Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\Python\API\_sources\pydoc\Leap.FingerList.txt" />
+     <None Include="Assets\LeapDeveloperKit\Examples\ThirdParty\JUCE\extras\Introjucer\Source\BinaryData\colourscheme_light.xml" />
+     <None Include="Assets\LeapDeveloperKit\Examples\GesturesDemo\README.txt" />
+     <None Include="Assets\LeapDeveloperKit\Examples\MotionVisualizer\JuceLibraryCode\ReadMe.txt" />
+     <None Include="Assets\LeapDeveloperKit\Examples\ThirdParty\JUCE\modules\juce_browser_plugin\wrapper\npapi\ReadMe.txt" />
+     <None Include="Assets\LeapDeveloperKit\Examples\ThirdParty\JUCE\extras\browser plugin demo\How to build a browser plugin.txt" />
+     <None Include="Assets\LeapDeveloperKit\Examples\ThirdParty\JUCE\extras\the jucer\JuceLibraryCode\ReadMe.txt" />
+     <None Include="Assets\LeapDeveloperKit\Examples\ThirdParty\JUCE\extras\audio plugin demo\How to use this framework.txt" />
+     <None Include="Assets\LeapDeveloperKit\Examples\ThirdParty\JUCE\extras\example projects\JuceLibraryCode\ReadMe.txt" />
+     <None Include="Assets\LeapDeveloperKit\Examples\ThirdParty\JUCE\modules\juce_graphics\image_formats\jpglib\changes to libjpeg for JUCE.txt" />
+     <None Include="Assets\LeapDeveloperKit\Examples\ThirdParty\JUCE\extras\example projects\readme.txt" />
+     <None Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\Python\API\_sources\pydoc\Leap.ScreenTapGesture.txt" />
+     <None Include="Assets\LeapDeveloperKit\Examples\ThirdParty\JUCE\modules\juce_audio_formats\codecs\flac\Flac Licence.txt" />
+     <None Include="Assets\LeapDeveloperKit\Examples\FingerVisualizer\JuceLibraryCode\ReadMe.txt" />
+     <None Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\Python\API\_sources\pydoc\Leap.CircleGesture.txt" />
+     <None Include="Assets\LeapDeveloperKit\LeapSDK\head_sha.txt" />
+     <None Include="Assets\LeapDeveloperKit\Examples\ThirdParty\JUCE\extras\audio plugin host\JuceLibraryCode\ReadMe.txt" />
+     <None Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\Python\API\_sources\pydoc\Leap.Config.txt" />
+     <None Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\Python\API\_sources\pydoc\Leap.Device.txt" />
+     <None Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\Python\API\_sources\pydoc\Leap.Pointable.txt" />
+     <None Include="Assets\LeapDeveloperKit\Examples\ThirdParty\JUCE\extras\JuceDemo\JuceLibraryCode\ReadMe.txt" />
+     <None Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\Python\API\_sources\pydoc\Leap.Screen.txt" />
+     <None Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\Python\API\_sources\pydoc\Leap.Tool.txt" />
+     <None Include="Assets\LeapDeveloperKit\Examples\ThirdParty\JUCE\extras\binarybuilder\JuceLibraryCode\ReadMe.txt" />
+     <None Include="Assets\LeapDeveloperKit\Examples\ThirdParty\JUCE\modules\juce_graphics\image_formats\pnglib\libpng_readme.txt" />
+     <None Include="Assets\LeapDeveloperKit\Examples\MotionVisualizer\README.txt" />
+     <None Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\JavaScript\API\scripts\prettify\Apache-License-2.0.txt" />
+     <None Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\Python\API\_sources\pydoc\Leap.ToolList.txt" />
+     <None Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\Python\API\_sources\pydoc\Leap.Hand.txt" />
+     <None Include="Assets\LeapDeveloperKit\Examples\UnitySandbox\UnitySandbox_Data\Mono\etc\mono\mconfig\config.xml" />
+     <None Include="Assets\LeapDeveloperKit\Examples\UnitySandbox\README.txt" />
+     <None Include="Assets\LeapDeveloperKit\Examples\ThirdParty\JUCE\extras\Introjucer\Source\BinaryData\AudioPluginXCodeScript.txt" />
+     <None Include="Assets\LeapDeveloperKit\Examples\ThirdParty\JUCE\extras\JuceDemo\Builds\Android\res\values\strings.xml" />
+     <None Include="Assets\LeapDeveloperKit\Examples\ThirdParty\JUCE\extras\JuceDemo\Binary Data\demo table data.xml" />
+     <None Include="Assets\LeapDeveloperKit\Examples\ThirdParty\JUCE\extras\static library\JuceLibraryCode\ReadMe.txt" />
+     <None Include="Assets\LeapDeveloperKit\Examples\ThirdParty\JUCE\extras\JuceDemo\Binary Data\treedemo.xml" />
+     <None Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\Python\API\_sources\pydoc\Leap.Controller.txt" />
+     <None Include="Assets\LeapDeveloperKit\Examples\UnitySandbox\Library\FailedAssetImports.txt" />
+     <None Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\Python\API\_sources\pydoc\Leap.PointableList.txt" />
+     <None Include="Assets\LeapDeveloperKit\Examples\ThirdParty\JUCE\extras\JuceDemo\Builds\Android\AndroidManifest.xml" />
+     <None Include="Assets\LeapDeveloperKit\Examples\ThirdParty\JUCE\extras\Introjucer\Source\BinaryData\colourscheme_dark.xml" />
+     <None Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\Python\API\_sources\pydoc\Leap.InteractionBox.txt" />
+     <None Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\Python\API\_sources\pydoc\Leap.DeviceList.txt" />
+     <None Include="Assets\LeapDeveloperKit\Examples\FingerVisualizer\README.txt" />
+     <None Include="Assets\LeapDeveloperKit\Examples\ThirdParty\JUCE\docs\gpl.txt" />
+     <None Include="Assets\LeapDeveloperKit\Examples\ThirdParty\JUCE\extras\JuceDemo\Builds\Android\build.xml" />
+     <None Include="Assets\LeapDeveloperKit\LeapSDK\docs\Languages\Python\API\_sources\index.txt" />
+ <Reference Include="Assembly-UnityScript">
+ <HintPath>Assets\LeapDeveloperKit\Examples\UnitySandbox\UnitySandbox_Data\Managed\Assembly-UnityScript.dll</HintPath>
+ </Reference>
+ <Reference Include="LeapCSharp.NET3.5">
+ <HintPath>Assets\LeapDeveloperKit\Examples\UnitySandbox\Assets\Plugins\LeapCSharp.NET3.5.dll</HintPath>
+ </Reference>
+ <Reference Include="UnityScript.Lang">
+ <HintPath>Assets\LeapDeveloperKit\Examples\UnitySandbox\UnitySandbox_Data\Managed\UnityScript.Lang.dll</HintPath>
+ </Reference>
+ <Reference Include="Mono.Security">
+ <HintPath>Assets\LeapDeveloperKit\Examples\UnitySandbox\UnitySandbox_Data\Managed\Mono.Security.dll</HintPath>
+ </Reference>
+ <Reference Include="System.Core">
+ <HintPath>Assets\LeapDeveloperKit\Examples\UnitySandbox\UnitySandbox_Data\Managed\System.Core.dll</HintPath>
+ </Reference>
+ <Reference Include="LeapCSharp.NET4.0">
+ <HintPath>Assets\LeapDeveloperKit\LeapSDK\lib\LeapCSharp.NET4.0.dll</HintPath>
+ </Reference>
+ <Reference Include="System">
+ <HintPath>Assets\LeapDeveloperKit\Examples\UnitySandbox\UnitySandbox_Data\Managed\System.dll</HintPath>
+ </Reference>
+ <Reference Include="Boo.Lang">
+ <HintPath>Assets\LeapDeveloperKit\Examples\UnitySandbox\UnitySandbox_Data\Managed\Boo.Lang.dll</HintPath>
+ </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="Assembly-CSharp-firstpass.csproj">
+      <Project>{A1E9F2D9-6D09-9335-AA9A-DB4D311A56C9}</Project>      <Name>Assembly-CSharp-firstpass</Name>    </ProjectReference>
+    <ProjectReference Include="Assembly-UnityScript-firstpass.unityproj">
+      <Project>{54000A13-5C09-9F73-EB18-CFE41B145E67}</Project>      <Name>Assembly-UnityScript-firstpass</Name>    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+	   Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  
+</Project>
