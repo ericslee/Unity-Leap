@@ -15,6 +15,10 @@ public class LeapWindow : EditorWindow {
 	// coordinates of the hand
 	static float handXCoordinate = 0;
 	static float handYCoordinate = 0;
+	
+	// current mode of the Leap interface
+	enum Modes { leapSelection, leapEdit };
+	static Modes currentMode;
 
 	string myString = "Hello World";
 	bool groupEnabled;
@@ -29,19 +33,28 @@ public class LeapWindow : EditorWindow {
 		//controller = new Controller();
 		
 		// enable gestures 
-		m_controller.EnableGesture(Gesture.GestureType.TYPECIRCLE, true);
+		m_controller.EnableGesture(Gesture.GestureType.TYPECIRCLE);
+		m_controller.EnableGesture(Gesture.GestureType.TYPECIRCLE);
+        m_controller.EnableGesture(Gesture.GestureType.TYPEKEYTAP);
+        m_controller.EnableGesture(Gesture.GestureType.TYPESCREENTAP);
+        m_controller.EnableGesture(Gesture.GestureType.TYPESWIPE);
+		
+		
+		// init in selection mode
+		currentMode = Modes.leapSelection;
 	}
 
 	// actual window controls go here
 	void OnGUI () {
-		GUILayout.Label ("Base Settings", EditorStyles.boldLabel);
-			myString = EditorGUILayout.TextField ("Text Field", myString);
-			
+	
+		GUILayout.Label ("Leap Unity Controller", EditorStyles.boldLabel);
+			//myString = EditorGUILayout.TextField ("Text Field", myString);
+			/*
 		groupEnabled = EditorGUILayout.BeginToggleGroup ("Optional Settings", groupEnabled);
 			myBool = EditorGUILayout.Toggle ("Toggle", myBool);
 			myFloat = EditorGUILayout.Slider ("Slider", myFloat, -3, 3);
 		EditorGUILayout.EndToggleGroup ();
-		
+		*/
 		
 		// for GUI only interactions, pressing a key
 		Event e = Event.current;
@@ -52,8 +65,8 @@ public class LeapWindow : EditorWindow {
                 {
                     if (Event.current.keyCode == (KeyCode.A))
                     {
+						// do something
                         Debug.Log("a was pressed");
-						manipulateObj();
                     }
                     break;
                 }
@@ -76,37 +89,51 @@ public class LeapWindow : EditorWindow {
 				Frame lastFrame = m_Frame == null ? Frame.Invalid : m_Frame;
 				m_Frame	= m_controller.Frame();
 				
-				if(m_Frame.Gestures().Count > 0) {
-					//Debug.Log("Detected gesture!");
-					//Gesture g = m_Frame.Gestures()[0];
-					
+				// handle gestures
+				if(m_Frame.Gestures().Count > 0) {					
 					for(int g = 0; g < m_Frame.Gestures().Count; g++)
 					{
-						switch (m_Frame.Gestures()[g].Type) {
+						Gesture gest = m_Frame.Gestures()[g];
+						switch (gest.Type) {
 						case Gesture.GestureType.TYPECIRCLE:
 							//Handle circle gestures
-							//Debug.Log("Circle gesture detected!");
-							manipulateObj();
+							//Debug.Log(gest.ToString());
+							
+							// create new circle gesture and rotate accordingly
+							CircleGesture circle = new CircleGesture(gest);
+							bool isClockwise = false;
+							if(circle.Normal.z < 0) {
+								isClockwise = true;
+							}
+							rotateObject(isClockwise);
 							break;
 						case Gesture.GestureType.TYPEKEYTAP:
 							//Handle key tap gestures
+							//Debug.Log("Key tap gesture detected!");
+							
+							// switch modes
+							if(currentMode.Equals(Modes.leapSelection))	{
+								currentMode = Modes.leapEdit;
+								Debug.Log("Edit mode");
+							}
+							else {
+								currentMode = Modes.leapSelection;
+								Debug.Log("Selection mode");
+							}
 							break;
 						case Gesture.GestureType.TYPESCREENTAP:
 							//Handle screen tap gestures
+							//Debug.Log("Screen tap gesture detected!");
 							break;
 						case Gesture.GestureType.TYPESWIPE:
 							//Handle swipe gestures
+							//Debug.Log("Swipe gesture detected!");
 							break;
 							default:
 							//Handle unrecognized gestures
 							break;
 						}
 					}
-					/*
-					if (g.Type.equals("Gesture.GestureType.TYPECIRCLE")) {
-						Debug.Log("Circle gesture detected!");
-					}
-					*/
 				}
 			}
 			
@@ -117,8 +144,12 @@ public class LeapWindow : EditorWindow {
 		}
 	}
 	
-	void manipulateObj() {
-		GameObject currentAsset = Selection.activeGameObject;
-		currentAsset.transform.Rotate(Vector3.up*1);
+	// rotates selected object(s)
+	void rotateObject(bool isClockwise) {
+		if(Selection.activeGameObject != null) {
+			GameObject currentAsset = Selection.activeGameObject;
+			if(isClockwise)	currentAsset.transform.Rotate(Vector3.up*1);
+			else currentAsset.transform.Rotate(Vector3.up*-1);
+		}
 	}
 }
