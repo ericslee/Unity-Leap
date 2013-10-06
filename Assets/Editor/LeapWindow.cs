@@ -20,10 +20,12 @@ public class LeapWindow : EditorWindow {
 	enum Modes { leapSelection, leapEdit };
 	static Modes currentMode;
 
+	/*
 	string myString = "Hello World";
 	bool groupEnabled;
 	bool myBool = true;
 	float myFloat = 1.23f;
+	*/
 	
 	// Add menu named "Leap Motion" to the Window menu
 	[MenuItem ("Window/Leap Control")]
@@ -63,10 +65,49 @@ public class LeapWindow : EditorWindow {
         {
             case EventType.keyDown:
                 {
-                    if (Event.current.keyCode == (KeyCode.A))
+					// SCALING
+                    if (Event.current.keyCode == (KeyCode.S))
                     {
-						// do something
-                        Debug.Log("a was pressed");
+						// scale larger
+                        Debug.Log("s was pressed");
+						scaleObject(2.0f);
+                    }
+					if (Event.current.keyCode == (KeyCode.D))
+                    {
+						// scale smaller
+                        Debug.Log("d was pressed");
+						scaleObject(0.5f);
+                    }
+					// TRANSLATION
+					if (Event.current.keyCode == (KeyCode.Z))
+                    {
+						// + X
+						translateObject(1.0f, 0.0f, 0.0f);
+                    }
+					if (Event.current.keyCode == (KeyCode.X))
+                    {
+						// - X
+						translateObject(-1.0f, 0.0f, 0.0f);
+                    }
+					if (Event.current.keyCode == (KeyCode.C))
+                    {
+						// + Y
+						translateObject(0.0f, 1.0f, 0.0f);
+                    }
+					if (Event.current.keyCode == (KeyCode.V))
+                    {
+						// - Y
+						translateObject(0.0f, -1.0f, 0.0f);
+                    }
+					if (Event.current.keyCode == (KeyCode.B))
+                    {
+						// + Z
+						translateObject(0.0f, 0.0f, 1.0f);
+                    }
+					if (Event.current.keyCode == (KeyCode.N))
+                    {
+						// - Z
+						translateObject(0.0f, 0.0f, -1.0f);
                     }
                     break;
                 }
@@ -135,6 +176,9 @@ public class LeapWindow : EditorWindow {
 						}
 					}
 				}
+				
+				// handle scaling
+				
 			}
 			
 			
@@ -152,4 +196,25 @@ public class LeapWindow : EditorWindow {
 			else currentAsset.transform.Rotate(Vector3.up*-1);
 		}
 	}
+	
+	// scales selected object(s)
+	void scaleObject(float scaleFactor) {
+		if(Selection.activeGameObject != null) {
+			GameObject currentAsset = Selection.activeGameObject;
+			float currentScaleX = currentAsset.transform.localScale.x * scaleFactor;
+			float currentScaleY = currentAsset.transform.localScale.y * scaleFactor;
+			float currentScaleZ = currentAsset.transform.localScale.z * scaleFactor;
+			currentAsset.transform.localScale = new Vector3(currentScaleX, currentScaleY, currentScaleZ);
+		}
+	}
+	
+	void translateObject(float transX, float transY, float transZ) {
+		if(Selection.activeGameObject != null) {
+			GameObject currentAsset = Selection.activeGameObject;
+			Vector3 translateVector = new Vector3(transX, transY, transZ);
+			currentAsset.transform.Translate(translateVector);
+		}
+	}
 }
+
+
