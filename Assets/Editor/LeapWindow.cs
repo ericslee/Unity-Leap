@@ -13,8 +13,8 @@ public class LeapWindow : EditorWindow {
 	static Leap.Frame			m_Frame			= null;
 	
 	// coordinates of the hand
-	static float handXCoordinate = 0;
-	static float handYCoordinate = 0;
+	//static float handXCoordinate = 0;
+	//static float handYCoordinate = 0;
 	
 	// current mode of the Leap interface
 	enum Modes { leapSelection, leapEdit };
@@ -23,6 +23,8 @@ public class LeapWindow : EditorWindow {
 	static EditModes currentEditMode;
 
 	// strings for display Leap data
+	string currentModeText = "Selection";
+	string currentEditModeText = "Rotate";
 	string currentFrameText = "0";
 	string currentFPSText = "0";
 	string numHandsText = "0";
@@ -38,6 +40,10 @@ public class LeapWindow : EditorWindow {
 	bool myBool = true;
 	float myFloat = 1.23f;
 	*/
+	
+	// delays
+	static int modeChangeDelay = 0;
+	static int editModeChangeDelay = 0;
 	
 	// Add menu named "Leap Motion" to the Window menu
 	[MenuItem ("Window/Leap Control")]
@@ -56,12 +62,15 @@ public class LeapWindow : EditorWindow {
 		
 		// init in selection mode
 		currentMode = Modes.leapSelection;
+		currentEditMode = EditModes.rotate;
 	}
 
 	// actual window controls go here
 	void OnGUI () {
 	
 		GUILayout.Label ("Leap Unity Controller", EditorStyles.boldLabel);
+		EditorGUILayout.LabelField ("Current mode", currentModeText);
+		EditorGUILayout.LabelField ("Current edit mode", currentEditModeText);
 		EditorGUILayout.LabelField ("Current frame", currentFrameText);
 		EditorGUILayout.LabelField ("Leap FPS", currentFPSText);
 		EditorGUILayout.LabelField ("Number of hands", numHandsText);
@@ -147,16 +156,16 @@ public class LeapWindow : EditorWindow {
 		// Reduce number of frames processed (maybe will mess with some input and will need to be changed later)
 		if(Time.time % 1000 == 0) {
 			if( m_controller != null )
-			{
+			{	
 				// grab the current frame
-				Frame lastFrame = m_Frame == null ? Frame.Invalid : m_Frame;
+				//Frame lastFrame = m_Frame == null ? Frame.Invalid : m_Frame;
 				m_Frame	= m_controller.Frame();
 				
 				// get data from the frame
 				HandList hands = m_Frame.Hands;
-				PointableList pointables = m_Frame.Pointables;
+				//PointableList pointables = m_Frame.Pointables;
 				FingerList fingers = m_Frame.Fingers;
-				ToolList tools = m_Frame.Tools;
+				//ToolList tools = m_Frame.Tools;
 				
 				// update GUI text
 				currentFrameText = m_Frame.ToString();
@@ -193,6 +202,10 @@ public class LeapWindow : EditorWindow {
 					average /= count;
 				}
 				*/
+				
+				// increment delays
+				modeChangeDelay++;
+				editModeChangeDelay++;
 								
 				// handle gestures
 				if(m_Frame.Gestures().Count > 0) {					
@@ -204,45 +217,81 @@ public class LeapWindow : EditorWindow {
 							//Handle circle gestures
 							currentGestureText = "Circle";
 							
-							// create new circle gesture and rotate accordingly
-							CircleGesture circle = new CircleGesture(gest);
-							bool isClockwise = false;
-							if(circle.Normal.z < 0) {
-								isClockwise = true;
+							if(currentEditMode.Equals(EditModes.rotate)) {
+								// create new circle gesture and rotate accordingly
+								CircleGesture circle = new CircleGesture(gest);
+								bool isClockwise = false;
+								if(circle.Normal.z < 0) {
+									isClockwise = true;
+								}
+								rotateObject(isClockwise);
+								float turns = circle.Progress;
+								circleCountText = turns.ToString();
 							}
-							rotateObject(isClockwise);
-							float turns = circle.Progress;
-							circleCountText = turns.ToString();
+							else if(currentEditMode.Equals(EditModes.scale)) {
+								// create new circle gesture and rotate accordingly
+								CircleGesture circle = new CircleGesture(gest);
+								bool isClockwise = false;
+								if(circle.Normal.z < 0) {
+									isClockwise = true;
+								}
+								scaleObjectCircleGesture(isClockwise);
+								float turns = circle.Progress;
+								circleCountText = turns.ToString();
+							}
 							break;
 						case Gesture.GestureType.TYPEKEYTAP:
 							//Handle key tap gestures
 							currentGestureText = "Key Tap";
 							
-							// switch modes
-							if(currentMode.Equals(Modes.leapSelection))	{
-								currentMode = Modes.leapEdit;
-								Debug.Log("Edit mode");
-							}
-							else {
-								currentMode = Modes.leapSelection;
-								Debug.Log("Selection mode");
+							// only change mode after a sufficient delay
+							if(modeChangeDelay > 20) {
+								// switch modes
+								if(currentMode.Equals(Modes.leapSelection))	{
+									currentMode = Modes.leapEdit;
+									currentModeText = "Edit";
+								}
+								else {
+									currentMode = Modes.leapSelection;
+									currentModeText = "Selection";
+								}
+								modeChangeDelay = 0;
 							}
 							break;
 						case Gesture.GestureType.TYPESCREENTAP:
 							//Handle screen tap gestures
 							currentGestureText = "Screen Tap";
 							
+							// only change mode after a sufficient delay
+							if(editModeChangeDelay > 50) {
+								// Change edit mode
+								if(currentEditMode.Equals(EditModes.rotate)) {
+									currentEditMode = EditModes.translate;
+									currentEditModeText = "Translate";
+								}
+								else if(currentEditMode.Equals(EditModes.translate)) {
+									currentEditMode = EditModes.scale;
+									currentEditModeText = "Scale";
+								}
+								else {
+									currentEditMode = EditModes.rotate;
+									currentEditModeText = "Rotate";
+								}
+								// reset delay
+								editModeChangeDelay = 0;
+							}
 							break;
 						case Gesture.GestureType.TYPESWIPE:
 							//Handle swipe gestures
 							currentGestureText = "Swipe";
 							
+							if(currentEditMode.Equals(EditModes.translate)) {
 							// create a new swipe gesture
-							SwipeGesture swipe = new SwipeGesture(gest);
-							Leap.Vector swipeDirection = swipe.Direction;
-							//Debug.Log(swipeDirection.ToString());
-							translateObject(swipeDirection.x/5.0f, swipeDirection.y/5.0f, swipeDirection.z/5.0f);
-
+								SwipeGesture swipe = new SwipeGesture(gest);
+								Leap.Vector swipeDirection = swipe.Direction;
+								//Debug.Log(swipeDirection.ToString());
+								translateObject(swipeDirection.x/5.0f, swipeDirection.y/5.0f, swipeDirection.z/5.0f);
+							}
 							break;
 							default:
 							//Handle unrecognized gestures
@@ -253,10 +302,13 @@ public class LeapWindow : EditorWindow {
 				}
 				
 				// handle scaling
-				float scaleFactor = m_Frame.ScaleFactor(m_controller.Frame(10));
-				scaleObject(scaleFactor);
-				scaleFactorText = scaleFactor.ToString();
-				
+				/*
+				if(currentEditMode.Equals(EditModes.scale)) {
+					float scaleFactor = m_Frame.ScaleFactor(m_controller.Frame(10));
+					scaleObject(scaleFactor);
+					scaleFactorText = scaleFactor.ToString();
+				}
+				*/
 														
 				// update the GUI
 				Repaint();
@@ -283,6 +335,25 @@ public class LeapWindow : EditorWindow {
 		if(Selection.activeGameObject != null) {
 			GameObject currentAsset = Selection.activeGameObject;
 			//float scaleFactorNormalized = scaleFactor / 1.0f;
+			
+			float currentScaleX = currentAsset.transform.localScale.x * scaleFactor;
+			float currentScaleY = currentAsset.transform.localScale.y * scaleFactor;
+			float currentScaleZ = currentAsset.transform.localScale.z * scaleFactor;
+			
+			// clamp scale values so asset remains visible
+			if(currentScaleX <= 0.2f) currentScaleX = 0.2f;
+			if(currentScaleY <= 0.2f) currentScaleY = 0.2f;
+			if(currentScaleZ <= 0.2f) currentScaleZ = 0.2f;
+			
+			currentAsset.transform.localScale = new Vector3(currentScaleX, currentScaleY, currentScaleZ);
+		}
+	}
+	
+	void scaleObjectCircleGesture(bool isClockwise) {
+		if(Selection.activeGameObject != null) {
+			GameObject currentAsset = Selection.activeGameObject;
+			float scaleFactor = 1.01f;
+			if(!isClockwise) scaleFactor = 0.99f;
 			
 			float currentScaleX = currentAsset.transform.localScale.x * scaleFactor;
 			float currentScaleY = currentAsset.transform.localScale.y * scaleFactor;
