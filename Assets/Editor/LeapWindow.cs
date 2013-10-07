@@ -18,10 +18,22 @@ public class LeapWindow : EditorWindow {
 	
 	// current mode of the Leap interface
 	enum Modes { leapSelection, leapEdit };
+	enum EditModes { translate, scale, rotate };
 	static Modes currentMode;
+	static EditModes currentEditMode;
 
+	// strings for display Leap data
+	string currentFrameText = "0";
+	string currentFPSText = "0";
+	string numHandsText = "0";
+	string numFingersText = "0";
+	string hand1PosText = "0";
+	string hand1NormalText = "0";
+	string hand1VelocityText = "0";
+	string currentGestureText = "None";
+	string circleCountText = "0";
+	string scaleFactorText = "1.0";
 	/*
-	string myString = "Hello World";
 	bool groupEnabled;
 	bool myBool = true;
 	float myFloat = 1.23f;
@@ -32,10 +44,10 @@ public class LeapWindow : EditorWindow {
 	static void Init () {
 		// Get existing open window or if none, make a new one:
 		LeapWindow window = (LeapWindow)EditorWindow.GetWindow (typeof (LeapWindow));
+		window.minSize = new Vector2(500, 500);
 		//controller = new Controller();
 		
 		// enable gestures 
-		m_controller.EnableGesture(Gesture.GestureType.TYPECIRCLE);
 		m_controller.EnableGesture(Gesture.GestureType.TYPECIRCLE);
         m_controller.EnableGesture(Gesture.GestureType.TYPEKEYTAP);
         m_controller.EnableGesture(Gesture.GestureType.TYPESCREENTAP);
@@ -50,6 +62,16 @@ public class LeapWindow : EditorWindow {
 	void OnGUI () {
 	
 		GUILayout.Label ("Leap Unity Controller", EditorStyles.boldLabel);
+		EditorGUILayout.LabelField ("Current frame", currentFrameText);
+		EditorGUILayout.LabelField ("Leap FPS", currentFPSText);
+		EditorGUILayout.LabelField ("Number of hands", numHandsText);
+		EditorGUILayout.LabelField ("Number of fingers", numFingersText);
+		EditorGUILayout.LabelField ("Hand Position", hand1PosText);
+		EditorGUILayout.LabelField ("Hand Normal", hand1NormalText);
+		EditorGUILayout.LabelField ("Hand Velocity", hand1VelocityText);
+		EditorGUILayout.LabelField ("Circle gesture", currentGestureText);
+		EditorGUILayout.LabelField ("Circle count", circleCountText);
+		EditorGUILayout.LabelField ("Scale factor", scaleFactorText);
 			//myString = EditorGUILayout.TextField ("Text Field", myString);
 			/*
 		groupEnabled = EditorGUILayout.BeginToggleGroup ("Optional Settings", groupEnabled);
@@ -126,10 +148,52 @@ public class LeapWindow : EditorWindow {
 		if(Time.time % 1000 == 0) {
 			if( m_controller != null )
 			{
-				
+				// grab the current frame
 				Frame lastFrame = m_Frame == null ? Frame.Invalid : m_Frame;
 				m_Frame	= m_controller.Frame();
 				
+				// get data from the frame
+				HandList hands = m_Frame.Hands;
+				PointableList pointables = m_Frame.Pointables;
+				FingerList fingers = m_Frame.Fingers;
+				ToolList tools = m_Frame.Tools;
+				
+				// update GUI text
+				currentFrameText = m_Frame.ToString();
+				currentFPSText = m_Frame.CurrentFramesPerSecond.ToString();
+				numHandsText = hands.Count.ToString();
+				numFingersText = fingers.Count.ToString();
+				
+				if(hands.Count > 0) {
+					Hand hand1 = hands[0];
+					Vector handPos = hand1.PalmPosition;
+					hand1PosText = handPos.ToString();
+					
+					Vector handNormal = hand1.PalmNormal;
+					hand1NormalText = handNormal.ToString();
+					
+					Vector handVelocity = hand1.PalmVelocity;
+					hand1VelocityText = handVelocity.ToString();
+				}
+				
+				currentGestureText = "None";
+
+				//Average a finger position for the last 10 frames
+				/*
+				for(int j; j < fingers.Count; j++) {
+					int count = 0;
+					Vector average = new Vector ();
+					Finger fingerToAverage = frame.Fingers [0];
+					for (int i = 0; i < 10; i++) {
+							Finger fingerFromFrame = controller.Frame (i).Finger (fingerToAverage.Id);
+							if (fingerFromFrame.IsValid) {
+									average += fingerFromFrame.TipPosition;
+									count++;
+							}
+					average /= count;
+				}
+				*/
+								
 				// handle gestures
 				if(m_Frame.Gestures().Count > 0) {					
 					for(int g = 0; g < m_Frame.Gestures().Count; g++)
@@ -138,7 +202,7 @@ public class LeapWindow : EditorWindow {
 						switch (gest.Type) {
 						case Gesture.GestureType.TYPECIRCLE:
 							//Handle circle gestures
-							//Debug.Log(gest.ToString());
+							currentGestureText = "Circle";
 							
 							// create new circle gesture and rotate accordingly
 							CircleGesture circle = new CircleGesture(gest);
@@ -147,10 +211,12 @@ public class LeapWindow : EditorWindow {
 								isClockwise = true;
 							}
 							rotateObject(isClockwise);
+							float turns = circle.Progress;
+							circleCountText = turns.ToString();
 							break;
 						case Gesture.GestureType.TYPEKEYTAP:
 							//Handle key tap gestures
-							//Debug.Log("Key tap gesture detected!");
+							currentGestureText = "Key Tap";
 							
 							// switch modes
 							if(currentMode.Equals(Modes.leapSelection))	{
@@ -164,21 +230,36 @@ public class LeapWindow : EditorWindow {
 							break;
 						case Gesture.GestureType.TYPESCREENTAP:
 							//Handle screen tap gestures
-							//Debug.Log("Screen tap gesture detected!");
+							currentGestureText = "Screen Tap";
+							
 							break;
 						case Gesture.GestureType.TYPESWIPE:
 							//Handle swipe gestures
-							//Debug.Log("Swipe gesture detected!");
+							currentGestureText = "Swipe";
+							
+							// create a new swipe gesture
+							SwipeGesture swipe = new SwipeGesture(gest);
+							Leap.Vector swipeDirection = swipe.Direction;
+							//Debug.Log(swipeDirection.ToString());
+							translateObject(swipeDirection.x/5.0f, swipeDirection.y/5.0f, swipeDirection.z/5.0f);
+
 							break;
 							default:
 							//Handle unrecognized gestures
+							
 							break;
 						}
 					}
 				}
 				
 				// handle scaling
+				float scaleFactor = m_Frame.ScaleFactor(m_controller.Frame(10));
+				scaleObject(scaleFactor);
+				scaleFactorText = scaleFactor.ToString();
 				
+														
+				// update the GUI
+				Repaint();
 			}
 			
 			
@@ -201,9 +282,17 @@ public class LeapWindow : EditorWindow {
 	void scaleObject(float scaleFactor) {
 		if(Selection.activeGameObject != null) {
 			GameObject currentAsset = Selection.activeGameObject;
+			//float scaleFactorNormalized = scaleFactor / 1.0f;
+			
 			float currentScaleX = currentAsset.transform.localScale.x * scaleFactor;
 			float currentScaleY = currentAsset.transform.localScale.y * scaleFactor;
 			float currentScaleZ = currentAsset.transform.localScale.z * scaleFactor;
+			
+			// clamp scale values so asset remains visible
+			if(currentScaleX <= 0.2f) currentScaleX = 0.2f;
+			if(currentScaleY <= 0.2f) currentScaleY = 0.2f;
+			if(currentScaleZ <= 0.2f) currentScaleZ = 0.2f;
+			
 			currentAsset.transform.localScale = new Vector3(currentScaleX, currentScaleY, currentScaleZ);
 		}
 	}
