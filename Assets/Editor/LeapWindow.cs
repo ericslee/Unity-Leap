@@ -173,15 +173,19 @@ public class LeapWindow : EditorWindow {
 				numHandsText = hands.Count.ToString();
 				numFingersText = fingers.Count.ToString();
 				
+				Vector handPos = new Vector();
+				Vector handNormal = new Vector();
+				Vector handVelocity = new Vector();
+				
 				if(hands.Count > 0) {
 					Hand hand1 = hands[0];
-					Vector handPos = hand1.PalmPosition;
+					handPos = hand1.PalmPosition;
 					hand1PosText = handPos.ToString();
 					
-					Vector handNormal = hand1.PalmNormal;
+					handNormal = hand1.PalmNormal;
 					hand1NormalText = handNormal.ToString();
 					
-					Vector handVelocity = hand1.PalmVelocity;
+					handVelocity = hand1.PalmVelocity;
 					hand1VelocityText = handVelocity.ToString();
 				}
 				
@@ -285,6 +289,7 @@ public class LeapWindow : EditorWindow {
 							//Handle swipe gestures
 							currentGestureText = "Swipe";
 							
+							/*
 							if(currentEditMode.Equals(EditModes.translate)) {
 							// create a new swipe gesture
 								SwipeGesture swipe = new SwipeGesture(gest);
@@ -292,6 +297,7 @@ public class LeapWindow : EditorWindow {
 								//Debug.Log(swipeDirection.ToString());
 								translateObject(swipeDirection.x/5.0f, swipeDirection.y/5.0f, swipeDirection.z/5.0f);
 							}
+							*/
 							break;
 							default:
 							//Handle unrecognized gestures
@@ -309,6 +315,11 @@ public class LeapWindow : EditorWindow {
 					scaleFactorText = scaleFactor.ToString();
 				}
 				*/
+				
+				// handle translation
+				if(currentEditMode.Equals(EditModes.translate)) {
+					positionObject(handPos.x/15.0f, handPos.y/15.0f, handPos.z/15.0f);
+				}
 														
 				// update the GUI
 				Repaint();
@@ -373,6 +384,14 @@ public class LeapWindow : EditorWindow {
 			GameObject currentAsset = Selection.activeGameObject;
 			Vector3 translateVector = new Vector3(transX, transY, transZ);
 			currentAsset.transform.Translate(translateVector);
+		}
+	}
+	
+	void positionObject(float posX, float posY, float posZ) {
+		if(Selection.activeGameObject != null) {
+			GameObject currentAsset = Selection.activeGameObject;
+			Vector3 positionVector = new Vector3(posX, posY, posZ);
+			currentAsset.transform.position = positionVector;
 		}
 	}
 }
