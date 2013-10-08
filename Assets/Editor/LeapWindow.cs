@@ -96,6 +96,21 @@ public class LeapWindow : EditorWindow {
         {
             case EventType.keyDown:
                 {
+					// select object
+					
+					if (Event.current.keyCode == (KeyCode.P))
+                    {
+						// scale larger
+                        Debug.Log(e.mousePosition.ToString());
+						//Ray ray = HandleUtility.GUIPointToWorldRay(e.mousePosition);
+						Ray ray = HandleUtility.GUIPointToWorldRay(e.mousePosition);
+						RaycastHit hit = new RaycastHit();
+						if (Physics.Raycast(ray, out hit, 1000.0f)) {
+							//Debug.Log("hit!");
+							Debug.Log(hit.point.ToString());
+						}
+                    }
+					
 					// SCALING
                     if (Event.current.keyCode == (KeyCode.S))
                     {
@@ -139,6 +154,32 @@ public class LeapWindow : EditorWindow {
                     {
 						// - Z
 						translateObject(0.0f, 0.0f, -1.0f);
+                    }
+                    break;
+                }
+        }
+	}
+	
+	void OnSceneGUI() {
+		Event e = Event.current;
+				
+		switch (e.type)
+        {
+            case EventType.keyDown:
+                {
+					// select object
+					if (Event.current.keyCode == (KeyCode.P))
+                    {
+						Debug.Log("P was pressed");
+						// scale larger
+                        //Debug.Log(e.mousePosition.ToString());
+						//Ray ray = HandleUtility.GUIPointToWorldRay(e.mousePosition);
+						Ray ray = HandleUtility.GUIPointToWorldRay(e.mousePosition);
+						RaycastHit hit = new RaycastHit();
+						if (Physics.Raycast(ray, out hit, 1000.0f)) {
+							//Debug.Log("hit!");
+							Debug.Log(hit.point.ToString());
+						}
                     }
                     break;
                 }
@@ -221,28 +262,23 @@ public class LeapWindow : EditorWindow {
 							//Handle circle gestures
 							currentGestureText = "Circle";
 							
-							if(currentEditMode.Equals(EditModes.rotate)) {
-								// create new circle gesture and rotate accordingly
-								CircleGesture circle = new CircleGesture(gest);
-								bool isClockwise = false;
-								if(circle.Normal.z < 0) {
-									isClockwise = true;
-								}
-								rotateObject(isClockwise);
-								float turns = circle.Progress;
-								circleCountText = turns.ToString();
+							// create new circle gesture and transform accordingly
+							CircleGesture circle = new CircleGesture(gest);
+							bool isClockwise = false;
+							if(circle.Normal.z < 0) {
+								isClockwise = true;
 							}
-							else if(currentEditMode.Equals(EditModes.scale)) {
-								// create new circle gesture and rotate accordingly
-								CircleGesture circle = new CircleGesture(gest);
-								bool isClockwise = false;
-								if(circle.Normal.z < 0) {
-									isClockwise = true;
+							if(currentMode.Equals(Modes.leapEdit)) {
+								if(currentEditMode.Equals(EditModes.rotate)) {					
+									rotateObject(isClockwise);
 								}
-								scaleObjectCircleGesture(isClockwise);
-								float turns = circle.Progress;
-								circleCountText = turns.ToString();
+								else if(currentEditMode.Equals(EditModes.scale)) {
+									scaleObjectCircleGesture(isClockwise);
+								}
 							}
+							
+							float turns = circle.Progress;
+							circleCountText = turns.ToString();
 							break;
 						case Gesture.GestureType.TYPEKEYTAP:
 							//Handle key tap gestures
@@ -267,22 +303,24 @@ public class LeapWindow : EditorWindow {
 							currentGestureText = "Screen Tap";
 							
 							// only change mode after a sufficient delay
-							if(editModeChangeDelay > 50) {
-								// Change edit mode
-								if(currentEditMode.Equals(EditModes.rotate)) {
-									currentEditMode = EditModes.translate;
-									currentEditModeText = "Translate";
+							if(currentMode.Equals(Modes.leapEdit)) {
+								if(editModeChangeDelay > 50) {
+									// Change edit mode
+									if(currentEditMode.Equals(EditModes.rotate)) {
+										currentEditMode = EditModes.translate;
+										currentEditModeText = "Translate";
+									}
+									else if(currentEditMode.Equals(EditModes.translate)) {
+										currentEditMode = EditModes.scale;
+										currentEditModeText = "Scale";
+									}
+									else {
+										currentEditMode = EditModes.rotate;
+										currentEditModeText = "Rotate";
+									}
+									// reset delay
+									editModeChangeDelay = 0;
 								}
-								else if(currentEditMode.Equals(EditModes.translate)) {
-									currentEditMode = EditModes.scale;
-									currentEditModeText = "Scale";
-								}
-								else {
-									currentEditMode = EditModes.rotate;
-									currentEditModeText = "Rotate";
-								}
-								// reset delay
-								editModeChangeDelay = 0;
 							}
 							break;
 						case Gesture.GestureType.TYPESWIPE:
@@ -317,8 +355,10 @@ public class LeapWindow : EditorWindow {
 				*/
 				
 				// handle translation
-				if(currentEditMode.Equals(EditModes.translate)) {
-					positionObject(handPos.x/15.0f, handPos.y/15.0f, handPos.z/15.0f);
+				if(currentMode.Equals(Modes.leapEdit)) {
+					if(currentEditMode.Equals(EditModes.translate)) {
+						positionObject(handPos.x/15.0f, handPos.y/15.0f, handPos.z/15.0f);
+					}
 				}
 														
 				// update the GUI
