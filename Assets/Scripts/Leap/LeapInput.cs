@@ -24,7 +24,7 @@ public static class LeapInput
 {	
 	public static bool EnableTranslation = true;
 	public static bool EnableRotation = true;
-	public static bool EnableScaling = true;
+	public static bool EnableScaling = false;
 	/// <summary>
 	/// Delegates for the events to be dispatched.  
 	/// </summary>

@@ -1,10 +1,13 @@
-﻿// Eric Lee 
-// 9/28/13
-// Custom Leap Editor Window
+﻿/******************************************************************************\
+* Eric Lee
+* Unity Leap
+\******************************************************************************/
+
 using UnityEngine;
 using UnityEditor;
 using Leap;
 using System.Collections;
+//using EditorUtility;
 
 // Window derives from EditorWindow
 public class LeapWindow : EditorWindow {
@@ -12,9 +15,21 @@ public class LeapWindow : EditorWindow {
 	static Leap.Controller 		m_controller	= new Leap.Controller();
 	static Leap.Frame			m_Frame			= null;
 	
-	// coordinates of the hand
-	//static float handXCoordinate = 0;
-	//static float handYCoordinate = 0;
+	static GameObject leapController;
+	static LeapUnityBridge lub;
+		
+	// These values, set from the editor window, set the corresponding fields in the
+	// LeapUnityExtension for translating vectors.
+	public static Vector3 m_LeapScaling = new Vector3(0.02f, 0.02f, 0.02f);
+	public static Vector3 m_LeapOffset = new Vector3(0,0,0);
+	
+		
+	//These arrays allow us to use our game object arrays much like pools.
+	//When a new hand/finger is found, we mark a game object by active
+	//by storing it's id, and when it goes out of scope we make the
+	//corresponding gameobject invisible & set the id to -1.
+	static int[]					m_fingerIDs = null;
+	static int[]					m_handIDs	= null;
 	
 	// current mode of the Leap interface
 	enum Modes { leapSelection, leapEdit };
@@ -35,11 +50,14 @@ public class LeapWindow : EditorWindow {
 	string currentGestureText = "None";
 	string circleCountText = "0";
 	string scaleFactorText = "1.0";
-	/*
-	bool groupEnabled;
-	bool myBool = true;
-	float myFloat = 1.23f;
-	*/
+	
+	string helpText = "";
+	bool displayHelp = false;
+	
+	// customizing Leap options
+	float xScale = 0.02f;
+	float yScale = 0.02f;
+	float zScale = 0.02f;
 	
 	// delays
 	static int modeChangeDelay = 0;
@@ -53,6 +71,10 @@ public class LeapWindow : EditorWindow {
 		window.minSize = new Vector2(500, 500);
 		//controller = new Controller();
 		
+		leapController = GameObject.FindWithTag("LeapController");
+		if(leapController != null) Debug.Log("found controller!");
+		else Debug.Log("no controller found");
+		
 		// enable gestures 
 		m_controller.EnableGesture(Gesture.GestureType.TYPECIRCLE);
         m_controller.EnableGesture(Gesture.GestureType.TYPEKEYTAP);
@@ -63,31 +85,73 @@ public class LeapWindow : EditorWindow {
 		// init in selection mode
 		currentMode = Modes.leapSelection;
 		currentEditMode = EditModes.rotate;
+		
+		
+		// init data structures to house fingers and hands
+		m_fingerIDs = new int[10];
+		for( int i = 0; i < m_fingerIDs.Length; i++ )
+		{
+			m_fingerIDs[i] = -1;	
+		}
+		
+		m_handIDs = new int[2];
+		for( int i = 0; i < m_handIDs.Length; i++ )
+		{
+			m_handIDs[i] = -1;	
+		}
+			
+		lub = (LeapUnityBridge) leapController.GetComponent(typeof(LeapUnityBridge));
+		lub.Awake();
+	}
+	
+	void OnDestroy() {
+		// when closing the editor window
+		//lub = (LeapUnityBridge) leapController.GetComponent(typeof(LeapUnityBridge));
+		lub.SetFalse();
+		
+		// delete hands (be careful with this...)
+		//GameObject handsGO = GameObject.FindWithTag("Hands");
+		//DestroyImmediate(handsGO);
 	}
 
 	// actual window controls go here
+	// sets up what is on GUI and handles any events when window is in focus
 	void OnGUI () {
-	
-		GUILayout.Label ("Leap Unity Controller", EditorStyles.boldLabel);
-		EditorGUILayout.LabelField ("Current mode", currentModeText);
-		EditorGUILayout.LabelField ("Current edit mode", currentEditModeText);
-		EditorGUILayout.LabelField ("Current frame", currentFrameText);
-		EditorGUILayout.LabelField ("Leap FPS", currentFPSText);
-		EditorGUILayout.LabelField ("Number of hands", numHandsText);
-		EditorGUILayout.LabelField ("Number of fingers", numFingersText);
-		EditorGUILayout.LabelField ("Hand Position", hand1PosText);
-		EditorGUILayout.LabelField ("Hand Normal", hand1NormalText);
-		EditorGUILayout.LabelField ("Hand Velocity", hand1VelocityText);
-		EditorGUILayout.LabelField ("Circle gesture", currentGestureText);
-		EditorGUILayout.LabelField ("Circle count", circleCountText);
-		EditorGUILayout.LabelField ("Scale factor", scaleFactorText);
-			//myString = EditorGUILayout.TextField ("Text Field", myString);
-			/*
-		groupEnabled = EditorGUILayout.BeginToggleGroup ("Optional Settings", groupEnabled);
-			myBool = EditorGUILayout.Toggle ("Toggle", myBool);
-			myFloat = EditorGUILayout.Slider ("Slider", myFloat, -3, 3);
-		EditorGUILayout.EndToggleGroup ();
-		*/
+		// set up GUI elements
+		GUILayout.Label("Leap Unity Controller", EditorStyles.boldLabel);
+		xScale = EditorGUILayout.FloatField ("Leap Scale: X", xScale, GUILayout.Width(300));
+		yScale = EditorGUILayout.FloatField ("Leap Scale: Y", yScale, GUILayout.Width(300));
+		zScale = EditorGUILayout.FloatField ("Leap Scale: Z", zScale, GUILayout.Width(300));
+		if(GUILayout.Button("Scale", GUILayout.Width(150))) {
+			lub = (LeapUnityBridge) leapController.GetComponent(typeof(LeapUnityBridge));
+			lub.SetLeapScaling(xScale, yScale, zScale);
+		}
+		EditorGUILayout.LabelField("Current mode", currentModeText);
+		EditorGUILayout.LabelField("Current edit mode", currentEditModeText);
+		EditorGUILayout.LabelField("Current frame", currentFrameText);
+		EditorGUILayout.LabelField("Leap FPS", currentFPSText);
+		EditorGUILayout.LabelField("Number of hands", numHandsText);
+		EditorGUILayout.LabelField("Number of fingers", numFingersText);
+		EditorGUILayout.LabelField("Hand Position", hand1PosText);
+		EditorGUILayout.LabelField("Hand Normal", hand1NormalText);
+		EditorGUILayout.LabelField("Hand Velocity", hand1VelocityText);
+		EditorGUILayout.LabelField("Circle gesture", currentGestureText);
+		EditorGUILayout.LabelField("Circle count", circleCountText);
+		EditorGUILayout.LabelField("Scale factor", scaleFactorText);
+		
+		// displaying help
+		if (GUILayout.Button("Help", GUILayout.Width(150)))
+        {
+            // display help
+			displayHelp = !displayHelp;
+			helpText = displayHelp ? "Key tap to switch between edit and selection modes. \n" +
+							"In edit mode, screen tap to switch between rotation, translation, and scaling. \n" +
+							"To rotate, make circle gestures. \n" +
+							"To scale, make circle gestures as well. \n" +
+							"To translate, swipe over the Leap. \n" +
+							"1cm of hand motion = .02m scene motion" : "";
+        }
+		GUILayout.Label(helpText);
 		
 		// for GUI only interactions, pressing a key
 		Event e = Event.current;
@@ -155,8 +219,21 @@ public class LeapWindow : EditorWindow {
 						// - Z
 						translateObject(0.0f, 0.0f, -1.0f);
                     }
+					if (Event.current.keyCode == (KeyCode.P))
+                    {
+						CreateCube();
+                    }										
                     break;
                 }
+			case EventType.MouseDown:
+			{			
+				if(e.button == 0)
+				{
+					Debug.Log("Mouse clicked");
+					e.Use();  //Eat the event so it doesn't propagate through the editor.
+				}
+				break;
+			}
         }
 	}
 	
@@ -193,6 +270,42 @@ public class LeapWindow : EditorWindow {
 	
 	// update function
 	void Update () {
+		if(leapController != null) EditorUtility.SetDirty(leapController);
+		
+		// if perspective camera in scene view changes, map the transformation to the Leap hands transform as well
+		//Vector3 position = SceneView.lastActiveSceneView.pivot;
+		if(Camera.current != null) {
+			Vector3 cameraLookAt = Camera.current.transform.forward;
+			Vector3 cameraPosition = Camera.current.transform.position;
+			//Debug.Log("(" + cameraLookAt.x + ", " + cameraLookAt.y + ", " + cameraLookAt.z);
+			//Debug.Log("(" + cameraPosition.x + ", " + cameraPosition.y + ", " + cameraPosition.z);
+			//lub.TransformHands(cameraPosition.x, cameraPosition.y, cameraPosition.z, cameraLookAt.x, 
+				//cameraLookAt.y, cameraLookAt.z);
+		}
+	
+		Event e = Event.current;
+		if(e != null) {		
+			switch (e.type)
+			{
+			 case EventType.keyDown:
+			 {
+				Debug.Log("key pressed");
+				break;
+			 }
+			case EventType.MouseDown:
+				{	
+					Debug.Log("Mouse clicked");				
+					if(e.button == 0)
+					{
+						Debug.Log("Mouse clicked");
+						e.Use();  //Eat the event so it doesn't propagate through the editor.
+					}
+					break;
+				}
+			}
+		}
+		
+		//if( !m_UseFixedUpdate ) LeapInput.Update();
 		
 		// Reduce number of frames processed (maybe will mess with some input and will need to be changed later)
 		if(Time.time % 1000 == 0) {
@@ -228,6 +341,10 @@ public class LeapWindow : EditorWindow {
 					
 					handVelocity = hand1.PalmVelocity;
 					hand1VelocityText = handVelocity.ToString();
+					
+					//CreateHand();
+					// display a sphere on the screen where the hand is
+					//Debug.Log("Hand detected");
 				}
 				
 				currentGestureText = "None";
@@ -326,6 +443,8 @@ public class LeapWindow : EditorWindow {
 						case Gesture.GestureType.TYPESWIPE:
 							//Handle swipe gestures
 							currentGestureText = "Swipe";
+							
+							//CreateCube();
 							
 							/*
 							if(currentEditMode.Equals(EditModes.translate)) {
@@ -434,6 +553,42 @@ public class LeapWindow : EditorWindow {
 			currentAsset.transform.position = positionVector;
 		}
 	}
+	/*
+	private GameObject CreateHand() {
+		//GameObject hand = new GameObject("hand");
+		if(handTracker == null) {
+			handTracker = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+			handTracker.transform.position = new Vector3(0, 0, 0);
+		}
+		//hand.transform.parent = parent.transform;
+		
+		if( index == 0 )
+			hand.name = "Primary Hand";
+		else if( index == 1 )
+			hand.name = "Secondary Hand";
+		else
+			hand.name = "Unknown Hand";
+		
+		return handTracker;
+	}
+	*/
+	
+	private GameObject CreateCube() {
+		GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+		Selection.activeGameObject = cube;
+		
+		return cube;
+	}
+	/*
+	private GameObject CreatePalm(GameObject parent, int index)
+	{
+		GameObject palm = Instantiate(m_PalmTemplate) as GameObject;
+		palm.name = "Palm " + index;
+		palm.transform.parent = parent.transform;
+		
+		return palm;
+	}
+	*/
 }
 
 
