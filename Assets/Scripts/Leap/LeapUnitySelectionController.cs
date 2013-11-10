@@ -22,6 +22,25 @@ using Leap;
 [ExecuteInEditMode]
 public class LeapUnitySelectionController : MonoBehaviour {
 
+	protected GameObject m_FocusedObject = null;
+	protected Leap.Frame m_LastFrame = null;
+	//m_Touching maintains a list of fingers currently touching the focused object.
+	//m_LastPos is the list of their last positions, used durring the update loop.
+	protected List<GameObject> 	m_Touching = new List<GameObject>();
+	protected List<Vector3>		m_LastPos = new List<Vector3>();
+	
+	protected bool m_Selected = false;
+	protected float m_FirstTouchedTime = 0.0f;
+	protected float m_LastMovedTime = 0.0f;
+	
+	protected const float kSelectionTime = .25f;
+	protected const float kIdleStartDeselectTime = .5f;
+	protected const float kMinSelectionTime = 2.0f;
+	protected const float kMovementThreshold = 2.0f;
+	protected Color kBlankColor = new Color(0,0,0,0);
+	
+	public Material m_HighlightMaterial = null;
+
 	public static LeapUnitySelectionController Get()
 	{
 		return (LeapUnitySelectionController)GameObject.FindObjectOfType(typeof(LeapUnitySelectionController));		
@@ -205,10 +224,10 @@ public class LeapUnitySelectionController : MonoBehaviour {
 		if( m_FocusedObject != null )
 		{
 			List<Material> materials = new List<Material>( m_FocusedObject.renderer.materials );
-			Material removeMaterial = materials.Find( m => m.name == m_HighlightMaterial.name + " (Instance)" );
-			materials.Remove(removeMaterial);
-			m_FocusedObject.renderer.materials = materials.ToArray();
-			Destroy(removeMaterial); //cleanup instanced material;
+			//Material removeMaterial = materials.Find( m => m.name == m_HighlightMaterial.name + " (Instance)" );
+			//materials.Remove(removeMaterial);
+			//m_FocusedObject.renderer.materials = materials.ToArray();
+			//Destroy(removeMaterial); //cleanup instanced material;
 		}
 		m_FocusedObject = null;
 		m_FirstTouchedTime = 0.0f;
@@ -225,10 +244,10 @@ public class LeapUnitySelectionController : MonoBehaviour {
 		m_LastMovedTime = Time.time + kMinSelectionTime;
 		//Add the new material, but set it as blank so it doesn't really show up.
 		List<Material> materials = new List<Material>( focus.renderer.materials );
-		Material newMaterial = new Material(m_HighlightMaterial);
-		newMaterial.color = new Color(0,0,0,0);
-		materials.Add(newMaterial);
-		focus.renderer.materials = materials.ToArray();
+		//Material newMaterial = new Material(m_HighlightMaterial);
+		//newMaterial.color = new Color(0,0,0,0);
+		//materials.Add(newMaterial);
+		//focus.renderer.materials = materials.ToArray();
 	}
 	
 	public void SetHighlightColor(Color c)
@@ -236,9 +255,9 @@ public class LeapUnitySelectionController : MonoBehaviour {
 		if( m_FocusedObject == true )
 		{
 			Material[] materials = m_FocusedObject.renderer.materials;
-			Material changeMat = Array.Find(materials, m => m.name == m_HighlightMaterial.name + " (Instance)" );
-			changeMat.color = c;
-			m_FocusedObject.renderer.materials = materials;
+			//Material changeMat = Array.Find(materials, m => m.name == m_HighlightMaterial.name + " (Instance)" );
+			//changeMat.color = c;
+			//m_FocusedObject.renderer.materials = materials;
 		}
 	}
 	
@@ -246,26 +265,5 @@ public class LeapUnitySelectionController : MonoBehaviour {
 	{
 		m_HighlightMaterial = Resources.Load("Materials/Highlight") as Material;
 	}
-	
-	protected GameObject m_FocusedObject = null;
-	protected Leap.Frame m_LastFrame = null;
-	//m_Touching maintains a list of fingers currently touching the focused object.
-	//m_LastPos is the list of their last positions, used durring the update loop.
-	protected List<GameObject> 	m_Touching = new List<GameObject>();
-	protected List<Vector3>		m_LastPos = new List<Vector3>();
-	
-	protected bool m_Selected = false;
-	protected float m_FirstTouchedTime = 0.0f;
-	protected float m_LastMovedTime = 0.0f;
-	
-	protected const float kSelectionTime = .25f;
-	protected const float kIdleStartDeselectTime = .5f;
-	protected const float kMinSelectionTime = 2.0f;
-	protected const float kMovementThreshold = 2.0f;
-	protected Color kBlankColor = new Color(0,0,0,0);
-	
-	private Material m_HighlightMaterial = null;
-	
-	
 	
 }

@@ -66,15 +66,27 @@ public class LeapWindow : EditorWindow {
 	
 	// Add menu named "Leap Motion" to the Window menu
 	[MenuItem ("Window/Leap Control")]
+	// called when window is initialized
 	static void Init () {
 		// Get existing open window or if none, make a new one:
 		LeapWindow window = (LeapWindow)EditorWindow.GetWindow (typeof (LeapWindow));
 		window.minSize = new Vector2(500, 500);
-		//controller = new Controller();
 		
+		// check if LeapController already exists, and create dynamically if not
 		leapController = GameObject.FindWithTag("LeapController");
 		if(leapController != null) Debug.Log("found controller!");
-		else Debug.Log("no controller found");
+		else 
+		{
+			Debug.Log("no controller found, creating new Leap Controller");
+			leapController = new GameObject("LeapController");
+			leapController.tag = "LeapController"; // what if this tag doesn't exist already?
+			
+			// attach scripts and set components
+			leapController.AddComponent(typeof(LeapUnityBridge));
+			leapController.AddComponent(typeof(LeapUnitySelectionController));
+			lub = leapController.GetComponent<LeapUnityBridge>();
+			lub.m_LeapScaling = new Vector3(0.1f, 0.1f, 0.1f);
+		}
 		
 		// enable gestures 
 		m_controller.EnableGesture(Gesture.GestureType.TYPECIRCLE);
@@ -238,30 +250,13 @@ public class LeapWindow : EditorWindow {
         }
 	}
 	
+	/*
+	Called when scene view is repainted
+	In the OnSceneGUI you can do eg. mesh editing, terrain painting or advanced gizmos If call Event.current.Use(), 
+	the event will be "eaten" by the editor and not be used by the scene view itself.
+	*/
 	void OnSceneGUI() {
-		Event e = Event.current;
-				
-		switch (e.type)
-        {
-            case EventType.keyDown:
-                {
-					// select object
-					if (Event.current.keyCode == (KeyCode.P))
-                    {
-						Debug.Log("P was pressed");
-						// scale larger
-                        //Debug.Log(e.mousePosition.ToString());
-						//Ray ray = HandleUtility.GUIPointToWorldRay(e.mousePosition);
-						Ray ray = HandleUtility.GUIPointToWorldRay(e.mousePosition);
-						RaycastHit hit = new RaycastHit();
-						if (Physics.Raycast(ray, out hit, 1000.0f)) {
-							//Debug.Log("hit!");
-							Debug.Log(hit.point.ToString());
-						}
-                    }
-                    break;
-                }
-        }
+
 	}
 	
 	public static Leap.Frame Frame
