@@ -6,6 +6,7 @@
 * Leap Motion and you, your company or other organization.                     *
 \******************************************************************************/
 using UnityEngine;
+using UnityEditor;
 using System.Collections;
 
 //This relatively simple classis added to fingertip objects by the LeapUnityBridge,
@@ -14,6 +15,7 @@ using System.Collections;
 
 [ExecuteInEditMode]
 public class LeapFingerCollisionDispatcher : MonoBehaviour {
+//public class LeapFingerCollisionDispatcher : Editor {
 	
 	const float kHitDistance = 20.0f;
 	
@@ -22,7 +24,9 @@ public class LeapFingerCollisionDispatcher : MonoBehaviour {
 		if( other.tag == "Touchable" )
 		{
 			LeapUnitySelectionController.Get().OnTouched(gameObject, other);
-			Debug.Log("COLLIDE");
+			
+			// Sets collided object as selected
+			Selection.activeGameObject = other.gameObject;
 		}
 	}
 	

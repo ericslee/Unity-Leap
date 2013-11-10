@@ -15,6 +15,7 @@ public class LeapWindow : EditorWindow {
 	static Leap.Controller 		m_controller	= new Leap.Controller();
 	static Leap.Frame			m_Frame			= null;
 	
+	// variables that refer to the gameObject that contains the LeapController and its Bridge script
 	static GameObject leapController;
 	static LeapUnityBridge lub;
 		

@@ -78,7 +78,8 @@ public class LeapUnitySelectionController : MonoBehaviour {
 			float currDist = currVec.magnitude;
 			float axisDist = axis.magnitude;
 			float angle = -Mathf.Asin(axisDist / (lastDist*currDist));
-			m_FocusedObject.transform.RotateAround(axis/axisDist, angle);
+			//m_FocusedObject.transform.RotateAround(axis/axisDist, angle);
+			m_FocusedObject.transform.Rotate(axis/axisDist, angle);
 		}	
 	}
 	public virtual void DoScaling(Frame thisFrame)

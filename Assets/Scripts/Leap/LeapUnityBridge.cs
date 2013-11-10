@@ -6,6 +6,7 @@
 * Leap Motion and you, your company or other organization.                     *
 \******************************************************************************/
 
+using UnityEditor;
 using UnityEngine;
 using System.Collections;
 
@@ -80,7 +81,6 @@ public class LeapUnityBridge : MonoBehaviour
 	
 	void Update()
 	{
-		//Debug.Log("Updating");
 		if( !m_UseFixedUpdate )
 			LeapInput.Update();
 		
