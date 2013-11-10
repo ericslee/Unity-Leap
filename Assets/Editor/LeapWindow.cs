@@ -268,15 +268,16 @@ public class LeapWindow : EditorWindow {
 	void Update () {
 		if(leapController != null) EditorUtility.SetDirty(leapController);
 		
-		// if perspective camera in scene view changes, map the transformation to the Leap hands transform as well
-		//Vector3 position = SceneView.lastActiveSceneView.pivot;
+		// if editor camera in scene view changes, map the transformation to the Leap hands transform as well
 		if(Camera.current != null) {
-			Vector3 cameraLookAt = Camera.current.transform.forward;
-			Vector3 cameraPosition = Camera.current.transform.position;
+			// Camera.current refers to the editor camera
+			Transform cameraTransform = Camera.current.transform;
+			Vector3 cameraLookAt = cameraTransform.forward;
+			Vector3 cameraPosition = cameraTransform.position;
 			//Debug.Log("(" + cameraLookAt.x + ", " + cameraLookAt.y + ", " + cameraLookAt.z);
-			//Debug.Log("(" + cameraPosition.x + ", " + cameraPosition.y + ", " + cameraPosition.z);
-			//lub.TransformHands(cameraPosition.x, cameraPosition.y, cameraPosition.z, cameraLookAt.x, 
-				//cameraLookAt.y, cameraLookAt.z);
+			//Debug.Log("Camera position: (" + cameraPosition.x + ", " + cameraPosition.y + ", " + cameraPosition.z);
+			lub.TransformHands(cameraPosition.x, cameraPosition.y, cameraPosition.z, cameraLookAt.x, 
+				cameraLookAt.y, cameraLookAt.z);
 		}
 	
 		Event e = Event.current;
