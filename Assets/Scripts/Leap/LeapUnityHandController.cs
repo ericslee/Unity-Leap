@@ -186,14 +186,17 @@ public class LeapUnityHandController : MonoBehaviour
 			handIndex = 2;
 		
 		GameObject parent = m_hands[handIndex];
-		if( child.transform.parent != parent.transform )
+		if(parent != null) 
 		{
-			child.transform.parent = parent.transform;
-			
-			foreach( Renderer r in child.GetComponents<Renderer>() )
-				r.material = m_materials[handIndex];;	
-			foreach( Renderer r in child.GetComponentsInChildren<Renderer>() )
-				r.material = m_materials[handIndex];;
+			if( child.transform.parent != parent.transform )
+			{
+				child.transform.parent = parent.transform;
+				
+				foreach( Renderer r in child.GetComponents<Renderer>() )
+					r.material = m_materials[handIndex];;	
+				foreach( Renderer r in child.GetComponentsInChildren<Renderer>() )
+					r.material = m_materials[handIndex];;
+			}
 		}
 	}
 }
