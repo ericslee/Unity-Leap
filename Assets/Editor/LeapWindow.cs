@@ -115,6 +115,16 @@ public class LeapWindow : EditorWindow {
 			
 		lub = (LeapUnityBridge) leapController.GetComponent(typeof(LeapUnityBridge));
 		lub.Awake();
+		
+		// Transform hands to where camera is looking initially
+		if(Camera.current != null) {
+			// Camera.current refers to the editor camera
+			Transform cameraTransform = Camera.current.transform;
+			Vector3 cameraLookAt = cameraTransform.forward;
+			Vector3 cameraPosition = cameraTransform.position;
+			lub.TransformHands(cameraPosition.x, cameraPosition.y, cameraPosition.z, cameraLookAt.x, 
+				cameraLookAt.y, cameraLookAt.z);
+		}
 	}
 	
 	void OnDestroy() {
@@ -402,10 +412,12 @@ public class LeapWindow : EditorWindow {
 								// switch modes
 								if(currentMode.Equals(Modes.leapSelection))	{
 									currentMode = Modes.leapEdit;
+									lub.currentMode = LeapUnityBridge.Modes.leapEdit;
 									currentModeText = "Edit";
 								}
 								else {
 									currentMode = Modes.leapSelection;
+									lub.currentMode = LeapUnityBridge.Modes.leapSelection;
 									currentModeText = "Selection";
 								}
 								modeChangeDelay = 0;
@@ -421,14 +433,17 @@ public class LeapWindow : EditorWindow {
 									// Change edit mode
 									if(currentEditMode.Equals(EditModes.rotate)) {
 										currentEditMode = EditModes.translate;
+										lub.currentEditMode = LeapUnityBridge.EditModes.translate;
 										currentEditModeText = "Translate";
 									}
 									else if(currentEditMode.Equals(EditModes.translate)) {
 										currentEditMode = EditModes.scale;
+										lub.currentEditMode = LeapUnityBridge.EditModes.scale;
 										currentEditModeText = "Scale";
 									}
 									else {
 										currentEditMode = EditModes.rotate;
+										lub.currentEditMode = LeapUnityBridge.EditModes.rotate;
 										currentEditModeText = "Rotate";
 									}
 									// reset delay
@@ -473,6 +488,7 @@ public class LeapWindow : EditorWindow {
 				if(currentMode.Equals(Modes.leapEdit)) {
 					if(currentEditMode.Equals(EditModes.translate)) {
 						positionObject(handPos.x/15.0f, handPos.y/15.0f, handPos.z/15.0f);
+						//positionObject(handPos.x, handPos.y, handPos.z);
 					}
 				}
 														
@@ -538,7 +554,11 @@ public class LeapWindow : EditorWindow {
 		if(Selection.activeGameObject != null) {
 			GameObject currentAsset = Selection.activeGameObject;
 			Vector3 translateVector = new Vector3(transX, transY, transZ);
-			currentAsset.transform.Translate(translateVector);
+			//Vector3 unityTranslatedLeap = translateVector.ToUnityTranslated();
+			Vector3 translateVector2 = new Vector3(currentAsset.transform.position.x + translateVector.x,
+												currentAsset.transform.position.y + translateVector.y, 
+												currentAsset.transform.position.z + translateVector.z);
+			currentAsset.transform.Translate(translateVector2);
 		}
 	}
 	

@@ -120,7 +120,7 @@ public class LeapUnitySelectionController : MonoBehaviour {
 	
 	void Update()
 	{
-		//Debug.Log("Selection controller updating");
+		/*
 		Leap.Frame thisFrame = LeapInput.Frame;
 		if( thisFrame == null ) 
 			return;
@@ -151,6 +151,7 @@ public class LeapUnitySelectionController : MonoBehaviour {
 		if( m_Selected && Time.time - m_FirstTouchedTime > kIdleStartDeselectTime + kSelectionTime )
 		{
 			selectedT = 1.3f - (((Time.time - m_LastMovedTime) - kIdleStartDeselectTime) / kSelectionTime);
+			Debug.Log("Selection controller updating");
 		}
 		//SetHighlightColor( Color.Lerp(kBlankColor, m_HighlightMaterial.color, selectedT) );
 		
@@ -185,6 +186,7 @@ public class LeapUnitySelectionController : MonoBehaviour {
 		{
 			m_LastPos[i] = m_Touching[i].transform.position;	
 		}
+		*/
 	}
 	
 	public void OnTouched(GameObject finger, Collider other)
@@ -223,7 +225,7 @@ public class LeapUnitySelectionController : MonoBehaviour {
 	{
 		if( m_FocusedObject != null )
 		{
-			List<Material> materials = new List<Material>( m_FocusedObject.renderer.materials );
+			//List<Material> materials = new List<Material>( m_FocusedObject.renderer.materials );
 			//Material removeMaterial = materials.Find( m => m.name == m_HighlightMaterial.name + " (Instance)" );
 			//materials.Remove(removeMaterial);
 			//m_FocusedObject.renderer.materials = materials.ToArray();
@@ -243,7 +245,7 @@ public class LeapUnitySelectionController : MonoBehaviour {
 		m_FirstTouchedTime = Time.time;
 		m_LastMovedTime = Time.time + kMinSelectionTime;
 		//Add the new material, but set it as blank so it doesn't really show up.
-		List<Material> materials = new List<Material>( focus.renderer.materials );
+		//List<Material> materials = new List<Material>( focus.renderer.materials );
 		//Material newMaterial = new Material(m_HighlightMaterial);
 		//newMaterial.color = new Color(0,0,0,0);
 		//materials.Add(newMaterial);

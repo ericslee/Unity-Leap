@@ -42,6 +42,13 @@ public class LeapUnityBridge : MonoBehaviour
 	
 	private static bool m_Created = false;
 	
+	public int selectionDelay = 0;
+	// current mode of the Leap interface
+	public enum Modes { leapSelection, leapEdit };
+	public enum EditModes { translate, scale, rotate };
+	public Modes currentMode;
+	public EditModes currentEditMode;
+	
 	public void Awake()
 	{
 		if( m_Created )
@@ -81,6 +88,9 @@ public class LeapUnityBridge : MonoBehaviour
 	
 	void Update()
 	{
+		// increment delay
+		selectionDelay++;
+		
 		if( !m_UseFixedUpdate )
 			LeapInput.Update();
 		
