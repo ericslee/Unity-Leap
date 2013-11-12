@@ -156,6 +156,7 @@ public class LeapUnityBridge : MonoBehaviour
 		}
 		for( int i = 0; i < behavior.m_fingers.Length; i++ )
 		{
+			// include collision boolean
 			behavior.m_fingers[i] = CreateFinger(behavior.m_hands[2], i);
 		}
 		for( int i = 0; i < behavior.m_palms.Length; i++ )
@@ -173,10 +174,16 @@ public class LeapUnityBridge : MonoBehaviour
 	{
 		GameObject hand = new GameObject();
 		hand.transform.parent = parent.transform;
-		if( index == 0 )
+		if( index == 0 ) 
+		{
 			hand.name = "Primary Hand";
+			hand.tag = "PrimaryHand";
+		}
 		else if( index == 1 )
+		{
 			hand.name = "Secondary Hand";
+			hand.tag = "SecondaryHand";
+		}
 		else
 			hand.name = "Unknown Hand";
 		
@@ -203,6 +210,8 @@ public class LeapUnityBridge : MonoBehaviour
 		rb.isKinematic = true;
 		rb.interpolation = RigidbodyInterpolation.Interpolate;
 		// add collision dispatcher script
+		// only add if it is the first hand
+		//if(parent.tag.Equals("PrimaryHand")) finger.AddComponent("LeapFingerCollisionDispatcher");
 		finger.AddComponent("LeapFingerCollisionDispatcher");
 		
 		return finger;

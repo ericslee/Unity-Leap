@@ -21,20 +21,26 @@ public class LeapFingerCollisionDispatcher : MonoBehaviour {
 	
 	void OnTriggerEnter(Collider other)
 	{		
-		if( other.tag == "Touchable" )
+		if(gameObject.transform.parent.tag == "PrimaryHand") 
 		{
-			LeapUnitySelectionController.Get().OnTouched(gameObject, other);
-			
-			// Sets collided object as selected
-			Selection.activeGameObject = other.gameObject;
+			if( other.tag == "Touchable" )
+			{
+				LeapUnitySelectionController.Get().OnTouched(gameObject, other);
+				
+				// Sets collided object as selected
+				Selection.activeGameObject = other.gameObject;
+			}
 		}
 	}
 	
 	void OnTriggerExit(Collider other)
 	{
-		if( other.tag == "Touchable" )
+		if(gameObject.transform.parent.tag == "PrimaryHand") 
 		{
-			LeapUnitySelectionController.Get().OnStoppedTouching(gameObject, other);	
+			if( other.tag == "Touchable" )
+			{
+				LeapUnitySelectionController.Get().OnStoppedTouching(gameObject, other);	
+			}
 		}
 	}
 	
