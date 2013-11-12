@@ -21,32 +21,28 @@ public class LeapFingerCollisionDispatcher : MonoBehaviour {
 	
 	void OnTriggerEnter(Collider other)
 	{		
-		if(gameObject.transform.parent.tag == "PrimaryHand") 
+		// only collide with the primary hand
+		if( gameObject.transform.parent.tag == "PrimaryHand" && other.tag == "Touchable" )
 		{
-			if( other.tag == "Touchable" )
-			{
-				LeapUnitySelectionController.Get().OnTouched(gameObject, other);
+			LeapUnitySelectionController.Get().OnTouched(gameObject, other);
 				
-				// Sets collided object as selected
-				Selection.activeGameObject = other.gameObject;
-			}
+			// Sets collided object as selected
+			Selection.activeGameObject = other.gameObject;
 		}
 	}
 	
 	void OnTriggerExit(Collider other)
 	{
-		if(gameObject.transform.parent.tag == "PrimaryHand") 
+		// only collide with the primary hand
+		if( gameObject.transform.parent.tag == "PrimaryHand" && other.tag == "Touchable" )
 		{
-			if( other.tag == "Touchable" )
-			{
-				LeapUnitySelectionController.Get().OnStoppedTouching(gameObject, other);	
-			}
+			LeapUnitySelectionController.Get().OnStoppedTouching(gameObject, other);	
 		}
 	}
 	
 	void FixedUpdate()
 	{
-		Debug.Log("COLLIDER UPDATING");
+		//Debug.Log("COLLIDER UPDATING");
 		if( gameObject.collider.enabled )
 		{
 			Debug.DrawRay(transform.position, transform.forward, Color.green);

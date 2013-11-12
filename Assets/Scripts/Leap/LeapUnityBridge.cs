@@ -209,9 +209,8 @@ public class LeapUnityBridge : MonoBehaviour
 		rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
 		rb.isKinematic = true;
 		rb.interpolation = RigidbodyInterpolation.Interpolate;
+		
 		// add collision dispatcher script
-		// only add if it is the first hand
-		//if(parent.tag.Equals("PrimaryHand")) finger.AddComponent("LeapFingerCollisionDispatcher");
 		finger.AddComponent("LeapFingerCollisionDispatcher");
 		
 		return finger;

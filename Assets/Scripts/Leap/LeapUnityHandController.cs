@@ -38,8 +38,6 @@ public class LeapUnityHandController : MonoBehaviour
 	{
 		foreach( Collider component in obj.GetComponents<Collider>() ) 
 		{
-			//Debug.Log(obj.transform.parent.tag);
-			//if(obj.transform.parent.tag == "PrimaryHand") 
 			component.enabled = collidable;
 		}
 	
@@ -86,14 +84,12 @@ public class LeapUnityHandController : MonoBehaviour
 		// AND ADD COLLIDERS - WILL NEED TO FIX LATER
 		foreach( GameObject palm in m_palms )
 		{
-			//updatePalm(Leap.Hand.Invalid, palm);
-			updatePalm(Hand.Invalid, palm, true);
+			updatePalm(Leap.Hand.Invalid, palm);
 		}
 		foreach( GameObject finger in m_fingers)
 		{
-			//updatePointable(Leap.Pointable.Invalid, finger);
-			updatePointable(Leap.Pointable.Invalid, finger, false);
-			if(finger.transform.parent.tag == "PrimaryHand") SetCollidable(finger, true);
+			updatePointable(Leap.Pointable.Invalid, finger);
+			SetCollidable(finger, true);
 		}
 	}
 	
@@ -105,9 +101,7 @@ public class LeapUnityHandController : MonoBehaviour
 		int index = Array.FindIndex(m_fingerIDs, id => id == p.Id);
 		if( index != -1 )
 		{
-			if(index != 1) updatePointable( p, m_fingers[index], true );
-			else updatePointable( p, m_fingers[index], false );
-			//updatePointable( p, m_fingers[index] );	
+			updatePointable( p, m_fingers[index] );	
 		}
 	}
 	void OnPointableFound( Pointable p )
@@ -116,9 +110,7 @@ public class LeapUnityHandController : MonoBehaviour
 		if( index != -1 )
 		{
 			m_fingerIDs[index] = p.Id;
-			if(index != 1) updatePointable( p, m_fingers[index], true );
-			else updatePointable( p, m_fingers[index], false );
-			//updatePointable( p, m_fingers[index] );
+			updatePointable( p, m_fingers[index] );
 		}
 	}
 	void OnPointableLost( int lostID )
@@ -126,9 +118,7 @@ public class LeapUnityHandController : MonoBehaviour
 		int index = Array.FindIndex(m_fingerIDs, id => id == lostID);
 		if( index != -1 )
 		{
-			if(index != 1) updatePointable( Pointable.Invalid, m_fingers[index], true );
-			else updatePointable( Pointable.Invalid, m_fingers[index], false );
-			//updatePointable( Pointable.Invalid, m_fingers[index] );
+			updatePointable( Pointable.Invalid, m_fingers[index] );
 			m_fingerIDs[index] = -1;
 		}
 	}
@@ -139,9 +129,7 @@ public class LeapUnityHandController : MonoBehaviour
 		if( index != -1 )
 		{
 			m_handIDs[index] = h.Id;
-			// set bool flag to not be collidable
-			if(index != 1) updatePalm(h, m_palms[index], true);
-			else updatePalm(h, m_palms[index], false);
+			updatePalm(h, m_palms[index]);
 		}
 	}
 	void OnHandUpdated( Hand h )
@@ -149,9 +137,7 @@ public class LeapUnityHandController : MonoBehaviour
 		int index = Array.FindIndex(m_handIDs, id => id == h.Id);
 		if( index != -1 )
 		{
-			//updatePalm(	h, m_palms[index] );
-			if(index != 1) updatePalm(h, m_palms[index], true);
-			else updatePalm(h, m_palms[index], false);
+			updatePalm(	h, m_palms[index] );
 		}
 	}
 	void OnHandLost(int lostID)
@@ -159,20 +145,17 @@ public class LeapUnityHandController : MonoBehaviour
 		int index = Array.FindIndex(m_handIDs, id => id == lostID);
 		if( index != -1 )
 		{
-			if(index != 1) updatePalm(Hand.Invalid, m_palms[index], true);
-			else updatePalm(Hand.Invalid, m_palms[index], false);
-			
-			//updatePalm(Hand.Invalid, m_palms[index]);
+			updatePalm(Hand.Invalid, m_palms[index]);
 			m_handIDs[index] = -1;
 		}
 	}
 	
-	void updatePointable( Leap.Pointable pointable, GameObject fingerObject, bool collidable )
+	void updatePointable( Leap.Pointable pointable, GameObject fingerObject)
 	{
 		updateParent( fingerObject, pointable.Hand.Id );
 		
 		SetVisible(fingerObject, pointable.IsValid);
-		if(fingerObject.transform.parent.tag == "PrimaryHand") SetCollidable(fingerObject, pointable.IsValid);
+		SetCollidable(fingerObject, pointable.IsValid);
 		
 		if ( pointable.IsValid )
 		{
@@ -184,12 +167,12 @@ public class LeapUnityHandController : MonoBehaviour
 		}
 	}
 
-	void updatePalm( Leap.Hand leapHand, GameObject palmObject, bool collidable )
+	void updatePalm( Leap.Hand leapHand, GameObject palmObject)
 	{
 		updateParent( palmObject, leapHand.Id);
 		
 		SetVisible(palmObject, leapHand.IsValid);
-		if(collidable) SetCollidable(palmObject, leapHand.IsValid);
+		SetCollidable(palmObject, leapHand.IsValid);
 		
 		if( leapHand.IsValid )
 		{
