@@ -136,7 +136,6 @@ public class LeapWindow : EditorWindow {
 		yScale = EditorGUILayout.FloatField ("Leap Scale: Y", yScale, GUILayout.Width(300));
 		zScale = EditorGUILayout.FloatField ("Leap Scale: Z", zScale, GUILayout.Width(300));
 		if(GUILayout.Button("Scale", GUILayout.Width(150))) {
-			lub = (LeapUnityBridge) leapController.GetComponent(typeof(LeapUnityBridge));
 			lub.SetLeapScaling(xScale, yScale, zScale);
 		}
 		EditorGUILayout.LabelField("Current mode", currentModeText);
