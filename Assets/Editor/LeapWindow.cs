@@ -508,7 +508,28 @@ public class LeapWindow : EditorWindow {
 					if(currentMode.Equals(Modes.leapEdit)) 
 					{
 						// this seems to be the magic number atm
-						if(translationEnabled) translateObject(handPos.x/2.0f, handPos.y/2.0f, -handPos.z/2.0f); 
+						if(translationEnabled) 
+						{
+							if(Camera.current != null) 
+							{
+								// Camera.current refers to the editor camera
+								Transform cameraTransform = Camera.current.transform;
+								Vector3 cameraLookAt = cameraTransform.forward;
+								Vector3 cameraPosition = cameraTransform.position;
+								lub.TransformHands(cameraPosition.x, cameraPosition.y, cameraPosition.z, cameraLookAt.x, 
+									cameraLookAt.y, cameraLookAt.z);
+								
+								// Translate handPos to cameraPos
+								Vector3 transformedHandPos = new Vector3(handPos.x - cameraPosition.x, handPos.y - cameraPosition.y, handPos.z - cameraPosition.z);
+								// rotate to camera forward
+								float angle = Vector3.Angle(transformedHandPos, cameraLookAt);
+								Quaternion q = Quaternion.AngleAxis(angle,Vector3.up);
+								transformedHandPos = q * transformedHandPos;
+								
+								translateObject(transformedHandPos.x/2.0f, transformedHandPos.y/2.0f, -transformedHandPos.z); 
+							}
+							//translateObject(handPos.x/2.0f, handPos.y/2.0f, -handPos.z); 
+						}
 						//if(currentEditMode.Equals(EditModes.translate)) translateObject(handPos.x/2.0f, handPos.y/2.0f, -handPos.z/2.0f); 
 						//if(currentEditMode.Equals(EditModes.translate)) translateObject(stableHandPos.x/2.0f, stableHandPos.y/2.0f, -stableHandPos.z/2.0f); 
 					}
