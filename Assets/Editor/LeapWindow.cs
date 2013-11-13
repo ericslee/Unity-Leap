@@ -69,7 +69,6 @@ public class LeapWindow : EditorWindow {
 	static int editModeChangeDelay = 0;
 	static int handAppearDelay = 0;
 	static bool canSwitchModes = true;
-	static bool raisedY = false;
 	
 	// These values, set from the editor window, set the corresponding fields in the
 	// LeapUnityExtension for translating vectors.
@@ -330,16 +329,6 @@ public class LeapWindow : EditorWindow {
 										currentMode = Modes.leapSelection;
 										lub.currentMode = LeapUnityBridge.Modes.leapSelection;
 										currentModeText = "Selection";
-										
-										/*
-										GameObject currentAsset = Selection.activeGameObject;
-										if(currentAsset != null && raisedY)
-										{
-											raisedY = false;
-											LeapUnityGridHandler gridHandler = currentAsset.GetComponent<LeapUnityGridHandler>();
-											gridHandler.yBuffer = currentAsset.transform.position.y - hoverAmount;
-										}
-										*/
 									}
 									modeChangeDelay = 0;
 									canSwitchModes = false;
@@ -410,6 +399,8 @@ public class LeapWindow : EditorWindow {
 								//Handle key tap gestures
 								currentGestureText = "Key Tap";
 								
+								Selection.objects = new UnityEngine.Object[0];
+								
 								/*
 								// only change mode after a sufficient delay
 								if(modeChangeDelay > 20) {
@@ -440,36 +431,16 @@ public class LeapWindow : EditorWindow {
 											currentEditMode = EditModes.translate;
 											lub.currentEditMode = LeapUnityBridge.EditModes.translate;
 											currentEditModeText = "Translate";
-											raisedY = true;
 										}
 										else if(currentEditMode.Equals(EditModes.translate)) {
 											currentEditMode = EditModes.scale;
 											lub.currentEditMode = LeapUnityBridge.EditModes.scale;
 											currentEditModeText = "Scale";
-											
-											/*
-											GameObject currentAsset = Selection.activeGameObject;
-											if(currentAsset != null && raisedY)
-											{
-												raisedY = false;
-												LeapUnityGridHandler gridHandler = currentAsset.GetComponent<LeapUnityGridHandler>();
-												gridHandler.yBuffer = currentAsset.transform.position.y - hoverAmount;
-											}
-											*/
 										}
 										else {
 											currentEditMode = EditModes.rotate;
 											lub.currentEditMode = LeapUnityBridge.EditModes.rotate;
 											currentEditModeText = "Rotate";
-											
-											/*
-											GameObject currentAsset = Selection.activeGameObject;
-											if(currentAsset != null && raisedY)
-											{
-												raisedY = false;
-												LeapUnityGridHandler gridHandler = currentAsset.GetComponent<LeapUnityGridHandler>();
-												gridHandler.yBuffer = currentAsset.transform.position.y - hoverAmount;
-											}*/
 										}
 										// reset delay
 										editModeChangeDelay = 0;
@@ -532,10 +503,6 @@ public class LeapWindow : EditorWindow {
 						else gridHandler.isSelected = false;
 					}
 				}
-				
-				//DispatchLostEvents(Frame, lastFrame);
-				//DispatchFoundEvents(Frame, lastFrame);
-				//DispatchUpdatedEvents(Frame, lastFrame);
 			}
 		}
 	}
@@ -605,16 +572,6 @@ public class LeapWindow : EditorWindow {
 			LeapUnityGridHandler gridHandler = currentAsset.GetComponent<LeapUnityGridHandler>();
 			if(gridHandler != null) 
 			{
-				// raise the object off the ground a little bit when translating
-				//currentAsset.transform.position.y = currentAsset.transform.position.y + 10.0f;
-				/*
-				if(raisedY) 
-				{
-					gridHandler.yBuffer = currentAsset.transform.position.y + hoverAmount;
-					raisedY = false;
-				}
-				*/
-				
 				// send the FLOOR of the hand translation so that we work with integers								
 				gridHandler.xBuffer = Mathf.Floor(translateVector2.x);
 				gridHandler.zBuffer = Mathf.Floor(translateVector2.z);

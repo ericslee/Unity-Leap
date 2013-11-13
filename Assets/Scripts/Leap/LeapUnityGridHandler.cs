@@ -15,9 +15,17 @@ public class LeapUnityGridHandler : MonoBehaviour
 {
 	public bool isSelected = false;
 
+	// hovering vars
 	public static float hoverAmount = 30.0f;
 	private bool isHovered = false;
-	private bool isGrounded = true;
+	public bool isGrounded = true;
+	
+	// wiggle vars
+	private bool wiggleCW = true;
+	private int wiggleLimit = 10;
+	private int wiggleCount = 0;
+	private float initialXRot = 0.0f;
+	
 	public float rotBuffer = 0.0f;
 	public float xBuffer = 0.0f;
 	public float yBuffer = 0.0f;
@@ -27,6 +35,7 @@ public class LeapUnityGridHandler : MonoBehaviour
 
 	void Update()
 	{
+		// raise the object off the ground a little bit when translating
 		if(isSelected) 
 		{
 			if(!isHovered)
@@ -34,18 +43,58 @@ public class LeapUnityGridHandler : MonoBehaviour
 				yBuffer = gameObject.transform.position.y + hoverAmount;
 				isHovered = true;
 				isGrounded = false;
+				
+				// save the initial x rotation
+				initialXRot = gameObject.transform.eulerAngles.x;
 			}
+			// Make object wiggle
+			if(wiggleCW)
+			{	
+				//gameObject.transform.Rotate(Vector3.right * 1);
+				//gameObject.transform.rotation = Quaternion.AngleAxis(1, Vector3.right);
+				//Quaternion rot = gameObject.transform.rotation;
+				//gameObject.transform.rotation = rot * Quaternion.Euler(2, 0, 0);
+				gameObject.transform.Rotate(2, 0, 0);
+				wiggleCount++;
+				if(wiggleCount > wiggleLimit) 
+				{
+					wiggleCW = false;
+					wiggleCount = 0;
+				}
+			}
+			else 
+			{
+				//gameObject.transform.Rotate(Vector3.right * -1);
+				//gameObject.transform.rotation = Quaternion.AngleAxis(-1, Vector3.right);
+				//Quaternion rot = gameObject.transform.rotation;
+				//gameObject.transform.rotation = rot * Quaternion.Euler(-2, 0, 0);
+				gameObject.transform.Rotate(-2, 0, 0);
+				wiggleCount++;
+				if(wiggleCount > wiggleLimit) 
+				{
+					wiggleCW = true;
+					wiggleCount = 0;
+				}
+			}
+			
 		}
-		else if(!isGrounded)
+		else
 		{
-			yBuffer = gameObject.transform.position.y - hoverAmount;
-			isHovered = false;
-			isGrounded = true;
+			if(!isGrounded)
+			{
+				yBuffer = gameObject.transform.position.y - hoverAmount;
+				isHovered = false;
+				isGrounded = true;
+			}
+			
+			// reset wiggle rot
+			gameObject.transform.rotation = Quaternion.Euler(initialXRot, gameObject.transform.eulerAngles.y, gameObject.transform.eulerAngles.z);
 		}
 		// find the grid object
 		GameObject ground = GameObject.FindWithTag("Ground");
 		theGrid = ground.GetComponent<LeapUnityGrid>();
 		
+		/*
 		// snap rotation to nearest 90 degree
 		float yAngle = rotBuffer % 360;
 		if(yAngle >= 0 && yAngle <= 45)
@@ -68,7 +117,7 @@ public class LeapUnityGridHandler : MonoBehaviour
 		{
 			gameObject.transform.rotation = Quaternion.AngleAxis(0.0f, Vector3.up);
 		}	
-		
+		*/
 		// snap position to the center of the closest grid center
 		
 		//float xPos = xBuffer % 10;
@@ -86,7 +135,7 @@ public class LeapUnityGridHandler : MonoBehaviour
 		if(z >= theGrid.zMax) z = theGrid.zMax;
 		else if(z <= theGrid.zMin) z = theGrid.zMin;
 		
-		Debug.Log(x);
+		//Debug.Log(x);
 		// raise the object off the ground a little bit when translating
 		gameObject.transform.position = new Vector3(x, yBuffer, z);
 	}
