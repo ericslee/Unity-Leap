@@ -573,8 +573,8 @@ public class LeapWindow : EditorWindow {
 			if(gridHandler != null) 
 			{
 				// send the FLOOR of the hand translation so that we work with integers								
-				gridHandler.xBuffer = Mathf.Floor(translateVector2.x);
-				gridHandler.zBuffer = Mathf.Floor(translateVector2.z);
+				gridHandler.xBuffer = Mathf.Floor(translateVector.x);
+				gridHandler.zBuffer = Mathf.Floor(translateVector.z);
 				//currentAsset.transform.Translate(translateVector2);
 			}
 		}

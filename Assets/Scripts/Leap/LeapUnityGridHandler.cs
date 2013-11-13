@@ -124,11 +124,13 @@ public class LeapUnityGridHandler : MonoBehaviour
 		//float zPos = zBuffer % 10;
 		float snapInverse = 1/theGrid.cellSize;
 		//Vector3 aligned = new Vector3(Mathf.Floor(xBuffer - xPos), gameObject.transform.position.y, Mathf.Floor(zBuffer - zPos));
-		float x = Mathf.Round(xBuffer * snapInverse)/snapInverse;
-		float z = Mathf.Round(zBuffer * snapInverse)/snapInverse; 
-		//Vector3 aligned = new Vector3(Mathf.Floor(mousePos.x/grid.width)*grid.width + grid.width/2.0f , 0.0f);
 		
-
+		//float x = Mathf.Round(xBuffer * snapInverse)/snapInverse;
+		//float z = Mathf.Round(zBuffer * snapInverse)/snapInverse; 
+		//Vector3 aligned = new Vector3(Mathf.Floor(mousePos.x/grid.width)*grid.width + grid.width/2.0f , 0.0f);
+		float x = Mathf.Floor(xBuffer/theGrid.width)*theGrid.width + theGrid.width/2.0f;
+		float z = Mathf.Floor(zBuffer/theGrid.height)*theGrid.height + theGrid.height/2.0f;
+		
 		// clamp values if needed
 		if(x >= theGrid.xMax) x = theGrid.xMax;
 		else if(x <= theGrid.xMin) x = theGrid.xMin;
