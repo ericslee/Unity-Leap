@@ -48,6 +48,7 @@ public class LeapUnityBridge : MonoBehaviour
 	public enum EditModes { translate, scale, rotate };
 	public Modes currentMode;
 	public EditModes currentEditMode;
+	public bool leapActive = true;
 	
 	public void Awake()
 	{
@@ -88,18 +89,25 @@ public class LeapUnityBridge : MonoBehaviour
 	
 	void Update()
 	{
-		// increment delay
-		selectionDelay++;
-		
-		if( !m_UseFixedUpdate )
-			LeapInput.Update();
-		
-		if( Input.GetKeyDown(KeyCode.T) )
-			LeapInput.EnableTranslation = !LeapInput.EnableTranslation;
-		if( Input.GetKeyDown(KeyCode.R) )
-			LeapInput.EnableRotation = !LeapInput.EnableRotation;
-		if( Input.GetKeyDown(KeyCode.S) )
-			LeapInput.EnableScaling = !LeapInput.EnableScaling;
+		if(!leapActive)
+		{
+			// To do: turn off renderer
+		}
+		else
+		{
+			// increment delay
+			selectionDelay++;
+			
+			if( !m_UseFixedUpdate )
+				LeapInput.Update();
+			
+			if( Input.GetKeyDown(KeyCode.T) )
+				LeapInput.EnableTranslation = !LeapInput.EnableTranslation;
+			if( Input.GetKeyDown(KeyCode.R) )
+				LeapInput.EnableRotation = !LeapInput.EnableRotation;
+			if( Input.GetKeyDown(KeyCode.S) )
+				LeapInput.EnableScaling = !LeapInput.EnableScaling;
+		}
 	}
 	
 	// alter scaling of hands

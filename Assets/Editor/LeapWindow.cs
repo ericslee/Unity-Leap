@@ -15,15 +15,11 @@ public class LeapWindow : EditorWindow {
 	static Leap.Controller 		m_controller	= new Leap.Controller();
 	static Leap.Frame			m_Frame			= null;
 	
+	public bool leapActive = true;
+	
 	// variables that refer to the gameObject that contains the LeapController and its Bridge script
 	static GameObject leapController;
 	static LeapUnityBridge lub;
-		
-	// These values, set from the editor window, set the corresponding fields in the
-	// LeapUnityExtension for translating vectors.
-	public static Vector3 m_LeapScaling = new Vector3(0.02f, 0.02f, 0.02f);
-	public static Vector3 m_LeapOffset = new Vector3(0,0,0);
-	
 		
 	//These arrays allow us to use our game object arrays much like pools.
 	//When a new hand/finger is found, we mark a game object by active
@@ -32,12 +28,17 @@ public class LeapWindow : EditorWindow {
 	static int[]					m_fingerIDs = null;
 	static int[]					m_handIDs	= null;
 	
-	// current mode of the Leap interface
+	/********************************************************************
+	* current mode of the Leap interface
+	*********************************************************************/
 	enum Modes { leapSelection, leapEdit };
 	enum EditModes { translate, scale, rotate };
 	static Modes currentMode;
 	static EditModes currentEditMode;
 
+	/********************************************************************
+	* GUI variables
+	*********************************************************************/
 	// strings for display Leap data
 	string currentModeText = "Selection";
 	string currentEditModeText = "Rotate";
@@ -66,9 +67,16 @@ public class LeapWindow : EditorWindow {
 	static int handAppearDelay = 0;
 	static bool canSwitchModes = true;
 	
+	// These values, set from the editor window, set the corresponding fields in the
+	// LeapUnityExtension for translating vectors.
+	public static Vector3 m_LeapScaling = new Vector3(0.02f, 0.02f, 0.02f);
+	public static Vector3 m_LeapOffset = new Vector3(0,0,0);
+	
 	// Add menu named "Leap Motion" to the Window menu
 	[MenuItem ("Window/Leap Control")]
-	// called when window is initialized
+	/********************************************************************
+	* called when window is initialized
+	*********************************************************************/
 	static void Init () {
 		// Get existing open window or if none, make a new one:
 		LeapWindow window = (LeapWindow)EditorWindow.GetWindow (typeof (LeapWindow));
@@ -139,8 +147,10 @@ public class LeapWindow : EditorWindow {
 		//DestroyImmediate(handsGO);
 	}
 
-	// actual window controls go here
-	// sets up what is on GUI and handles any events when window is in focus
+	/********************************************************************
+	* actual window controls go here
+	* sets up what is on GUI and handles any events when window is in focus
+	*********************************************************************/
 	void OnGUI () {
 		// set up GUI elements
 		GUILayout.Label("Leap Unity Controller", EditorStyles.boldLabel);
@@ -178,86 +188,20 @@ public class LeapWindow : EditorWindow {
 		GUILayout.Label(helpText);
 		
 		// for GUI only interactions, pressing a key
-		Event e = Event.current;
-				
+		Event e = Event.current;		
 		switch (e.type)
         {
             case EventType.keyDown:
-                {
-					// select object
-					
-					if (Event.current.keyCode == (KeyCode.P))
-                    {
-						// scale larger
-                        Debug.Log(e.mousePosition.ToString());
-						//Ray ray = HandleUtility.GUIPointToWorldRay(e.mousePosition);
-						Ray ray = HandleUtility.GUIPointToWorldRay(e.mousePosition);
-						RaycastHit hit = new RaycastHit();
-						if (Physics.Raycast(ray, out hit, 1000.0f)) {
-							//Debug.Log("hit!");
-							Debug.Log(hit.point.ToString());
-						}
-                    }
-					
-					// SCALING
-                    if (Event.current.keyCode == (KeyCode.S))
-                    {
-						// scale larger
-                        Debug.Log("s was pressed");
-						scaleObject(2.0f);
-                    }
-					if (Event.current.keyCode == (KeyCode.D))
-                    {
-						// scale smaller
-                        Debug.Log("d was pressed");
-						scaleObject(0.5f);
-                    }
-					// TRANSLATION
-					if (Event.current.keyCode == (KeyCode.Z))
-                    {
-						// + X
-						translateObject(1.0f, 0.0f, 0.0f);
-                    }
-					if (Event.current.keyCode == (KeyCode.X))
-                    {
-						// - X
-						translateObject(-1.0f, 0.0f, 0.0f);
-                    }
-					if (Event.current.keyCode == (KeyCode.C))
-                    {
-						// + Y
-						translateObject(0.0f, 1.0f, 0.0f);
-                    }
-					if (Event.current.keyCode == (KeyCode.V))
-                    {
-						// - Y
-						translateObject(0.0f, -1.0f, 0.0f);
-                    }
-					if (Event.current.keyCode == (KeyCode.B))
-                    {
-						// + Z
-						translateObject(0.0f, 0.0f, 1.0f);
-                    }
-					if (Event.current.keyCode == (KeyCode.N))
-                    {
-						// - Z
-						translateObject(0.0f, 0.0f, -1.0f);
-                    }
-					if (Event.current.keyCode == (KeyCode.P))
-                    {
-						CreateCube();
-                    }										
-                    break;
-                }
-			case EventType.MouseDown:
-			{			
-				if(e.button == 0)
+            {
+				// toggle leap active or not
+				if (Event.current.keyCode == (KeyCode.D)) 
 				{
-					Debug.Log("Mouse clicked");
-					e.Use();  //Eat the event so it doesn't propagate through the editor.
-				}
-				break;
-			}
+					leapActive = !leapActive;
+					lub.leapActive = !lub.leapActive;
+					Debug.Log("LeapActive:" + lub.leapActive);
+				}								
+                break;
+            }
         }
 	}
 	
@@ -313,235 +257,235 @@ public class LeapWindow : EditorWindow {
 			}
 		}
 		
-		//if( !m_UseFixedUpdate ) LeapInput.Update();
-		
-		// Reduce number of frames processed (maybe will mess with some input and will need to be changed later)
-		if(Time.time % 1000 == 0) {
-			if( m_controller != null )
-			{	
-				// grab the current frame
-				//Frame lastFrame = m_Frame == null ? Frame.Invalid : m_Frame;
-				m_Frame	= m_controller.Frame();
-				
-				// get data from the frame
-				HandList hands = m_Frame.Hands;
-				//PointableList pointables = m_Frame.Pointables;
-				FingerList fingers = m_Frame.Fingers;
-				//ToolList tools = m_Frame.Tools;
-				
-				// update GUI text
-				currentFrameText = m_Frame.ToString();
-				currentFPSText = m_Frame.CurrentFramesPerSecond.ToString();
-				numHandsText = hands.Count.ToString();
-				numFingersText = fingers.Count.ToString();
-				
-				Vector handPos = new Vector();
-				Vector handNormal = new Vector();
-				Vector handVelocity = new Vector();
-				
-				if(hands.Count > 0) 
-				{
-					Hand hand1 = hands[0];
-					handPos = hand1.PalmPosition;
-					hand1PosText = handPos.ToString();
+		if(leapActive)
+		{
+			// Reduce number of frames processed (maybe will mess with some input and will need to be changed later)
+			if(Time.time % 1000 == 0) 
+			{
+				if( m_controller != null )
+				{	
+					// grab the current frame
+					//Frame lastFrame = m_Frame == null ? Frame.Invalid : m_Frame;
+					m_Frame	= m_controller.Frame();
 					
-					handNormal = hand1.PalmNormal;
-					hand1NormalText = handNormal.ToString();
+					// get data from the frame
+					HandList hands = m_Frame.Hands;
+					//PointableList pointables = m_Frame.Pointables;
+					FingerList fingers = m_Frame.Fingers;
+					//ToolList tools = m_Frame.Tools;
 					
-					handVelocity = hand1.PalmVelocity;
-					hand1VelocityText = handVelocity.ToString();
+					// update GUI text
+					currentFrameText = m_Frame.ToString();
+					currentFPSText = m_Frame.CurrentFramesPerSecond.ToString();
+					numHandsText = hands.Count.ToString();
+					numFingersText = fingers.Count.ToString();
 					
-					if(hands.Count < 2 && !canSwitchModes)
+					Vector handPos = new Vector();
+					Vector handNormal = new Vector();
+					Vector handVelocity = new Vector();
+					
+					if(hands.Count > 0) 
 					{
-						canSwitchModes = true;
-					}
-					
-					// if two hands on screen, enable mode switching
-					if(hands.Count > 1) 
-					{
-						// hands should remain on the screen for a short period of time before switching modes
-						if(handAppearDelay > 50) 
+						Hand hand1 = hands[0];
+						handPos = hand1.PalmPosition;
+						hand1PosText = handPos.ToString();
+						
+						handNormal = hand1.PalmNormal;
+						hand1NormalText = handNormal.ToString();
+						
+						handVelocity = hand1.PalmVelocity;
+						hand1VelocityText = handVelocity.ToString();
+						
+						if(hands.Count < 2 && !canSwitchModes)
 						{
-							// only change mode after a sufficient delay and if second hand was removed
-							if(modeChangeDelay > 20 && canSwitchModes) 
-							{
-								// switch modes
-								if(currentMode.Equals(Modes.leapSelection))	
-								{
-									currentMode = Modes.leapEdit;
-									lub.currentMode = LeapUnityBridge.Modes.leapEdit;
-									currentModeText = "Edit";
-								}
-								else 
-								{
-									currentMode = Modes.leapSelection;
-									lub.currentMode = LeapUnityBridge.Modes.leapSelection;
-									currentModeText = "Selection";
-								}
-								modeChangeDelay = 0;
-								canSwitchModes = false;
-							}
-							
-							// reset hand delay
-							handAppearDelay = 0;
+							canSwitchModes = true;
 						}
+						
+						// if two hands on screen, enable mode switching
+						if(hands.Count > 1) 
+						{
+							// hands should remain on the screen for a short period of time before switching modes
+							if(handAppearDelay > 50) 
+							{
+								// only change mode after a sufficient delay and if second hand was removed
+								if(modeChangeDelay > 20 && canSwitchModes) 
+								{
+									// switch modes
+									if(currentMode.Equals(Modes.leapSelection))	
+									{
+										currentMode = Modes.leapEdit;
+										lub.currentMode = LeapUnityBridge.Modes.leapEdit;
+										currentModeText = "Edit";
+									}
+									else 
+									{
+										currentMode = Modes.leapSelection;
+										lub.currentMode = LeapUnityBridge.Modes.leapSelection;
+										currentModeText = "Selection";
+									}
+									modeChangeDelay = 0;
+									canSwitchModes = false;
+								}
+								
+								// reset hand delay
+								handAppearDelay = 0;
+							}
+						}
+						
+						//CreateHand();
+						// display a sphere on the screen where the hand is
+						//Debug.Log("Hand detected");
 					}
 					
-					//CreateHand();
-					// display a sphere on the screen where the hand is
-					//Debug.Log("Hand detected");
-				}
-				
-				currentGestureText = "None";
+					currentGestureText = "None";
 
-				//Average a finger position for the last 10 frames
-				/*
-				for(int j; j < fingers.Count; j++) {
-					int count = 0;
-					Vector average = new Vector ();
-					Finger fingerToAverage = frame.Fingers [0];
-					for (int i = 0; i < 10; i++) {
-							Finger fingerFromFrame = controller.Frame (i).Finger (fingerToAverage.Id);
-							if (fingerFromFrame.IsValid) {
-									average += fingerFromFrame.TipPosition;
-									count++;
-							}
-					average /= count;
-				}
-				*/
-				
-				// increment delays
-				modeChangeDelay++;
-				editModeChangeDelay++;
-				handAppearDelay++;
+					//Average a finger position for the last 10 frames
+					/*
+					for(int j; j < fingers.Count; j++) {
+						int count = 0;
+						Vector average = new Vector ();
+						Finger fingerToAverage = frame.Fingers [0];
+						for (int i = 0; i < 10; i++) {
+								Finger fingerFromFrame = controller.Frame (i).Finger (fingerToAverage.Id);
+								if (fingerFromFrame.IsValid) {
+										average += fingerFromFrame.TipPosition;
+										count++;
+								}
+						average /= count;
+					}
+					*/
+					
+					// increment delays
+					modeChangeDelay++;
+					editModeChangeDelay++;
+					handAppearDelay++;
+									
+					// handle gestures
+					if(m_Frame.Gestures().Count > 0) {					
+						for(int g = 0; g < m_Frame.Gestures().Count; g++)
+						{
+							Gesture gest = m_Frame.Gestures()[g];
+							switch (gest.Type) {
+							case Gesture.GestureType.TYPECIRCLE:
+								//Handle circle gestures
+								currentGestureText = "Circle";
 								
-				// handle gestures
-				if(m_Frame.Gestures().Count > 0) {					
-					for(int g = 0; g < m_Frame.Gestures().Count; g++)
-					{
-						Gesture gest = m_Frame.Gestures()[g];
-						switch (gest.Type) {
-						case Gesture.GestureType.TYPECIRCLE:
-							//Handle circle gestures
-							currentGestureText = "Circle";
-							
-							// create new circle gesture and transform accordingly
-							CircleGesture circle = new CircleGesture(gest);
-							bool isClockwise = false;
-							if(circle.Normal.z < 0) {
-								isClockwise = true;
-							}
-							if(currentMode.Equals(Modes.leapEdit)) {
-								if(currentEditMode.Equals(EditModes.rotate)) {					
-									rotateObject(isClockwise);
+								// create new circle gesture and transform accordingly
+								CircleGesture circle = new CircleGesture(gest);
+								bool isClockwise = false;
+								if(circle.Normal.z < 0) {
+									isClockwise = true;
 								}
-								else if(currentEditMode.Equals(EditModes.scale)) {
-									scaleObjectCircleGesture(isClockwise);
-								}
-							}
-							
-							float turns = circle.Progress;
-							circleCountText = turns.ToString();
-							break;
-						case Gesture.GestureType.TYPEKEYTAP:
-							//Handle key tap gestures
-							currentGestureText = "Key Tap";
-							
-							/*
-							// only change mode after a sufficient delay
-							if(modeChangeDelay > 20) {
-								// switch modes
-								if(currentMode.Equals(Modes.leapSelection))	{
-									currentMode = Modes.leapEdit;
-									lub.currentMode = LeapUnityBridge.Modes.leapEdit;
-									currentModeText = "Edit";
-								}
-								else {
-									currentMode = Modes.leapSelection;
-									lub.currentMode = LeapUnityBridge.Modes.leapSelection;
-									currentModeText = "Selection";
-								}
-								modeChangeDelay = 0;
-							}
-							*/
-							break;
-						case Gesture.GestureType.TYPESCREENTAP:
-							//Handle screen tap gestures
-							currentGestureText = "Screen Tap";
-							
-							// only change mode after a sufficient delay
-							if(currentMode.Equals(Modes.leapEdit)) {
-								if(editModeChangeDelay > 50) {
-									// Change edit mode
-									if(currentEditMode.Equals(EditModes.rotate)) {
-										currentEditMode = EditModes.translate;
-										lub.currentEditMode = LeapUnityBridge.EditModes.translate;
-										currentEditModeText = "Translate";
+								if(currentMode.Equals(Modes.leapEdit)) {
+									if(currentEditMode.Equals(EditModes.rotate)) {					
+										rotateObject(isClockwise);
 									}
-									else if(currentEditMode.Equals(EditModes.translate)) {
-										currentEditMode = EditModes.scale;
-										lub.currentEditMode = LeapUnityBridge.EditModes.scale;
-										currentEditModeText = "Scale";
+									else if(currentEditMode.Equals(EditModes.scale)) {
+										scaleObjectCircleGesture(isClockwise);
+									}
+								}
+								
+								float turns = circle.Progress;
+								circleCountText = turns.ToString();
+								break;
+							case Gesture.GestureType.TYPEKEYTAP:
+								//Handle key tap gestures
+								currentGestureText = "Key Tap";
+								
+								/*
+								// only change mode after a sufficient delay
+								if(modeChangeDelay > 20) {
+									// switch modes
+									if(currentMode.Equals(Modes.leapSelection))	{
+										currentMode = Modes.leapEdit;
+										lub.currentMode = LeapUnityBridge.Modes.leapEdit;
+										currentModeText = "Edit";
 									}
 									else {
-										currentEditMode = EditModes.rotate;
-										lub.currentEditMode = LeapUnityBridge.EditModes.rotate;
-										currentEditModeText = "Rotate";
+										currentMode = Modes.leapSelection;
+										lub.currentMode = LeapUnityBridge.Modes.leapSelection;
+										currentModeText = "Selection";
 									}
-									// reset delay
-									editModeChangeDelay = 0;
+									modeChangeDelay = 0;
 								}
+								*/
+								break;
+							case Gesture.GestureType.TYPESCREENTAP:
+								//Handle screen tap gestures
+								currentGestureText = "Screen Tap";
+								
+								// only change mode after a sufficient delay
+								if(currentMode.Equals(Modes.leapEdit)) {
+									if(editModeChangeDelay > 50) {
+										// Change edit mode
+										if(currentEditMode.Equals(EditModes.rotate)) {
+											currentEditMode = EditModes.translate;
+											lub.currentEditMode = LeapUnityBridge.EditModes.translate;
+											currentEditModeText = "Translate";
+										}
+										else if(currentEditMode.Equals(EditModes.translate)) {
+											currentEditMode = EditModes.scale;
+											lub.currentEditMode = LeapUnityBridge.EditModes.scale;
+											currentEditModeText = "Scale";
+										}
+										else {
+											currentEditMode = EditModes.rotate;
+											lub.currentEditMode = LeapUnityBridge.EditModes.rotate;
+											currentEditModeText = "Rotate";
+										}
+										// reset delay
+										editModeChangeDelay = 0;
+									}
+								}
+								break;
+							case Gesture.GestureType.TYPESWIPE:
+								//Handle swipe gestures
+								currentGestureText = "Swipe";
+								
+								/*
+								if(currentEditMode.Equals(EditModes.translate)) {
+								// create a new swipe gesture
+									SwipeGesture swipe = new SwipeGesture(gest);
+									Leap.Vector swipeDirection = swipe.Direction;
+									//Debug.Log(swipeDirection.ToString());
+									translateObject(swipeDirection.x/5.0f, swipeDirection.y/5.0f, swipeDirection.z/5.0f);
+								}
+								*/
+								break;
+								default:
+								//Handle unrecognized gestures
+								
+								break;
 							}
-							break;
-						case Gesture.GestureType.TYPESWIPE:
-							//Handle swipe gestures
-							currentGestureText = "Swipe";
-							
-							//CreateCube();
-							
-							/*
-							if(currentEditMode.Equals(EditModes.translate)) {
-							// create a new swipe gesture
-								SwipeGesture swipe = new SwipeGesture(gest);
-								Leap.Vector swipeDirection = swipe.Direction;
-								//Debug.Log(swipeDirection.ToString());
-								translateObject(swipeDirection.x/5.0f, swipeDirection.y/5.0f, swipeDirection.z/5.0f);
-							}
-							*/
-							break;
-							default:
-							//Handle unrecognized gestures
-							
-							break;
 						}
 					}
-				}
-				
-				// handle scaling
-				/*
-				if(currentEditMode.Equals(EditModes.scale)) {
-					float scaleFactor = m_Frame.ScaleFactor(m_controller.Frame(10));
-					scaleObject(scaleFactor);
-					scaleFactorText = scaleFactor.ToString();
-				}
-				*/
-				
-				// handle translation
-				if(currentMode.Equals(Modes.leapEdit)) {
-					if(currentEditMode.Equals(EditModes.translate)) {
-						positionObject(handPos.x/15.0f, handPos.y/15.0f, handPos.z/15.0f);
-						//positionObject(handPos.x, handPos.y, handPos.z);
+					
+					// handle scaling
+					/*
+					if(currentEditMode.Equals(EditModes.scale)) {
+						float scaleFactor = m_Frame.ScaleFactor(m_controller.Frame(10));
+						scaleObject(scaleFactor);
+						scaleFactorText = scaleFactor.ToString();
 					}
+					*/
+					
+					// handle translation
+					if(currentMode.Equals(Modes.leapEdit)) {
+						if(currentEditMode.Equals(EditModes.translate)) {
+							positionObject(handPos.x/15.0f, handPos.y/15.0f, handPos.z/15.0f);
+							//positionObject(handPos.x, handPos.y, handPos.z);
+						}
+					}
+															
+					// update the GUI
+					Repaint();
 				}
-														
-				// update the GUI
-				Repaint();
+				
+				
+				//DispatchLostEvents(Frame, lastFrame);
+				//DispatchFoundEvents(Frame, lastFrame);
+				//DispatchUpdatedEvents(Frame, lastFrame);
 			}
-			
-			
-			//DispatchLostEvents(Frame, lastFrame);
-			//DispatchFoundEvents(Frame, lastFrame);
-			//DispatchUpdatedEvents(Frame, lastFrame);
 		}
 	}
 	
