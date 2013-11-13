@@ -19,6 +19,13 @@ public class LeapUnityGrid : MonoBehaviour
 	public float zMin = -100.0f;
 	public float zMax = 100.0f;
 	
+	public float width = 32.0f;
+    public float height = 32.0f;
+	
+	void Start () 
+    {
+    }
+	
 	void Update()
 	{
 		// dynamically set x and z min and max
@@ -31,4 +38,25 @@ public class LeapUnityGrid : MonoBehaviour
 		*/
 		
 	}
+	
+	/********************************
+	* Used to draw in the editor
+	********************************/
+	void OnDrawGizmos()
+    {
+		// save the camera's current position
+		Vector3 pos = Camera.current.transform.position;
+     
+		for (float z = pos.z - 800.0f; z < pos.z + 800.0f; z+= height)
+		{
+			Gizmos.DrawLine(new Vector3(-1000000.0f, 0.5f, Mathf.Floor(z/height) * height),
+							new Vector3(1000000.0f, 0.5f, Mathf.Floor(z/height) * height));
+		}
+		
+		for (float x = pos.x - 1200.0f; x < pos.x + 1200.0f; x+= width)
+		{
+			Gizmos.DrawLine(new Vector3(Mathf.Floor(x/width) * width, 0.5f, -1000000.0f),
+							new Vector3(Mathf.Floor(x/width) * width, 0.5f, 1000000.0f));
+		}
+    }
 }
