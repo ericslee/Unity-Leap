@@ -18,6 +18,9 @@ public class LeapWindow : EditorWindow {
 	static Leap.Frame			m_Frame			= null;
 	
 	public bool leapActive = true;
+	public bool translationEnabled = true;
+	public bool rotationEnabled = true;
+	public bool scaleEnabled = false; // TODO
 	
 	// variables that refer to the gameObject that contains the LeapController, its Bridge script, and the world grid
 	static GameObject leapController;
@@ -293,6 +296,7 @@ public class LeapWindow : EditorWindow {
 					numFingersText = fingers.Count.ToString();
 					
 					Vector handPos = new Vector();
+					Vector stableHandPos = new Vector();
 					Vector handNormal = new Vector();
 					Vector handVelocity = new Vector();
 					
@@ -301,6 +305,8 @@ public class LeapWindow : EditorWindow {
 						Hand hand1 = hands[0];
 						handPos = hand1.PalmPosition;
 						hand1PosText = handPos.ToString();
+						
+						stableHandPos = hand1.StabilizedPalmPosition;
 						
 						handNormal = hand1.PalmNormal;
 						hand1NormalText = handNormal.ToString();
@@ -319,6 +325,24 @@ public class LeapWindow : EditorWindow {
 							// hands should remain on the screen for a short period of time before switching modes
 							if(handAppearDelay > 50) 
 							{
+								// enable translation
+								if(hands.Leftmost.Fingers.Count > 1) 
+								{
+									translationEnabled = true;
+									currentMode = Modes.leapEdit;
+									lub.currentMode = LeapUnityBridge.Modes.leapEdit;
+									currentModeText = "Edit";
+								}
+								else 
+								{
+									translationEnabled = false;
+									currentMode = Modes.leapSelection;
+									lub.currentMode = LeapUnityBridge.Modes.leapSelection;
+									currentModeText = "Selection";
+								}
+								modeChangeDelay = 0;
+								
+								/*
 								// only change mode after a sufficient delay and if second hand was removed
 								if(modeChangeDelay > 20 && canSwitchModes) 
 								{
@@ -338,7 +362,8 @@ public class LeapWindow : EditorWindow {
 									modeChangeDelay = 0;
 									canSwitchModes = false;
 								}
-								
+								*/
+														
 								// reset hand delay
 								handAppearDelay = 0;
 							}
@@ -388,14 +413,14 @@ public class LeapWindow : EditorWindow {
 								if(circle.Normal.z < 0) {
 									isClockwise = true;
 								}
-								if(currentMode.Equals(Modes.leapEdit)) {
-									if(currentEditMode.Equals(EditModes.rotate)) {					
+								//if(currentMode.Equals(Modes.leapEdit)) {
+									//if(currentEditMode.Equals(EditModes.rotate)) {					
 										rotateObject(isClockwise);
-									}
-									else if(currentEditMode.Equals(EditModes.scale)) {
-										scaleObjectCircleGesture(isClockwise);
-									}
-								}
+									//}
+									//else if(currentEditMode.Equals(EditModes.scale)) {
+										//scaleObjectCircleGesture(isClockwise);
+									//}
+								//}
 								
 								float turns = circle.Progress;
 								circleCountText = turns.ToString();
@@ -428,8 +453,10 @@ public class LeapWindow : EditorWindow {
 								//Handle screen tap gestures
 								currentGestureText = "Screen Tap";
 								
+								/*
 								// only change mode after a sufficient delay
-								if(currentMode.Equals(Modes.leapEdit)) {
+								if(currentMode.Equals(Modes.leapEdit)) 
+								{
 									if(editModeChangeDelay > 50) {
 										// Change edit mode
 										if(currentEditMode.Equals(EditModes.rotate)) {
@@ -451,6 +478,7 @@ public class LeapWindow : EditorWindow {
 										editModeChangeDelay = 0;
 									}
 								}
+								*/
 								break;
 							case Gesture.GestureType.TYPESWIPE:
 								//Handle swipe gestures
@@ -474,23 +502,13 @@ public class LeapWindow : EditorWindow {
 						}
 					}
 					
-					// handle scaling
-					/*
-					if(currentEditMode.Equals(EditModes.scale)) {
-						float scaleFactor = m_Frame.ScaleFactor(m_controller.Frame(10));
-						scaleObject(scaleFactor);
-						scaleFactorText = scaleFactor.ToString();
-					}
-					*/
-					
 					// handle translation
-					if(currentMode.Equals(Modes.leapEdit)) {
-						if(currentEditMode.Equals(EditModes.translate)) {
-							translateObject(handPos.x/2.0f, handPos.y/2.0f, -handPos.z/2.0f);
-							//translateObject(handVelocity.x, handVelocity.y, handVelocity.z);
-							//positionObject(handPos.x/15.0f, handPos.y/15.0f, handPos.z/15.0f);
-							//positionObject(handPos.x, handPos.y, handPos.z);
-						}
+					if(currentMode.Equals(Modes.leapEdit)) 
+					{
+						// this seems to be the magic number atm
+						if(translationEnabled) translateObject(handPos.x/2.0f, handPos.y/2.0f, -handPos.z/2.0f); 
+						//if(currentEditMode.Equals(EditModes.translate)) translateObject(handPos.x/2.0f, handPos.y/2.0f, -handPos.z/2.0f); 
+						//if(currentEditMode.Equals(EditModes.translate)) translateObject(stableHandPos.x/2.0f, stableHandPos.y/2.0f, -stableHandPos.z/2.0f); 
 					}
 															
 					// update the GUI
@@ -518,17 +536,7 @@ public class LeapWindow : EditorWindow {
 		}
 		
 		// update the grid itself to draw if necessary
-		if(theGrid != null)
-		{
-			theGrid.SetDraw(leapActive && Selection.objects.Length > 0);
-			/*
-			if(leapActive && Selection.objects.Length > 0) 
-			{
-				theGrid.SetDraw(true);
-			}
-			else theGrid.SetDraw(false);
-			*/
-		}
+		if(theGrid != null) theGrid.SetDraw(leapActive && Selection.objects.Length > 0);
 		
 	}
 	

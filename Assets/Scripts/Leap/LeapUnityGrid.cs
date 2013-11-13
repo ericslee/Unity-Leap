@@ -22,7 +22,7 @@ public class LeapUnityGrid : MonoBehaviour
 	public float width = 32.0f;
     public float height = 32.0f;
 	
-	private bool canDraw = true;
+	public bool canDraw = true;
 	
 	void Start () 
     {
