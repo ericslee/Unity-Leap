@@ -88,7 +88,8 @@ public class LeapUnityGridHandler : MonoBehaviour
 			}
 			
 			// reset wiggle rot
-			gameObject.transform.rotation = Quaternion.Euler(initialXRot, gameObject.transform.eulerAngles.y, gameObject.transform.eulerAngles.z);
+			//gameObject.transform.rotation = Quaternion.Euler(initialXRot, gameObject.transform.eulerAngles.y, gameObject.transform.eulerAngles.z);
+			gameObject.transform.rotation = Quaternion.Euler(0.0f, gameObject.transform.eulerAngles.y, 0.0f); // hack, resetting x and z to 0 always
 		}
 		// find the grid object
 		GameObject ground = GameObject.FindWithTag("Ground");

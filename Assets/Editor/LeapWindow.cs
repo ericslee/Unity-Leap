@@ -510,6 +510,7 @@ public class LeapWindow : EditorWindow {
 						// this seems to be the magic number atm
 						if(translationEnabled) 
 						{
+							/*
 							if(Camera.current != null) 
 							{
 								// Camera.current refers to the editor camera
@@ -526,9 +527,10 @@ public class LeapWindow : EditorWindow {
 								Quaternion q = Quaternion.AngleAxis(angle,Vector3.up);
 								transformedHandPos = q * transformedHandPos;
 								
-								translateObject(transformedHandPos.x/2.0f, transformedHandPos.y/2.0f, -transformedHandPos.z); 
+								translateObject(transformedHandPos.x/2.0f, transformedHandPos.y/2.0f, -transformedHandPos.z * 2.0f); 
 							}
-							//translateObject(handPos.x/2.0f, handPos.y/2.0f, -handPos.z); 
+							*/
+							translateObject(handPos.x/2.0f, handPos.y/2.0f, -handPos.z);							
 						}
 						//if(currentEditMode.Equals(EditModes.translate)) translateObject(handPos.x/2.0f, handPos.y/2.0f, -handPos.z/2.0f); 
 						//if(currentEditMode.Equals(EditModes.translate)) translateObject(stableHandPos.x/2.0f, stableHandPos.y/2.0f, -stableHandPos.z/2.0f); 

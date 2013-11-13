@@ -225,7 +225,8 @@ public class LeapUnityBridge : MonoBehaviour
 		Rigidbody rb = finger.AddComponent<Rigidbody>(); // Add the rigidbody.
 		rb.mass = 0.5f; // Set the GO's mass to 5 via the Rigidbody.
 		rb.useGravity = false;
-		rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
+		//rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
+		rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
 		rb.isKinematic = true;
 		rb.interpolation = RigidbodyInterpolation.Interpolate;
 		
