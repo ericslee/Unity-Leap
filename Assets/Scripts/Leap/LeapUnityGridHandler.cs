@@ -13,15 +13,41 @@ using Leap;
 // Ground plane should be centered at 0,0,0
 public class LeapUnityGridHandler : MonoBehaviour 
 {
+	public bool isSelected = false;
+
+	public static float hoverAmount = 30.0f;
+	private bool isHovered = false;
+	private bool isGrounded = true;
 	public float rotBuffer = 0.0f;
+	public float xBuffer = 0.0f;
+	public float yBuffer = 0.0f;
+	public float zBuffer = 0.0f;
+	
+	LeapUnityGrid theGrid;
 
 	void Update()
 	{
-		// snap rotation to nearest 90 degree
-		//float yAngle = gameObject.transform.localEulerAngles.y;
+		if(isSelected) 
+		{
+			if(!isHovered)
+			{
+				yBuffer = gameObject.transform.position.y + hoverAmount;
+				isHovered = true;
+				isGrounded = false;
+			}
+		}
+		else if(!isGrounded)
+		{
+			yBuffer = gameObject.transform.position.y - hoverAmount;
+			isHovered = false;
+			isGrounded = true;
+		}
+		// find the grid object
+		GameObject ground = GameObject.FindWithTag("Ground");
+		theGrid = ground.GetComponent<LeapUnityGrid>();
 		
-		float yAngle = rotBuffer;
-		yAngle = yAngle % 360;
+		// snap rotation to nearest 90 degree
+		float yAngle = rotBuffer % 360;
 		if(yAngle >= 0 && yAngle <= 45)
 		{
 			gameObject.transform.rotation = Quaternion.AngleAxis(0.0f, Vector3.up);
@@ -41,33 +67,27 @@ public class LeapUnityGridHandler : MonoBehaviour
 		else
 		{
 			gameObject.transform.rotation = Quaternion.AngleAxis(0.0f, Vector3.up);
-		}
+		}	
 		
+		// snap position to the center of the closest grid center
 		
-		//float increment = gameObject.transform.localEulerAngles.y % 90;
-		/*
-		float increment = rotBuffer % 90;
-		if(increment != 0) 
-		{
-			Debug.Log(increment);
-			float diff = 90 - increment;
-			if(diff <= 45.0f)
-			{
-				//float angle = gameObject.transform.rotation.eulerAngles.y - diff;
-				float angle = rotBuffer - diff;
-				gameObject.transform.rotation = Quaternion.AngleAxis(angle, Vector3.up);
-			}
-			else
-			{
-				float angle = rotBuffer + (90 - diff);
-				gameObject.transform.rotation = Quaternion.AngleAxis(angle, Vector3.up);
-			}
-			//gameObject.transform.localEulerAngles.y = gameObject.transform.localEulerAngles.y + increment;
-			//float rotAngle = 0.0f;
-			//gameObject.transform.rotation = Quaternion.AngleAxis(rotAngle, Vector3.up);
-		}
-		*/
+		//float xPos = xBuffer % 10;
+		//float zPos = zBuffer % 10;
+		float snapInverse = 1/theGrid.cellSize;
+		//Vector3 aligned = new Vector3(Mathf.Floor(xBuffer - xPos), gameObject.transform.position.y, Mathf.Floor(zBuffer - zPos));
+		float x = Mathf.Round(xBuffer * snapInverse)/snapInverse;
+		float z = Mathf.Round(zBuffer * snapInverse)/snapInverse; 
+		//Vector3 aligned = new Vector3(Mathf.Floor(mousePos.x/grid.width)*grid.width + grid.width/2.0f , 0.0f);
 		
+
+		// clamp values if needed
+		if(x >= theGrid.xMax) x = theGrid.xMax;
+		else if(x <= theGrid.xMin) x = theGrid.xMin;
+		if(z >= theGrid.zMax) z = theGrid.zMax;
+		else if(z <= theGrid.zMin) z = theGrid.zMin;
 		
+		Debug.Log(x);
+		// raise the object off the ground a little bit when translating
+		gameObject.transform.position = new Vector3(x, yBuffer, z);
 	}
 }

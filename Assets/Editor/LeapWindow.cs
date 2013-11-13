@@ -11,6 +11,8 @@ using System.Collections;
 
 // Window derives from EditorWindow
 public class LeapWindow : EditorWindow {
+	public static float hoverAmount = 30.0f;
+
 	// Controller provides main interaction between Leap and the app (Unity in this case)
 	static Leap.Controller 		m_controller	= new Leap.Controller();
 	static Leap.Frame			m_Frame			= null;
@@ -67,6 +69,7 @@ public class LeapWindow : EditorWindow {
 	static int editModeChangeDelay = 0;
 	static int handAppearDelay = 0;
 	static bool canSwitchModes = true;
+	static bool raisedY = false;
 	
 	// These values, set from the editor window, set the corresponding fields in the
 	// LeapUnityExtension for translating vectors.
@@ -223,11 +226,13 @@ public class LeapWindow : EditorWindow {
 	}
 	
 	// update function
-	void Update () {
+	void Update () 
+	{
 		if(leapController != null) EditorUtility.SetDirty(leapController);
 		
 		// if editor camera in scene view changes, map the transformation to the Leap hands transform as well
-		if(Camera.current != null) {
+		if(Camera.current != null) 
+		{
 			// Camera.current refers to the editor camera
 			Transform cameraTransform = Camera.current.transform;
 			Vector3 cameraLookAt = cameraTransform.forward;
@@ -325,6 +330,16 @@ public class LeapWindow : EditorWindow {
 										currentMode = Modes.leapSelection;
 										lub.currentMode = LeapUnityBridge.Modes.leapSelection;
 										currentModeText = "Selection";
+										
+										/*
+										GameObject currentAsset = Selection.activeGameObject;
+										if(currentAsset != null && raisedY)
+										{
+											raisedY = false;
+											LeapUnityGridHandler gridHandler = currentAsset.GetComponent<LeapUnityGridHandler>();
+											gridHandler.yBuffer = currentAsset.transform.position.y - hoverAmount;
+										}
+										*/
 									}
 									modeChangeDelay = 0;
 									canSwitchModes = false;
@@ -425,16 +440,36 @@ public class LeapWindow : EditorWindow {
 											currentEditMode = EditModes.translate;
 											lub.currentEditMode = LeapUnityBridge.EditModes.translate;
 											currentEditModeText = "Translate";
+											raisedY = true;
 										}
 										else if(currentEditMode.Equals(EditModes.translate)) {
 											currentEditMode = EditModes.scale;
 											lub.currentEditMode = LeapUnityBridge.EditModes.scale;
 											currentEditModeText = "Scale";
+											
+											/*
+											GameObject currentAsset = Selection.activeGameObject;
+											if(currentAsset != null && raisedY)
+											{
+												raisedY = false;
+												LeapUnityGridHandler gridHandler = currentAsset.GetComponent<LeapUnityGridHandler>();
+												gridHandler.yBuffer = currentAsset.transform.position.y - hoverAmount;
+											}
+											*/
 										}
 										else {
 											currentEditMode = EditModes.rotate;
 											lub.currentEditMode = LeapUnityBridge.EditModes.rotate;
 											currentEditModeText = "Rotate";
+											
+											/*
+											GameObject currentAsset = Selection.activeGameObject;
+											if(currentAsset != null && raisedY)
+											{
+												raisedY = false;
+												LeapUnityGridHandler gridHandler = currentAsset.GetComponent<LeapUnityGridHandler>();
+												gridHandler.yBuffer = currentAsset.transform.position.y - hoverAmount;
+											}*/
 										}
 										// reset delay
 										editModeChangeDelay = 0;
@@ -475,7 +510,9 @@ public class LeapWindow : EditorWindow {
 					// handle translation
 					if(currentMode.Equals(Modes.leapEdit)) {
 						if(currentEditMode.Equals(EditModes.translate)) {
-							positionObject(handPos.x/15.0f, handPos.y/15.0f, handPos.z/15.0f);
+							translateObject(handPos.x/5.0f, handPos.y/5.0f, -handPos.z/5.0f);
+							//translateObject(handVelocity.x, handVelocity.y, handVelocity.z);
+							//positionObject(handPos.x/15.0f, handPos.y/15.0f, handPos.z/15.0f);
 							//positionObject(handPos.x, handPos.y, handPos.z);
 						}
 					}
@@ -484,6 +521,17 @@ public class LeapWindow : EditorWindow {
 					Repaint();
 				}
 				
+				// update selection status of all LeapUnityGrid objects
+				GameObject[] sceneItems = GameObject.FindGameObjectsWithTag("Touchable");  
+				foreach (GameObject currentAsset in sceneItems) 
+				{
+					LeapUnityGridHandler gridHandler = currentAsset.GetComponent<LeapUnityGridHandler>();
+					if(gridHandler != null)
+					{
+						if(Selection.Contains(currentAsset)) gridHandler.isSelected = true;
+						else gridHandler.isSelected = false;
+					}
+				}
 				
 				//DispatchLostEvents(Frame, lastFrame);
 				//DispatchFoundEvents(Frame, lastFrame);
@@ -496,8 +544,13 @@ public class LeapWindow : EditorWindow {
 	void rotateObject(bool isClockwise) {
 		if(Selection.activeGameObject != null) {
 			GameObject currentAsset = Selection.activeGameObject;
+			LeapUnityGridHandler gridHandler = currentAsset.GetComponent<LeapUnityGridHandler>();
+			if(isClockwise) gridHandler.rotBuffer+=5;
+			else gridHandler.rotBuffer-=5;
+			/*
 			if(isClockwise)	currentAsset.transform.Rotate(Vector3.up*1);
 			else currentAsset.transform.Rotate(Vector3.up*-1);
+			*/
 		}
 	}
 	
@@ -547,7 +600,26 @@ public class LeapWindow : EditorWindow {
 			Vector3 translateVector2 = new Vector3(currentAsset.transform.position.x + translateVector.x,
 												currentAsset.transform.position.y + translateVector.y, 
 												currentAsset.transform.position.z + translateVector.z);
-			currentAsset.transform.Translate(translateVector2);
+												
+												
+			LeapUnityGridHandler gridHandler = currentAsset.GetComponent<LeapUnityGridHandler>();
+			if(gridHandler != null) 
+			{
+				// raise the object off the ground a little bit when translating
+				//currentAsset.transform.position.y = currentAsset.transform.position.y + 10.0f;
+				/*
+				if(raisedY) 
+				{
+					gridHandler.yBuffer = currentAsset.transform.position.y + hoverAmount;
+					raisedY = false;
+				}
+				*/
+				
+				// send the FLOOR of the hand translation so that we work with integers								
+				gridHandler.xBuffer = Mathf.Floor(translateVector2.x);
+				gridHandler.zBuffer = Mathf.Floor(translateVector2.z);
+				//currentAsset.transform.Translate(translateVector2);
+			}
 		}
 	}
 	
