@@ -20,7 +20,8 @@ using Leap;
 //disabled in the scene by default.
 
 [ExecuteInEditMode]
-public class LeapUnitySelectionController : MonoBehaviour {
+public class LeapUnitySelectionController : MonoBehaviour 
+{
 
 	protected GameObject m_FocusedObject = null;
 	protected Leap.Frame m_LastFrame = null;

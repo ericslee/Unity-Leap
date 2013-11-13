@@ -42,6 +42,7 @@ public class LeapWindow : EditorWindow {
 	// strings for display Leap data
 	string currentModeText = "Selection";
 	string currentEditModeText = "Rotate";
+	string leapActiveText = "True";
 	string currentFrameText = "0";
 	string currentFPSText = "0";
 	string numHandsText = "0";
@@ -162,6 +163,7 @@ public class LeapWindow : EditorWindow {
 		}
 		EditorGUILayout.LabelField("Current mode", currentModeText);
 		EditorGUILayout.LabelField("Current edit mode", currentEditModeText);
+		EditorGUILayout.LabelField("Leap active: ", leapActiveText);
 		EditorGUILayout.LabelField("Current frame", currentFrameText);
 		EditorGUILayout.LabelField("Leap FPS", currentFPSText);
 		EditorGUILayout.LabelField("Number of hands", numHandsText);
@@ -197,7 +199,8 @@ public class LeapWindow : EditorWindow {
 				if (Event.current.keyCode == (KeyCode.D)) 
 				{
 					leapActive = !leapActive;
-					lub.leapActive = !lub.leapActive;
+					lub.leapActive = leapActive;
+					leapActiveText = leapActive ? "True" : "False";
 					Debug.Log("LeapActive:" + lub.leapActive);
 				}								
                 break;
