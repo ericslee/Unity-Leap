@@ -17,7 +17,7 @@ using System.Collections;
 public class LeapFingerCollisionDispatcher : MonoBehaviour {
 //public class LeapFingerCollisionDispatcher : Editor {
 	
-	const float kHitDistance = 20.0f;
+	const float kHitDistance = 10.0f;
 	
 	void OnTriggerEnter(Collider other)
 	{		
@@ -32,7 +32,17 @@ public class LeapFingerCollisionDispatcher : MonoBehaviour {
 			if(lub.selectionDelay > 55 && lub.currentMode.Equals(LeapUnityBridge.Modes.leapSelection)) 
 			{
 				// Sets collided object as selected
-				Selection.activeGameObject = other.gameObject;
+				if(lub.canSelectMultiple) 
+				{
+					Object[] newSelection = new GameObject[Selection.objects.Length + 1];
+					for(int i = 0; i < Selection.objects.Length; i++) 
+					{
+						newSelection[i] = Selection.objects[i];
+					}
+					newSelection[Selection.objects.Length] = other.gameObject;
+					Selection.objects = newSelection;
+				}
+				else Selection.activeGameObject = other.gameObject;
 				lub.selectionDelay = 0;
 			}
 		}

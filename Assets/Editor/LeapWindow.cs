@@ -17,10 +17,11 @@ public class LeapWindow : EditorWindow {
 	static Leap.Controller 		m_controller	= new Leap.Controller();
 	static Leap.Frame			m_Frame			= null;
 	
-	public bool leapActive = true;
+	public static bool leapActive = true;
 	public bool translationEnabled = true;
 	public bool rotationEnabled = true;
 	public bool scaleEnabled = false; // TODO
+	public static bool canSelectMultiple = false;
 	
 	// variables that refer to the gameObject that contains the LeapController, its Bridge script, and the world grid
 	static GameObject leapController;
@@ -46,9 +47,10 @@ public class LeapWindow : EditorWindow {
 	* GUI variables
 	*********************************************************************/
 	// strings for display Leap data
-	string currentModeText = "Selection";
+	static string currentModeText = "Selection";
+	static string canSelectMultipleText = "False";
 	string currentEditModeText = "Rotate";
-	string leapActiveText = "True";
+	static string leapActiveText = "True";
 	string currentFrameText = "0";
 	string currentFPSText = "0";
 	string numHandsText = "0";
@@ -84,7 +86,8 @@ public class LeapWindow : EditorWindow {
 	/********************************************************************
 	* called when window is initialized
 	*********************************************************************/
-	static void Init () {
+	static void Init () 
+	{
 		// Get existing open window or if none, make a new one:
 		LeapWindow window = (LeapWindow)EditorWindow.GetWindow (typeof (LeapWindow));
 		window.minSize = new Vector2(500, 500);
@@ -115,6 +118,7 @@ public class LeapWindow : EditorWindow {
 		// init in selection mode
 		currentMode = Modes.leapSelection;
 		currentEditMode = EditModes.rotate;
+		canSelectMultiple = false;
 		
 		
 		// init data structures to house fingers and hands
@@ -146,6 +150,8 @@ public class LeapWindow : EditorWindow {
 		// Get the grid
 		GameObject ground = GameObject.FindWithTag("Ground");
 		if(ground != null) theGrid = ground.GetComponent<LeapUnityGrid>();
+		
+		SceneView.onSceneGUIDelegate += OnScene;
 	}
 	
 	void OnDestroy() {
@@ -153,6 +159,7 @@ public class LeapWindow : EditorWindow {
 		//lub = (LeapUnityBridge) leapController.GetComponent(typeof(LeapUnityBridge));
 		lub.SetFalse();
 		
+		SceneView.onSceneGUIDelegate -= OnScene;
 		// delete hands (be careful with this...)
 		//GameObject handsGO = GameObject.FindWithTag("Hands");
 		//DestroyImmediate(handsGO);
@@ -171,9 +178,10 @@ public class LeapWindow : EditorWindow {
 		if(GUILayout.Button("Scale", GUILayout.Width(150))) {
 			lub.SetLeapScaling(xScale, yScale, zScale);
 		}
-		EditorGUILayout.LabelField("Current mode", currentModeText);
+		EditorGUILayout.LabelField("Current mode", currentModeText, EditorStyles.boldLabel);
+		EditorGUILayout.LabelField("Multi-Selection", canSelectMultipleText, EditorStyles.boldLabel);
+		EditorGUILayout.LabelField("Leap active: ", leapActiveText, EditorStyles.boldLabel);
 		EditorGUILayout.LabelField("Current edit mode", currentEditModeText);
-		EditorGUILayout.LabelField("Leap active: ", leapActiveText);
 		EditorGUILayout.LabelField("Current frame", currentFrameText);
 		EditorGUILayout.LabelField("Leap FPS", currentFPSText);
 		EditorGUILayout.LabelField("Number of hands", numHandsText);
@@ -198,34 +206,53 @@ public class LeapWindow : EditorWindow {
 							"1cm of hand motion = .02m scene motion" : "";
         }
 		GUILayout.Label(helpText);
-		
-		// for GUI only interactions, pressing a key
-		Event e = Event.current;		
+	}
+	
+	private static void OnScene(SceneView sceneview)
+    {
+        // for GUI only interactions, pressing a key
+		Event e = Event.current;	
 		switch (e.type)
         {
-            case EventType.keyDown:
+            case EventType.KeyDown:
             {
 				// toggle leap active or not
 				if (Event.current.keyCode == (KeyCode.D)) 
 				{
 					leapActive = !leapActive;
-					lub.leapActive = leapActive;
+					if(lub != null)	lub.leapActive = leapActive;
 					leapActiveText = leapActive ? "True" : "False";
-					Debug.Log("LeapActive:" + lub.leapActive);
-				}								
+					if(lub != null) Debug.Log("LeapActive:" + lub.leapActive);
+				}	
+				if (Event.current.keyCode == (KeyCode.S)) 
+				{
+					// switch modes
+					if(currentMode.Equals(Modes.leapSelection))	
+					{
+						currentMode = Modes.leapEdit;
+						if(lub != null) lub.currentMode = LeapUnityBridge.Modes.leapEdit;
+						currentModeText = "Edit";
+					}
+					else 
+					{
+						currentMode = Modes.leapSelection;
+						if(lub != null) lub.currentMode = LeapUnityBridge.Modes.leapSelection;
+						currentModeText = "Selection";
+					}					
+				}
+				if (Event.current.keyCode == (KeyCode.A)) 
+				{
+					canSelectMultiple = !canSelectMultiple;
+					canSelectMultipleText = canSelectMultiple ? "True" : "False";
+					if(lub != null)	lub.canSelectMultiple = canSelectMultiple;
+					
+					// handle multiple objects here (deselect all?)
+					Selection.objects = new UnityEngine.Object[0];				
+				}
                 break;
             }
         }
-	}
-	
-	/*
-	Called when scene view is repainted
-	In the OnSceneGUI you can do eg. mesh editing, terrain painting or advanced gizmos If call Event.current.Use(), 
-	the event will be "eaten" by the editor and not be used by the scene view itself.
-	*/
-	void OnSceneGUI() {
-
-	}
+    }
 	
 	public static Leap.Frame Frame
 	{
@@ -248,28 +275,6 @@ public class LeapWindow : EditorWindow {
 			//Debug.Log("Camera position: (" + cameraPosition.x + ", " + cameraPosition.y + ", " + cameraPosition.z);
 			lub.TransformHands(cameraPosition.x, cameraPosition.y, cameraPosition.z, cameraLookAt.x, 
 				cameraLookAt.y, cameraLookAt.z);
-		}
-	
-		Event e = Event.current;
-		if(e != null) {		
-			switch (e.type)
-			{
-			 case EventType.keyDown:
-			 {
-				Debug.Log("key pressed");
-				break;
-			 }
-			case EventType.MouseDown:
-				{	
-					Debug.Log("Mouse clicked");				
-					if(e.button == 0)
-					{
-						Debug.Log("Mouse clicked");
-						e.Use();  //Eat the event so it doesn't propagate through the editor.
-					}
-					break;
-				}
-			}
 		}
 		
 		if(leapActive)
@@ -318,7 +323,7 @@ public class LeapWindow : EditorWindow {
 						{
 							canSwitchModes = true;
 						}
-						
+						/*
 						// if two hands on screen, enable mode switching
 						if(hands.Count > 1) 
 						{
@@ -342,7 +347,7 @@ public class LeapWindow : EditorWindow {
 								}
 								modeChangeDelay = 0;
 								
-								/*
+								
 								// only change mode after a sufficient delay and if second hand was removed
 								if(modeChangeDelay > 20 && canSwitchModes) 
 								{
@@ -362,16 +367,13 @@ public class LeapWindow : EditorWindow {
 									modeChangeDelay = 0;
 									canSwitchModes = false;
 								}
-								*/
+								
 														
 								// reset hand delay
 								handAppearDelay = 0;
 							}
 						}
-						
-						//CreateHand();
-						// display a sphere on the screen where the hand is
-						//Debug.Log("Hand detected");
+						*/
 					}
 					
 					currentGestureText = "None";
@@ -544,13 +546,17 @@ public class LeapWindow : EditorWindow {
 	void rotateObject(bool isClockwise) {
 		if(Selection.activeGameObject != null) {
 			GameObject currentAsset = Selection.activeGameObject;
-			LeapUnityGridHandler gridHandler = currentAsset.GetComponent<LeapUnityGridHandler>();
-			if(isClockwise) gridHandler.rotBuffer+=5;
-			else gridHandler.rotBuffer-=5;
 			/*
-			if(isClockwise)	currentAsset.transform.Rotate(Vector3.up*1);
-			else currentAsset.transform.Rotate(Vector3.up*-1);
+			LeapUnityGridHandler gridHandler = currentAsset.GetComponent<LeapUnityGridHandler>();
+			if(gridHandler != null)
+			{
+				if(isClockwise) gridHandler.rotBuffer+=5;
+				else gridHandler.rotBuffer-=5;
+			}
 			*/
+			
+			if(isClockwise)	currentAsset.transform.Rotate(Vector3.up*1);
+			else currentAsset.transform.Rotate(Vector3.up*-1);			
 		}
 	}
 	
@@ -594,21 +600,40 @@ public class LeapWindow : EditorWindow {
 	
 	void translateObject(float transX, float transY, float transZ) {
 		if(Selection.activeGameObject != null) {
-			GameObject currentAsset = Selection.activeGameObject;
-			Vector3 translateVector = new Vector3(transX, transY, transZ);
-			//Vector3 unityTranslatedLeap = translateVector.ToUnityTranslated();
-			Vector3 translateVector2 = new Vector3(currentAsset.transform.position.x + translateVector.x,
-												currentAsset.transform.position.y + translateVector.y, 
-												currentAsset.transform.position.z + translateVector.z);
-												
-												
-			LeapUnityGridHandler gridHandler = currentAsset.GetComponent<LeapUnityGridHandler>();
-			if(gridHandler != null) 
+			if(!canSelectMultiple)
 			{
-				// send the FLOOR of the hand translation so that we work with integers								
-				gridHandler.xBuffer = Mathf.Floor(translateVector.x);
-				gridHandler.zBuffer = Mathf.Floor(translateVector.z);
-				//currentAsset.transform.Translate(translateVector2);
+				GameObject currentAsset = Selection.activeGameObject;
+				Vector3 translateVector = new Vector3(transX, transY, transZ);
+				//Vector3 unityTranslatedLeap = translateVector.ToUnityTranslated();
+				Vector3 translateVector2 = new Vector3(currentAsset.transform.position.x + translateVector.x,
+													currentAsset.transform.position.y + translateVector.y, 
+													currentAsset.transform.position.z + translateVector.z);
+													
+													
+				LeapUnityGridHandler gridHandler = currentAsset.GetComponent<LeapUnityGridHandler>();
+				if(gridHandler != null) 
+				{
+					// send the FLOOR of the hand translation so that we work with integers								
+					gridHandler.xBuffer = Mathf.Floor(translateVector.x);
+					gridHandler.zBuffer = Mathf.Floor(translateVector.z);
+					//currentAsset.transform.Translate(translateVector2);
+				}
+			}
+			else
+			{
+				for(int i = 0; i < Selection.transforms.Length; i++) 
+				{
+					GameObject currentAsset = Selection.transforms[i].gameObject;
+					
+					Vector3 translateVector = new Vector3(transX, transY, transZ);
+					LeapUnityGridHandler gridHandler = currentAsset.GetComponent<LeapUnityGridHandler>();
+					if(gridHandler != null) 
+					{
+						// send the FLOOR of the hand translation so that we work with integers								
+						gridHandler.xBuffer = Mathf.Floor(translateVector.x);
+						gridHandler.zBuffer = Mathf.Floor(translateVector.z);
+					}
+				}
 			}
 		}
 	}

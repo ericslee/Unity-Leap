@@ -49,6 +49,7 @@ public class LeapUnityBridge : MonoBehaviour
 	public Modes currentMode;
 	public EditModes currentEditMode;
 	public bool leapActive = true;
+	public bool canSelectMultiple = false;
 	
 	public void Awake()
 	{

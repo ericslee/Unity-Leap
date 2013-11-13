@@ -24,8 +24,11 @@ public class LeapUnityGrid : MonoBehaviour
 	
 	public bool canDraw = true;
 	
+	public Texture selectionTexture;
+	
 	void Start () 
     {
+	
     }
 	
 	void Update()
@@ -54,17 +57,26 @@ public class LeapUnityGrid : MonoBehaviour
 			
 			Gizmos.color = Color.white;
 		 
+			// draw grid
 			for (float z = pos.z - 800.0f; z < pos.z + 800.0f; z+= height)
 			{
-				Gizmos.DrawLine(new Vector3(-1000.0f, 0.5f, Mathf.Floor(z/height) * height),
-								new Vector3(1000.0f, 0.5f, Mathf.Floor(z/height) * height));
+				Gizmos.DrawLine(new Vector3(-1000.0f, 15.5f, Mathf.Floor(z/height) * height),
+								new Vector3(1000.0f, 15.5f, Mathf.Floor(z/height) * height));
 			}
 			
 			for (float x = pos.x - 1200.0f; x < pos.x + 1200.0f; x+= width)
 			{
-				Gizmos.DrawLine(new Vector3(Mathf.Floor(x/width) * width, 0.5f, -1000.0f),
-								new Vector3(Mathf.Floor(x/width) * width, 0.5f, 1000.0f));
+				Gizmos.DrawLine(new Vector3(Mathf.Floor(x/width) * width, 15.5f, -1000.0f),
+								new Vector3(Mathf.Floor(x/width) * width, 15.5f, 1000.0f));
 			}
+			
+			// draw current mode
+			/*
+			if(selectionTexture != null)
+			{
+				Gizmos.DrawGUITexture(new Rect(10,10,100,100), selectionTexture);
+			}
+			*/
 		}
     }
 	
