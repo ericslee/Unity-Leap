@@ -29,7 +29,7 @@ public class LeapFingerCollisionDispatcher : MonoBehaviour {
 			// only set new active object after a certain delay
 			GameObject leapController = GameObject.FindWithTag("LeapController");
 			LeapUnityBridge lub = (LeapUnityBridge) leapController.GetComponent(typeof(LeapUnityBridge));
-			if(lub.selectionDelay > 75 && lub.currentMode.Equals(LeapUnityBridge.Modes.leapSelection)) 
+			if(lub.selectionDelay > 55 && lub.currentMode.Equals(LeapUnityBridge.Modes.leapSelection)) 
 			{
 				// Sets collided object as selected
 				Selection.activeGameObject = other.gameObject;

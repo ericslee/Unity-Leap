@@ -60,9 +60,11 @@ public class LeapWindow : EditorWindow {
 	float yScale = 0.02f;
 	float zScale = 0.02f;
 	
-	// delays
+	// delays and mode switching variables
 	static int modeChangeDelay = 0;
 	static int editModeChangeDelay = 0;
+	static int handAppearDelay = 0;
+	static bool canSwitchModes = true;
 	
 	// Add menu named "Leap Motion" to the Window menu
 	[MenuItem ("Window/Leap Control")]
@@ -337,7 +339,8 @@ public class LeapWindow : EditorWindow {
 				Vector handNormal = new Vector();
 				Vector handVelocity = new Vector();
 				
-				if(hands.Count > 0) {
+				if(hands.Count > 0) 
+				{
 					Hand hand1 = hands[0];
 					handPos = hand1.PalmPosition;
 					hand1PosText = handPos.ToString();
@@ -347,6 +350,42 @@ public class LeapWindow : EditorWindow {
 					
 					handVelocity = hand1.PalmVelocity;
 					hand1VelocityText = handVelocity.ToString();
+					
+					if(hands.Count < 2 && !canSwitchModes)
+					{
+						canSwitchModes = true;
+					}
+					
+					// if two hands on screen, enable mode switching
+					if(hands.Count > 1) 
+					{
+						// hands should remain on the screen for a short period of time before switching modes
+						if(handAppearDelay > 50) 
+						{
+							// only change mode after a sufficient delay and if second hand was removed
+							if(modeChangeDelay > 20 && canSwitchModes) 
+							{
+								// switch modes
+								if(currentMode.Equals(Modes.leapSelection))	
+								{
+									currentMode = Modes.leapEdit;
+									lub.currentMode = LeapUnityBridge.Modes.leapEdit;
+									currentModeText = "Edit";
+								}
+								else 
+								{
+									currentMode = Modes.leapSelection;
+									lub.currentMode = LeapUnityBridge.Modes.leapSelection;
+									currentModeText = "Selection";
+								}
+								modeChangeDelay = 0;
+								canSwitchModes = false;
+							}
+							
+							// reset hand delay
+							handAppearDelay = 0;
+						}
+					}
 					
 					//CreateHand();
 					// display a sphere on the screen where the hand is
@@ -374,6 +413,7 @@ public class LeapWindow : EditorWindow {
 				// increment delays
 				modeChangeDelay++;
 				editModeChangeDelay++;
+				handAppearDelay++;
 								
 				// handle gestures
 				if(m_Frame.Gestures().Count > 0) {					
@@ -407,6 +447,7 @@ public class LeapWindow : EditorWindow {
 							//Handle key tap gestures
 							currentGestureText = "Key Tap";
 							
+							/*
 							// only change mode after a sufficient delay
 							if(modeChangeDelay > 20) {
 								// switch modes
@@ -422,6 +463,7 @@ public class LeapWindow : EditorWindow {
 								}
 								modeChangeDelay = 0;
 							}
+							*/
 							break;
 						case Gesture.GestureType.TYPESCREENTAP:
 							//Handle screen tap gestures
