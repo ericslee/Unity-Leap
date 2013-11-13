@@ -92,7 +92,7 @@ public class LeapUnityGridHandler : MonoBehaviour
 		}
 		// find the grid object
 		GameObject ground = GameObject.FindWithTag("Ground");
-		theGrid = ground.GetComponent<LeapUnityGrid>();
+		if(ground != null) theGrid = ground.GetComponent<LeapUnityGrid>();
 		
 		/*
 		// snap rotation to nearest 90 degree

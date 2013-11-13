@@ -19,9 +19,10 @@ public class LeapWindow : EditorWindow {
 	
 	public bool leapActive = true;
 	
-	// variables that refer to the gameObject that contains the LeapController and its Bridge script
+	// variables that refer to the gameObject that contains the LeapController, its Bridge script, and the world grid
 	static GameObject leapController;
 	static LeapUnityBridge lub;
+	static LeapUnityGrid theGrid;
 		
 	//These arrays allow us to use our game object arrays much like pools.
 	//When a new hand/finger is found, we mark a game object by active
@@ -138,6 +139,10 @@ public class LeapWindow : EditorWindow {
 			lub.TransformHands(cameraPosition.x, cameraPosition.y, cameraPosition.z, cameraLookAt.x, 
 				cameraLookAt.y, cameraLookAt.z);
 		}
+		
+		// Get the grid
+		GameObject ground = GameObject.FindWithTag("Ground");
+		if(ground != null) theGrid = ground.GetComponent<LeapUnityGrid>();
 	}
 	
 	void OnDestroy() {
@@ -481,7 +486,7 @@ public class LeapWindow : EditorWindow {
 					// handle translation
 					if(currentMode.Equals(Modes.leapEdit)) {
 						if(currentEditMode.Equals(EditModes.translate)) {
-							translateObject(handPos.x/5.0f, handPos.y/5.0f, -handPos.z/5.0f);
+							translateObject(handPos.x/2.0f, handPos.y/2.0f, -handPos.z/2.0f);
 							//translateObject(handVelocity.x, handVelocity.y, handVelocity.z);
 							//positionObject(handPos.x/15.0f, handPos.y/15.0f, handPos.z/15.0f);
 							//positionObject(handPos.x, handPos.y, handPos.z);
@@ -491,6 +496,10 @@ public class LeapWindow : EditorWindow {
 					// update the GUI
 					Repaint();
 				}
+				
+				/////////////////////////////////////////////////////////////
+				// Update the status of other scripts in the scene
+				/////////////////////////////////////////////////////////////
 				
 				// update selection status of all LeapUnityGrid objects
 				GameObject[] sceneItems = GameObject.FindGameObjectsWithTag("Touchable");  
@@ -502,9 +511,25 @@ public class LeapWindow : EditorWindow {
 						if(Selection.Contains(currentAsset)) gridHandler.isSelected = true;
 						else gridHandler.isSelected = false;
 					}
-				}
+				}				
+				
+				
 			}
 		}
+		
+		// update the grid itself to draw if necessary
+		if(theGrid != null)
+		{
+			theGrid.SetDraw(leapActive && Selection.objects.Length > 0);
+			/*
+			if(leapActive && Selection.objects.Length > 0) 
+			{
+				theGrid.SetDraw(true);
+			}
+			else theGrid.SetDraw(false);
+			*/
+		}
+		
 	}
 	
 	// rotates selected object(s)
