@@ -42,7 +42,18 @@ public class LeapFingerCollisionDispatcher : MonoBehaviour {
 					newSelection[Selection.objects.Length] = other.gameObject;
 					Selection.objects = newSelection;
 				}
-				else Selection.activeGameObject = other.gameObject;
+				// Set the other game object to know that it was selected by a hand
+				else 
+				{
+					LeapUnityGridHandler gridHandlerScript = other.GetComponent<LeapUnityGridHandler>();
+					// make sure the object is valid to be selected by Leap
+					if(gridHandlerScript != null) 
+					{
+						Debug.Log("Grabbed LeapUnityGridHandler successfully");
+						gridHandlerScript.setSelectedByHand(true);
+						Selection.activeGameObject = other.gameObject;
+					}
+				}
 				lub.selectionDelay = 0;
 			}
 		}

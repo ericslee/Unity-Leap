@@ -2314,7 +2314,7 @@ MonoBehaviour:
     type: 2}
   m_UnknownHandMaterial: {fileID: 2100000, guid: a4f715a3c55d0594aa44d1e177736768,
     type: 2}
-  selectionDelay: 555
+  selectionDelay: 556
   currentMode: 0
   currentEditMode: 0
   leapActive: 1

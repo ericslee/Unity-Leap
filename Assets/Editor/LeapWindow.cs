@@ -198,11 +198,12 @@ public class LeapWindow : EditorWindow {
         {
             // display help
 			displayHelp = !displayHelp;
-			helpText = displayHelp ? "Key tap to switch between edit and selection modes. \n" +
+			helpText = displayHelp ? "Press S to switch between edit and selection modes. \n" +
 							"In edit mode, screen tap to switch between rotation, translation, and scaling. \n" +
+							"Press D to disable Leap control completely. \n" +
 							"To rotate, make circle gestures. \n" +
 							"To scale, make circle gestures as well. \n" +
-							"To translate, swipe over the Leap. \n" +
+							"To translate, just move your hand around. \n" +
 							"1cm of hand motion = .02m scene motion" : "";
         }
 		GUILayout.Label(helpText);
@@ -668,25 +669,6 @@ public class LeapWindow : EditorWindow {
 			currentAsset.transform.position = positionVector;
 		}
 	}
-	/*
-	private GameObject CreateHand() {
-		//GameObject hand = new GameObject("hand");
-		if(handTracker == null) {
-			handTracker = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-			handTracker.transform.position = new Vector3(0, 0, 0);
-		}
-		//hand.transform.parent = parent.transform;
-		
-		if( index == 0 )
-			hand.name = "Primary Hand";
-		else if( index == 1 )
-			hand.name = "Secondary Hand";
-		else
-			hand.name = "Unknown Hand";
-		
-		return handTracker;
-	}
-	*/
 	
 	private GameObject CreateCube() {
 		GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
@@ -694,16 +676,6 @@ public class LeapWindow : EditorWindow {
 		
 		return cube;
 	}
-	/*
-	private GameObject CreatePalm(GameObject parent, int index)
-	{
-		GameObject palm = Instantiate(m_PalmTemplate) as GameObject;
-		palm.name = "Palm " + index;
-		palm.transform.parent = parent.transform;
-		
-		return palm;
-	}
-	*/
 }
 
 
