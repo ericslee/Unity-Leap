@@ -27,6 +27,7 @@ public class LeapUnityGridHandler : MonoBehaviour
 	private int wiggleCount = 0;
 	private float initialXRot = 0.0f;
 	
+	// temp vars that store where the Leap translates the object too then 
 	public float rotBuffer = 0.0f;
 	public float xBuffer = 0.0f;
 	public float yBuffer = 0.0f;
@@ -35,13 +36,19 @@ public class LeapUnityGridHandler : MonoBehaviour
 	// distinguish between selection by hand and selection by mouse
 	private bool selectedByHand = false;
 	
-	LeapUnityGrid theGrid;
+	// Object reference to the one grid for the scene
+	private LeapUnityGrid theGrid;
 	
+	
+	// Setters
 	public void setSelectedByHand(bool selected) 
 	{
 		selectedByHand = selected;
 	}
 
+	
+	// Called continuously for whatever gameobject this is attached too
+	// Handles updating position when moving using the Leap
 	void Update()
 	{
 		// raise the object off the ground a little bit when translating
@@ -50,6 +57,7 @@ public class LeapUnityGridHandler : MonoBehaviour
 		{
 			if(!isHovered)
 			{
+				// hover object and update state
 				yBuffer = gameObject.transform.position.y + hoverAmount;
 				isHovered = true;
 				isGrounded = false;
@@ -60,10 +68,6 @@ public class LeapUnityGridHandler : MonoBehaviour
 			// Make object wiggle
 			if(wiggleCW)
 			{	
-				//gameObject.transform.Rotate(Vector3.right * 1);
-				//gameObject.transform.rotation = Quaternion.AngleAxis(1, Vector3.right);
-				//Quaternion rot = gameObject.transform.rotation;
-				//gameObject.transform.rotation = rot * Quaternion.Euler(2, 0, 0);
 				gameObject.transform.Rotate(2, 0, 0);
 				wiggleCount++;
 				if(wiggleCount > wiggleLimit) 
@@ -74,10 +78,6 @@ public class LeapUnityGridHandler : MonoBehaviour
 			}
 			else 
 			{
-				//gameObject.transform.Rotate(Vector3.right * -1);
-				//gameObject.transform.rotation = Quaternion.AngleAxis(-1, Vector3.right);
-				//Quaternion rot = gameObject.transform.rotation;
-				//gameObject.transform.rotation = rot * Quaternion.Euler(-2, 0, 0);
 				gameObject.transform.Rotate(-2, 0, 0);
 				wiggleCount++;
 				if(wiggleCount > wiggleLimit) 
@@ -102,15 +102,14 @@ public class LeapUnityGridHandler : MonoBehaviour
 			if(z >= theGrid.zMax) z = theGrid.zMax;
 			else if(z <= theGrid.zMin) z = theGrid.zMin;
 			
-			//Debug.Log(x);
 			// raise the object off the ground a little bit when translating
-			gameObject.transform.position = new Vector3(x, yBuffer, z);
-			
+			gameObject.transform.position = new Vector3(x, yBuffer, z);		
 		}
 		else
 		{
 			if(!isGrounded)
 			{
+				// lower object back down and update state
 				yBuffer = gameObject.transform.position.y - hoverAmount;
 				isHovered = false;
 				isGrounded = true;

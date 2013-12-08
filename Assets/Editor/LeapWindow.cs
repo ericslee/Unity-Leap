@@ -417,8 +417,12 @@ public class LeapWindow : EditorWindow {
 									isClockwise = true;
 								}
 								//if(currentMode.Equals(Modes.leapEdit)) {
-									//if(currentEditMode.Equals(EditModes.rotate)) {					
-										rotateObject(isClockwise);
+									//if(currentEditMode.Equals(EditModes.rotate)) {	
+
+										// UNCOMMENT TO ROTATE
+										//rotateObject(isClockwise);
+										
+										
 									//}
 									//else if(currentEditMode.Equals(EditModes.scale)) {
 										//scaleObjectCircleGesture(isClockwise);
@@ -487,15 +491,6 @@ public class LeapWindow : EditorWindow {
 								//Handle swipe gestures
 								currentGestureText = "Swipe";
 								
-								/*
-								if(currentEditMode.Equals(EditModes.translate)) {
-								// create a new swipe gesture
-									SwipeGesture swipe = new SwipeGesture(gest);
-									Leap.Vector swipeDirection = swipe.Direction;
-									//Debug.Log(swipeDirection.ToString());
-									translateObject(swipeDirection.x/5.0f, swipeDirection.y/5.0f, swipeDirection.z/5.0f);
-								}
-								*/
 								break;
 								default:
 								//Handle unrecognized gestures
@@ -546,18 +541,12 @@ public class LeapWindow : EditorWindow {
 				/////////////////////////////////////////////////////////////
 				
 				// update selection status of all LeapUnityGrid objects
-				GameObject[] sceneItems = GameObject.FindGameObjectsWithTag("Touchable");  
-				foreach (GameObject currentAsset in sceneItems) 
+				LeapUnityGridHandler[] sceneItems = Object.FindObjectsOfType(typeof(LeapUnityGridHandler)) as LeapUnityGridHandler[];
+				foreach (LeapUnityGridHandler currentAsset in sceneItems) 
 				{
-					LeapUnityGridHandler gridHandler = currentAsset.GetComponent<LeapUnityGridHandler>();
-					if(gridHandler != null)
-					{
-						if(Selection.Contains(currentAsset)) gridHandler.isSelected = true;
-						else gridHandler.isSelected = false;
-					}
-				}				
-				
-				
+					if(Selection.Contains(currentAsset.gameObject)) currentAsset.isSelected = true;
+					else currentAsset.isSelected = false;
+				}			
 			}
 		}
 		

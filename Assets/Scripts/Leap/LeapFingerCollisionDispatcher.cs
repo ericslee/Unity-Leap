@@ -21,8 +21,10 @@ public class LeapFingerCollisionDispatcher : MonoBehaviour {
 	
 	void OnTriggerEnter(Collider other)
 	{		
+		
 		// only collide with the primary hand
-		if( gameObject.transform.parent.tag == "PrimaryHand" && other.tag == "Touchable")
+		//if( gameObject.transform.parent.tag == "PrimaryHand" && other.tag == "Touchable")
+		if( gameObject.transform.parent.tag == "PrimaryHand" && other.GetComponent<LeapUnityGridHandler>() != null)
 		{
 			LeapUnitySelectionController.Get().OnTouched(gameObject, other);
 				
@@ -49,7 +51,6 @@ public class LeapFingerCollisionDispatcher : MonoBehaviour {
 					// make sure the object is valid to be selected by Leap
 					if(gridHandlerScript != null) 
 					{
-						Debug.Log("Grabbed LeapUnityGridHandler successfully");
 						gridHandlerScript.setSelectedByHand(true);
 						Selection.activeGameObject = other.gameObject;
 					}
@@ -62,7 +63,8 @@ public class LeapFingerCollisionDispatcher : MonoBehaviour {
 	void OnTriggerExit(Collider other)
 	{
 		// only collide with the primary hand
-		if( gameObject.transform.parent.tag == "PrimaryHand" && other.tag == "Touchable" )
+		//if( gameObject.transform.parent.tag == "PrimaryHand" && other.tag == "Touchable" )
+		if( gameObject.transform.parent.tag == "PrimaryHand" && other.GetComponent<LeapUnityGridHandler>() != null)
 		{
 			LeapUnitySelectionController.Get().OnStoppedTouching(gameObject, other);	
 		}
