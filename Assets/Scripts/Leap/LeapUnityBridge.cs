@@ -50,6 +50,8 @@ public class LeapUnityBridge : MonoBehaviour
 	public EditModes currentEditMode;
 	public bool leapActive = true;
 	public bool canSelectMultiple = false;
+	// was the current selection selected from Leap controls
+	private bool selectedWithLeap = false;
 	
 	public void Awake()
 	{
@@ -243,4 +245,11 @@ public class LeapUnityBridge : MonoBehaviour
 		
 		return palm;
 	}
+	
+	// Getters
+	public bool getSelectedWithLeap() { return selectedWithLeap; }
+	
+	
+	// Setters
+	public void setSelectedWithLeap(bool b) { selectedWithLeap = b; }
 };

@@ -1,0 +1,174 @@
+	/*
+	private GameObject CreatePalm(GameObject parent, int index)
+	{
+		GameObject palm = Instantiate(m_PalmTemplate) as GameObject;
+		palm.name = "Palm " + index;
+		palm.transform.parent = parent.transform;
+		
+		return palm;
+	}
+	*/
+	
+		/*
+	private GameObject CreateHand() {
+		//GameObject hand = new GameObject("hand");
+		if(handTracker == null) {
+			handTracker = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+			handTracker.transform.position = new Vector3(0, 0, 0);
+		}
+		//hand.transform.parent = parent.transform;
+		
+		if( index == 0 )
+			hand.name = "Primary Hand";
+		else if( index == 1 )
+			hand.name = "Secondary Hand";
+		else
+			hand.name = "Unknown Hand";
+		
+		return handTracker;
+	}
+	*/
+	
+	
+			/*
+		// snap rotation to nearest 90 degree
+		float yAngle = rotBuffer % 360;
+		if(yAngle >= 0 && yAngle <= 45)
+		{
+			gameObject.transform.rotation = Quaternion.AngleAxis(0.0f, Vector3.up);
+		}
+		else if(yAngle > 45 && yAngle <= 135)
+		{
+			gameObject.transform.rotation = Quaternion.AngleAxis(90.0f, Vector3.up);
+		}
+		else if(yAngle > 135 && yAngle <= 225)
+		{
+			gameObject.transform.rotation = Quaternion.AngleAxis(180.0f, Vector3.up);
+		}
+		else if(yAngle > 225 && yAngle <= 315)
+		{
+			gameObject.transform.rotation = Quaternion.AngleAxis(270.0f, Vector3.up);
+		}
+		else
+		{
+			gameObject.transform.rotation = Quaternion.AngleAxis(0.0f, Vector3.up);
+		}	
+		*/
+		
+										/*
+								if(currentEditMode.Equals(EditModes.translate)) {
+								// create a new swipe gesture
+									SwipeGesture swipe = new SwipeGesture(gest);
+									Leap.Vector swipeDirection = swipe.Direction;
+									//Debug.Log(swipeDirection.ToString());
+									translateObject(swipeDirection.x/5.0f, swipeDirection.y/5.0f, swipeDirection.z/5.0f);
+								}
+								*/
+								
+								//gameObject.transform.Rotate(Vector3.right * 1);
+				//gameObject.transform.rotation = Quaternion.AngleAxis(1, Vector3.right);
+				//Quaternion rot = gameObject.transform.rotation;
+				//gameObject.transform.rotation = rot * Quaternion.Euler(2, 0, 0);
+				
+				//gameObject.transform.Rotate(Vector3.right * -1);
+				//gameObject.transform.rotation = Quaternion.AngleAxis(-1, Vector3.right);
+				//Quaternion rot = gameObject.transform.rotation;
+				//gameObject.transform.rotation = rot * Quaternion.Euler(-2, 0, 0);
+				
+				
+				/*
+						// if two hands on screen, enable mode switching
+						if(hands.Count > 1) 
+						{
+							// hands should remain on the screen for a short period of time before switching modes
+							if(handAppearDelay > 50) 
+							{
+								// enable translation
+								if(hands.Leftmost.Fingers.Count > 1) 
+								{
+									translationEnabled = true;
+									currentMode = Modes.leapEdit;
+									lub.currentMode = LeapUnityBridge.Modes.leapEdit;
+									currentModeText = "Edit";
+								}
+								else 
+								{
+									translationEnabled = false;
+									currentMode = Modes.leapSelection;
+									lub.currentMode = LeapUnityBridge.Modes.leapSelection;
+									currentModeText = "Selection";
+								}
+								modeChangeDelay = 0;
+								
+								
+								// only change mode after a sufficient delay and if second hand was removed
+								if(modeChangeDelay > 20 && canSwitchModes) 
+								{
+									// switch modes
+									if(currentMode.Equals(Modes.leapSelection))	
+									{
+										currentMode = Modes.leapEdit;
+										lub.currentMode = LeapUnityBridge.Modes.leapEdit;
+										currentModeText = "Edit";
+									}
+									else 
+									{
+										currentMode = Modes.leapSelection;
+										lub.currentMode = LeapUnityBridge.Modes.leapSelection;
+										currentModeText = "Selection";
+									}
+									modeChangeDelay = 0;
+									canSwitchModes = false;
+								}
+								
+														
+								// reset hand delay
+								handAppearDelay = 0;
+							}
+						}
+						*/
+						
+														/*
+								// only change mode after a sufficient delay
+								if(modeChangeDelay > 20) {
+									// switch modes
+									if(currentMode.Equals(Modes.leapSelection))	{
+										currentMode = Modes.leapEdit;
+										lub.currentMode = LeapUnityBridge.Modes.leapEdit;
+										currentModeText = "Edit";
+									}
+									else {
+										currentMode = Modes.leapSelection;
+										lub.currentMode = LeapUnityBridge.Modes.leapSelection;
+										currentModeText = "Selection";
+									}
+									modeChangeDelay = 0;
+								}
+								*/
+								
+								/*
+								// only change mode after a sufficient delay
+								if(currentMode.Equals(Modes.leapEdit)) 
+								{
+									if(editModeChangeDelay > 50) {
+										// Change edit mode
+										if(currentEditMode.Equals(EditModes.rotate)) {
+											currentEditMode = EditModes.translate;
+											lub.currentEditMode = LeapUnityBridge.EditModes.translate;
+											currentEditModeText = "Translate";
+										}
+										else if(currentEditMode.Equals(EditModes.translate)) {
+											currentEditMode = EditModes.scale;
+											lub.currentEditMode = LeapUnityBridge.EditModes.scale;
+											currentEditModeText = "Scale";
+										}
+										else {
+											currentEditMode = EditModes.rotate;
+											lub.currentEditMode = LeapUnityBridge.EditModes.rotate;
+											currentEditModeText = "Rotate";
+										}
+										// reset delay
+										editModeChangeDelay = 0;
+									}
+								}
+								*/

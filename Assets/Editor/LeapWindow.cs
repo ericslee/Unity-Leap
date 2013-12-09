@@ -70,12 +70,6 @@ public class LeapWindow : EditorWindow {
 	float yScale = 0.02f;
 	float zScale = 0.02f;
 	
-	// delays and mode switching variables
-	static int modeChangeDelay = 0;
-	static int editModeChangeDelay = 0;
-	static int handAppearDelay = 0;
-	static bool canSwitchModes = true;
-	
 	// These values, set from the editor window, set the corresponding fields in the
 	// LeapUnityExtension for translating vectors.
 	public static Vector3 m_LeapScaling = new Vector3(0.02f, 0.02f, 0.02f);
@@ -255,14 +249,10 @@ public class LeapWindow : EditorWindow {
         }
     }
 	
-	public static Leap.Frame Frame
-	{
-		get { return m_Frame; }
-	}
-	
-	// update function
+	// Update function, called continuously
 	void Update () 
 	{
+		// Don't remember why I need to do this...leave comments Eric
 		if(leapController != null) EditorUtility.SetDirty(leapController);
 		
 		// if editor camera in scene view changes, map the transformation to the Leap hands transform as well
@@ -278,6 +268,7 @@ public class LeapWindow : EditorWindow {
 				cameraLookAt.y, cameraLookAt.z);
 		}
 		
+		// Only if Leap controls are active
 		if(leapActive)
 		{
 			// Reduce number of frames processed (maybe will mess with some input and will need to be changed later)
@@ -286,7 +277,6 @@ public class LeapWindow : EditorWindow {
 				if( m_controller != null )
 				{	
 					// grab the current frame
-					//Frame lastFrame = m_Frame == null ? Frame.Invalid : m_Frame;
 					m_Frame	= m_controller.Frame();
 					
 					// get data from the frame
@@ -319,86 +309,11 @@ public class LeapWindow : EditorWindow {
 						
 						handVelocity = hand1.PalmVelocity;
 						hand1VelocityText = handVelocity.ToString();
-						
-						if(hands.Count < 2 && !canSwitchModes)
-						{
-							canSwitchModes = true;
-						}
-						/*
-						// if two hands on screen, enable mode switching
-						if(hands.Count > 1) 
-						{
-							// hands should remain on the screen for a short period of time before switching modes
-							if(handAppearDelay > 50) 
-							{
-								// enable translation
-								if(hands.Leftmost.Fingers.Count > 1) 
-								{
-									translationEnabled = true;
-									currentMode = Modes.leapEdit;
-									lub.currentMode = LeapUnityBridge.Modes.leapEdit;
-									currentModeText = "Edit";
-								}
-								else 
-								{
-									translationEnabled = false;
-									currentMode = Modes.leapSelection;
-									lub.currentMode = LeapUnityBridge.Modes.leapSelection;
-									currentModeText = "Selection";
-								}
-								modeChangeDelay = 0;
-								
-								
-								// only change mode after a sufficient delay and if second hand was removed
-								if(modeChangeDelay > 20 && canSwitchModes) 
-								{
-									// switch modes
-									if(currentMode.Equals(Modes.leapSelection))	
-									{
-										currentMode = Modes.leapEdit;
-										lub.currentMode = LeapUnityBridge.Modes.leapEdit;
-										currentModeText = "Edit";
-									}
-									else 
-									{
-										currentMode = Modes.leapSelection;
-										lub.currentMode = LeapUnityBridge.Modes.leapSelection;
-										currentModeText = "Selection";
-									}
-									modeChangeDelay = 0;
-									canSwitchModes = false;
-								}
-								
-														
-								// reset hand delay
-								handAppearDelay = 0;
-							}
-						}
-						*/
 					}
 					
 					currentGestureText = "None";
-
-					//Average a finger position for the last 10 frames
-					/*
-					for(int j; j < fingers.Count; j++) {
-						int count = 0;
-						Vector average = new Vector ();
-						Finger fingerToAverage = frame.Fingers [0];
-						for (int i = 0; i < 10; i++) {
-								Finger fingerFromFrame = controller.Frame (i).Finger (fingerToAverage.Id);
-								if (fingerFromFrame.IsValid) {
-										average += fingerFromFrame.TipPosition;
-										count++;
-								}
-						average /= count;
-					}
-					*/
 					
-					// increment delays
-					modeChangeDelay++;
-					editModeChangeDelay++;
-					handAppearDelay++;
+					// increment delays here if using counters for delaying anything
 									
 					// handle gestures
 					if(m_Frame.Gestures().Count > 0) {					
@@ -409,26 +324,21 @@ public class LeapWindow : EditorWindow {
 							case Gesture.GestureType.TYPECIRCLE:
 								//Handle circle gestures
 								currentGestureText = "Circle";
+								CircleGesture circle = new CircleGesture(gest);
 								
 								// create new circle gesture and transform accordingly
-								CircleGesture circle = new CircleGesture(gest);
+								// UNCOMMENT TO ROTATE
+								/*
 								bool isClockwise = false;
-								if(circle.Normal.z < 0) {
+								if(circle.Normal.z < 0) 
+								{
 									isClockwise = true;
 								}
-								//if(currentMode.Equals(Modes.leapEdit)) {
-									//if(currentEditMode.Equals(EditModes.rotate)) {	
-
-										// UNCOMMENT TO ROTATE
-										//rotateObject(isClockwise);
-										
-										
-									//}
-									//else if(currentEditMode.Equals(EditModes.scale)) {
-										//scaleObjectCircleGesture(isClockwise);
-									//}
-								//}
-								
+								if(currentMode.Equals(Modes.leapEdit)) 
+									
+									rotateObject(isClockwise);
+								}
+								*/
 								float turns = circle.Progress;
 								circleCountText = turns.ToString();
 								break;
@@ -436,61 +346,20 @@ public class LeapWindow : EditorWindow {
 								//Handle key tap gestures
 								currentGestureText = "Key Tap";
 								
+								// deselect all objects
 								Selection.objects = new UnityEngine.Object[0];
 								
-								/*
-								// only change mode after a sufficient delay
-								if(modeChangeDelay > 20) {
-									// switch modes
-									if(currentMode.Equals(Modes.leapSelection))	{
-										currentMode = Modes.leapEdit;
-										lub.currentMode = LeapUnityBridge.Modes.leapEdit;
-										currentModeText = "Edit";
-									}
-									else {
-										currentMode = Modes.leapSelection;
-										lub.currentMode = LeapUnityBridge.Modes.leapSelection;
-										currentModeText = "Selection";
-									}
-									modeChangeDelay = 0;
-								}
-								*/
+								// we are not in hand selection mode anymore
+								lub.setSelectedWithLeap(false);
+								
 								break;
 							case Gesture.GestureType.TYPESCREENTAP:
 								//Handle screen tap gestures
-								currentGestureText = "Screen Tap";
-								
-								/*
-								// only change mode after a sufficient delay
-								if(currentMode.Equals(Modes.leapEdit)) 
-								{
-									if(editModeChangeDelay > 50) {
-										// Change edit mode
-										if(currentEditMode.Equals(EditModes.rotate)) {
-											currentEditMode = EditModes.translate;
-											lub.currentEditMode = LeapUnityBridge.EditModes.translate;
-											currentEditModeText = "Translate";
-										}
-										else if(currentEditMode.Equals(EditModes.translate)) {
-											currentEditMode = EditModes.scale;
-											lub.currentEditMode = LeapUnityBridge.EditModes.scale;
-											currentEditModeText = "Scale";
-										}
-										else {
-											currentEditMode = EditModes.rotate;
-											lub.currentEditMode = LeapUnityBridge.EditModes.rotate;
-											currentEditModeText = "Rotate";
-										}
-										// reset delay
-										editModeChangeDelay = 0;
-									}
-								}
-								*/
+								currentGestureText = "Screen Tap";								
 								break;
 							case Gesture.GestureType.TYPESWIPE:
 								//Handle swipe gestures
-								currentGestureText = "Swipe";
-								
+								currentGestureText = "Swipe";		
 								break;
 								default:
 								//Handle unrecognized gestures
@@ -550,8 +419,8 @@ public class LeapWindow : EditorWindow {
 			}
 		}
 		
-		// update the grid itself to draw if necessary
-		if(theGrid != null) theGrid.SetDraw(leapActive && Selection.objects.Length > 0);
+		// update the grid itself to draw if necessary (only when with objects selected from Leap)
+		if(theGrid != null) theGrid.SetDraw(leapActive && Selection.objects.Length > 0 && lub.getSelectedWithLeap() == true);
 		
 	}
 	

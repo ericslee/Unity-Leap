@@ -33,6 +33,9 @@ public class LeapFingerCollisionDispatcher : MonoBehaviour {
 			LeapUnityBridge lub = (LeapUnityBridge) leapController.GetComponent(typeof(LeapUnityBridge));
 			if(lub.selectionDelay > 55 && lub.currentMode.Equals(LeapUnityBridge.Modes.leapSelection)) 
 			{
+				// let the system know the selection was through a hand
+				lub.setSelectedWithLeap(true);
+				
 				// Sets collided object as selected
 				if(lub.canSelectMultiple) 
 				{
