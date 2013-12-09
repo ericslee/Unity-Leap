@@ -181,3 +181,6 @@
 				else gridHandler.rotBuffer-=5;
 			}
 			*/
+			
+			//if(currentEditMode.Equals(EditModes.translate)) translateObject(handPos.x/2.0f, handPos.y/2.0f, -handPos.z/2.0f); 
+						//if(currentEditMode.Equals(EditModes.translate)) translateObject(stableHandPos.x/2.0f, stableHandPos.y/2.0f, -stableHandPos.z/2.0f); 

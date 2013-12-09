@@ -176,12 +176,17 @@ public class LeapUnityBridge : MonoBehaviour
 		}
 		for( int i = 0; i < behavior.m_fingers.Length; i++ )
 		{
-			// include collision boolean
 			behavior.m_fingers[i] = CreateFinger(behavior.m_hands[2], i);
 		}
 		for( int i = 0; i < behavior.m_palms.Length; i++ )
 		{
 			behavior.m_palms[i] = CreatePalm(behavior.m_hands[2], i);	
+		}
+		
+		foreach( GameObject palm in GameObject.FindGameObjectsWithTag("Palm") )
+		{
+			Debug.Log ("adding component...");
+			palm.AddComponent(typeof(LeapFingerCollisionDispatcher));	
 		}
 		
 		foreach( GameObject fingerTip in GameObject.FindGameObjectsWithTag("FingerTip") )
@@ -215,6 +220,7 @@ public class LeapUnityBridge : MonoBehaviour
 		finger.transform.parent = parent.transform;
 		finger.name = "Finger " + index;
 		
+		/*
 		//finger.AddComponent<SphereCollider>();
 		SphereCollider sphere = finger.GetComponent<SphereCollider>();
 		if(sphere != null) 
@@ -233,7 +239,7 @@ public class LeapUnityBridge : MonoBehaviour
 		
 		// add collision dispatcher script
 		finger.AddComponent("LeapFingerCollisionDispatcher");
-		
+		*/
 		return finger;
 	}
 	private GameObject CreatePalm(GameObject parent, int index)
@@ -242,6 +248,25 @@ public class LeapUnityBridge : MonoBehaviour
 		palm.name = "Palm " + index;
 		palm.transform.parent = parent.transform;
 		palm.tag = "Palm";
+		
+		//finger.AddComponent<SphereCollider>();
+		SphereCollider sphere = palm.GetComponent<SphereCollider>();
+		if(sphere != null) 
+		{
+			sphere.enabled = true;
+			sphere.isTrigger = true;
+		}
+		
+		Rigidbody rb = palm.AddComponent<Rigidbody>(); // Add the rigidbody.
+		rb.mass = 0.5f; // Set the GO's mass to 5 via the Rigidbody.
+		rb.useGravity = false;
+		//rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
+		rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
+		rb.isKinematic = true;
+		rb.interpolation = RigidbodyInterpolation.Interpolate;
+			
+		// add collision dispatcher script
+		palm.AddComponent("LeapFingerCollisionDispatcher");
 		
 		return palm;
 	}

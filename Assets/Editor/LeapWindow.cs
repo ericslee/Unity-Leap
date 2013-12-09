@@ -501,8 +501,6 @@ public class LeapWindow : EditorWindow {
 							}
 							//translateObject(handPos.x, handPos.y, -handPos.z);	
 						}
-						//if(currentEditMode.Equals(EditModes.translate)) translateObject(handPos.x/2.0f, handPos.y/2.0f, -handPos.z/2.0f); 
-						//if(currentEditMode.Equals(EditModes.translate)) translateObject(stableHandPos.x/2.0f, stableHandPos.y/2.0f, -stableHandPos.z/2.0f); 
 					}
 															
 					// update the GUI
@@ -548,19 +546,26 @@ public class LeapWindow : EditorWindow {
 		}
 	}
 	
-	// rotates selected object(s)
+	/********************************************************************
+	* Rotates selected object(s)
+	*********************************************************************/
 	void rotateObject(bool isClockwise) 
 	{
-		if(Selection.activeGameObject != null) {
+		if(Selection.activeGameObject != null) 
+		{
 			GameObject currentAsset = Selection.activeGameObject;
 			if(isClockwise)	currentAsset.transform.Rotate(Vector3.up*1);
 			else currentAsset.transform.Rotate(Vector3.up*-1);			
 		}
 	}
 	
-	// scales selected object(s)
-	void scaleObject(float scaleFactor) {
-		if(Selection.activeGameObject != null) {
+	/********************************************************************
+	* scales selected object(s)
+	*********************************************************************/
+	void scaleObject(float scaleFactor) 
+	{
+		if(Selection.activeGameObject != null) 
+		{
 			GameObject currentAsset = Selection.activeGameObject;
 			//float scaleFactorNormalized = scaleFactor / 1.0f;
 			
@@ -577,8 +582,13 @@ public class LeapWindow : EditorWindow {
 		}
 	}
 	
-	void scaleObjectCircleGesture(bool isClockwise) {
-		if(Selection.activeGameObject != null) {
+	/********************************************************************
+	* scales selected object(s) using circle gesture
+	*********************************************************************/
+	void scaleObjectCircleGesture(bool isClockwise) 
+	{
+		if(Selection.activeGameObject != null) 
+		{
 			GameObject currentAsset = Selection.activeGameObject;
 			float scaleFactor = 1.01f;
 			if(!isClockwise) scaleFactor = 0.99f;
@@ -596,8 +606,13 @@ public class LeapWindow : EditorWindow {
 		}
 	}
 	
-	void translateObject(float transX, float transY, float transZ) {
-		if(Selection.activeGameObject != null) {
+	/********************************************************************
+	* Translates objects while snapping to grid
+	*********************************************************************/
+	void translateObject(float transX, float transY, float transZ) 
+	{
+		if(Selection.activeGameObject != null) 
+		{
 			if(!canSelectMultiple)
 			{
 				GameObject currentAsset = Selection.activeGameObject;
@@ -636,15 +651,11 @@ public class LeapWindow : EditorWindow {
 		}
 	}
 	
-	void positionObject(float posX, float posY, float posZ) {
-		if(Selection.activeGameObject != null) {
-			GameObject currentAsset = Selection.activeGameObject;
-			Vector3 positionVector = new Vector3(posX, posY, posZ);
-			currentAsset.transform.position = positionVector;
-		}
-	}
-	
-	private GameObject CreateCube() {
+	/********************************************************************
+	* Skeleton method for asset creation later
+	*********************************************************************/
+	private GameObject CreateCube() 
+	{
 		GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
 		Selection.activeGameObject = cube;
 		
