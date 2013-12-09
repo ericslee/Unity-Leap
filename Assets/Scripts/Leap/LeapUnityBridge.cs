@@ -117,7 +117,7 @@ public class LeapUnityBridge : MonoBehaviour
 	}
 	
 	// alter the transformation of the hands
-	public void TransformHands(float transX, float transY, float transZ, float fowX, float fowY, float fowZ) 
+	public void TransformHands(float transX, float transY, float transZ, float fowX, float fowY, float fowZ, Transform cameraTrans) 
 	{
 		GameObject hands = GameObject.FindWithTag("Hands");
 		if(hands == null) {
@@ -126,6 +126,7 @@ public class LeapUnityBridge : MonoBehaviour
 		}
 		// translate hands to where the camera is
 		Vector3 normalizedLookAt = new Vector3(fowX, fowY, fowZ);
+		
 		/*
 		hands.transform.position = new Vector3(transX + 10*(normalizedLookAt.x), transY - 10, 
 			transZ + 50*(normalizedLookAt.z));
@@ -134,8 +135,10 @@ public class LeapUnityBridge : MonoBehaviour
 		//Debug.Log("Hands position: (" + hands.transform.position.x + ", " + hands.transform.position.y + ", " + hands.transform.position.z);
 		
 		// rotate hands to match where the scene view camera is pointing
-		hands.transform.forward = new Vector3(fowX, fowY, fowZ);	
+		//hands.transform.forward = new Vector3(fowX, fowY, fowZ);	
 		// get direction of look at vector
+		
+		hands.transform.parent = cameraTrans;
 	}
 	
 	private void CreateSceneHands()

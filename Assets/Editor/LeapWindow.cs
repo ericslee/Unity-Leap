@@ -132,13 +132,14 @@ public class LeapWindow : EditorWindow {
 		lub.Awake();
 		
 		// Transform hands to where camera is looking initially
-		if(Camera.current != null) {
+		if(Camera.current != null) 
+		{
 			// Camera.current refers to the editor camera
 			Transform cameraTransform = Camera.current.transform;
 			Vector3 cameraLookAt = cameraTransform.forward;
 			Vector3 cameraPosition = cameraTransform.position;
 			lub.TransformHands(cameraPosition.x, cameraPosition.y, cameraPosition.z, cameraLookAt.x, 
-				cameraLookAt.y, cameraLookAt.z);
+				cameraLookAt.y, cameraLookAt.z, cameraTransform);
 		}
 		
 		// Get the grid
@@ -282,7 +283,7 @@ public class LeapWindow : EditorWindow {
 			//Debug.Log("(" + cameraLookAt.x + ", " + cameraLookAt.y + ", " + cameraLookAt.z);
 			//Debug.Log("Camera position: (" + cameraPosition.x + ", " + cameraPosition.y + ", " + cameraPosition.z);
 			lub.TransformHands(cameraPosition.x, cameraPosition.y, cameraPosition.z, cameraLookAt.x, 
-				cameraLookAt.y, cameraLookAt.z);
+				cameraLookAt.y, cameraLookAt.z, cameraTransform);
 		}
 		
 		// Only if Leap controls are active
@@ -445,15 +446,6 @@ public class LeapWindow : EditorWindow {
 	void rotateObject(bool isClockwise) {
 		if(Selection.activeGameObject != null) {
 			GameObject currentAsset = Selection.activeGameObject;
-			/*
-			LeapUnityGridHandler gridHandler = currentAsset.GetComponent<LeapUnityGridHandler>();
-			if(gridHandler != null)
-			{
-				if(isClockwise) gridHandler.rotBuffer+=5;
-				else gridHandler.rotBuffer-=5;
-			}
-			*/
-			
 			if(isClockwise)	currentAsset.transform.Rotate(Vector3.up*1);
 			else currentAsset.transform.Rotate(Vector3.up*-1);			
 		}
