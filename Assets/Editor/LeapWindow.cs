@@ -111,7 +111,7 @@ public class LeapWindow : EditorWindow {
 		
 		// init in selection mode
 		currentMode = Modes.leapSelection;
-		currentEditMode = EditModes.rotate;
+		currentEditMode = EditModes.translate;
 		canSelectMultiple = false;
 		
 		
@@ -197,11 +197,9 @@ public class LeapWindow : EditorWindow {
             // display help
 			displayHelp = !displayHelp;
 			helpText = displayHelp ? "Press S to switch between edit and selection modes. \n" +
-							"In edit mode, screen tap to switch between rotation, translation, and scaling. \n" +
 							"Press D to disable Leap control completely. \n" +
-							"To rotate, make circle gestures. \n" +
-							"To scale, make circle gestures as well. \n" +
 							"To translate, just move your hand around. \n" +
+							"To deselect/drop the object, tap down or hit Z. \n" +
 							"1cm of hand motion = .02m scene motion" : "";
         }
 		GUILayout.Label(helpText);
@@ -413,7 +411,10 @@ public class LeapWindow : EditorWindow {
 								translateObject(transformedHandPos.x/2.0f, transformedHandPos.y/2.0f, -transformedHandPos.z * 2.0f); 
 							}
 							*/
-							translateObject(handPos.x/2.0f, handPos.y/2.0f, -handPos.z);							
+							//translateObject(handPos.x/2.0f, handPos.y/2.0f, -handPos.z);
+
+							// translate object along with the hand, z must be flipped because of conversion from Leap to Unity coordinate system
+							translateObject(handPos.x, handPos.y, -handPos.z);	
 						}
 						//if(currentEditMode.Equals(EditModes.translate)) translateObject(handPos.x/2.0f, handPos.y/2.0f, -handPos.z/2.0f); 
 						//if(currentEditMode.Equals(EditModes.translate)) translateObject(stableHandPos.x/2.0f, stableHandPos.y/2.0f, -stableHandPos.z/2.0f); 
