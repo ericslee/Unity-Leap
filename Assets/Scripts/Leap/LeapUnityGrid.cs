@@ -84,4 +84,17 @@ public class LeapUnityGrid : MonoBehaviour
 	{
 		canDraw = active;
 	}
+	
+	
+	/********************************
+	* Getters
+	********************************/
+	public float getWidth() { return width; }
+	public float getHeight() { return height; }
+	
+	/********************************
+	* Setters
+	********************************/
+	public void setWidth(float w) { width += w; }
+	public void setHeight(float h) { height += h; }
 }

@@ -172,3 +172,12 @@
 									}
 								}
 								*/
+								
+								/*
+			LeapUnityGridHandler gridHandler = currentAsset.GetComponent<LeapUnityGridHandler>();
+			if(gridHandler != null)
+			{
+				if(isClockwise) gridHandler.rotBuffer+=5;
+				else gridHandler.rotBuffer-=5;
+			}
+			*/

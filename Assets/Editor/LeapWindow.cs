@@ -22,6 +22,7 @@ public class LeapWindow : EditorWindow {
 	public bool rotationEnabled = true;
 	public bool scaleEnabled = false; // TODO
 	public static bool canSelectMultiple = false;
+	private static bool canResizeGrid = false;
 	
 	// variables that refer to the gameObject that contains the LeapController, its Bridge script, and the world grid
 	static GameObject leapController;
@@ -49,6 +50,7 @@ public class LeapWindow : EditorWindow {
 	// strings for display Leap data
 	static string currentModeText = "Selection";
 	static string canSelectMultipleText = "False";
+	static string canResizeGridText = "False";
 	string currentEditModeText = "Rotate";
 	static string leapActiveText = "True";
 	string currentFrameText = "0";
@@ -111,6 +113,8 @@ public class LeapWindow : EditorWindow {
 		
 		// init in selection mode
 		currentMode = Modes.leapSelection;
+		// Make sure the bridge knows what mode to start in as well
+		if(lub != null) lub.currentMode = LeapUnityBridge.Modes.leapSelection;
 		currentEditMode = EditModes.translate;
 		canSelectMultiple = false;
 		
@@ -178,6 +182,7 @@ public class LeapWindow : EditorWindow {
 		}
 		EditorGUILayout.LabelField("Current mode", currentModeText, EditorStyles.boldLabel);
 		EditorGUILayout.LabelField("Multi-Selection", canSelectMultipleText, EditorStyles.boldLabel);
+		EditorGUILayout.LabelField("Grid-Resizable", canResizeGridText, EditorStyles.boldLabel);
 		EditorGUILayout.LabelField("Leap active: ", leapActiveText, EditorStyles.boldLabel);
 		EditorGUILayout.LabelField("Current edit mode", currentEditModeText);
 		EditorGUILayout.LabelField("Current frame", currentFrameText);
@@ -199,10 +204,70 @@ public class LeapWindow : EditorWindow {
 			helpText = displayHelp ? "Press S to switch between edit and selection modes. \n" +
 							"Press D to disable Leap control completely. \n" +
 							"To translate, just move your hand around. \n" +
-							"To deselect/drop the object, tap down or hit Z. \n" +
+							"To deselect/drop the object, hit Z. \n" +
+							"To resize grid, toggle grid resizing on with G and draw circles to change the size. \n" +
 							"1cm of hand motion = .02m scene motion" : "";
         }
 		GUILayout.Label(helpText);
+		
+		
+		// for GUI only interactions, pressing a key
+		Event e = Event.current;	
+		switch (e.type)
+        {
+            case EventType.KeyDown:
+            {
+				// toggle leap active or not
+				if (Event.current.keyCode == (KeyCode.D)) 
+				{
+					leapActive = !leapActive;
+					if(lub != null)	lub.leapActive = leapActive;
+					leapActiveText = leapActive ? "True" : "False";
+					if(lub != null) Debug.Log("LeapActive:" + lub.leapActive);
+				}	
+				// switch modes
+				if (Event.current.keyCode == (KeyCode.S)) 
+				{
+					if(currentMode.Equals(Modes.leapSelection))	
+					{
+						currentMode = Modes.leapEdit;
+						if(lub != null) lub.currentMode = LeapUnityBridge.Modes.leapEdit;
+						currentModeText = "Edit";
+					}
+					else 
+					{
+						currentMode = Modes.leapSelection;
+						if(lub != null) lub.currentMode = LeapUnityBridge.Modes.leapSelection;
+						currentModeText = "Selection";
+					}					
+				}
+				// enable/disable multiple selection with Leap
+				if (Event.current.keyCode == (KeyCode.A)) 
+				{
+					canSelectMultiple = !canSelectMultiple;
+					canSelectMultipleText = canSelectMultiple ? "True" : "False";
+					if(lub != null)	lub.canSelectMultiple = canSelectMultiple;
+					
+					// handle multiple objects here (deselect all?)
+					Selection.objects = new UnityEngine.Object[0];				
+				}
+				// drop selected game asset(s)
+				if (Event.current.keyCode == (KeyCode.Z)) 
+				{
+					Selection.objects = new UnityEngine.Object[0];
+								
+					// we are not in hand selection mode anymore
+					lub.setSelectedWithLeap(false);			
+				}
+				// enable/disable grid resizing
+				if (Event.current.keyCode == (KeyCode.G)) 
+				{
+					canResizeGrid = !canResizeGrid;
+					canResizeGridText = canResizeGrid ? "True" : "False";	
+				}
+                break;
+            }
+        }
 	}
 	
 	/********************************************************************
@@ -257,6 +322,12 @@ public class LeapWindow : EditorWindow {
 								
 					// we are not in hand selection mode anymore
 					lub.setSelectedWithLeap(false);			
+				}
+				// enable/disable grid resizing
+				if (Event.current.keyCode == (KeyCode.G)) 
+				{
+					canResizeGrid = !canResizeGrid;
+					canResizeGridText = canResizeGrid ? "True" : "False";
 				}
                 break;
             }
@@ -342,6 +413,17 @@ public class LeapWindow : EditorWindow {
 								currentGestureText = "Circle";
 								CircleGesture circle = new CircleGesture(gest);
 								
+								// adjust size of grid
+								bool isClockwise = false;
+								if(circle.Normal.z < 0) 
+								{
+									isClockwise = true;
+								}
+								if(canResizeGrid) 
+								{	
+									resizeGrid(isClockwise);
+								}
+								
 								// create new circle gesture and transform accordingly
 								// UNCOMMENT TO ROTATE
 								/*
@@ -363,10 +445,10 @@ public class LeapWindow : EditorWindow {
 								currentGestureText = "Key Tap";
 								
 								// deselect all objects
-								Selection.objects = new UnityEngine.Object[0];
+								//Selection.objects = new UnityEngine.Object[0];
 								
 								// we are not in hand selection mode anymore
-								lub.setSelectedWithLeap(false);
+								//lub.setSelectedWithLeap(false);
 								
 								break;
 							case Gesture.GestureType.TYPESCREENTAP:
@@ -411,10 +493,13 @@ public class LeapWindow : EditorWindow {
 								translateObject(transformedHandPos.x/2.0f, transformedHandPos.y/2.0f, -transformedHandPos.z * 2.0f); 
 							}
 							*/
-							//translateObject(handPos.x/2.0f, handPos.y/2.0f, -handPos.z);
-
-							// translate object along with the hand, z must be flipped because of conversion from Leap to Unity coordinate system
-							translateObject(handPos.x, handPos.y, -handPos.z);	
+							
+							GameObject handsGO = GameObject.FindWithTag("Palm");
+							if(handsGO != null)
+							{
+								translateObject(handsGO.transform.position.x, handsGO.transform.position.y, handsGO.transform.position.z);
+							}
+							//translateObject(handPos.x, handPos.y, -handPos.z);	
 						}
 						//if(currentEditMode.Equals(EditModes.translate)) translateObject(handPos.x/2.0f, handPos.y/2.0f, -handPos.z/2.0f); 
 						//if(currentEditMode.Equals(EditModes.translate)) translateObject(stableHandPos.x/2.0f, stableHandPos.y/2.0f, -stableHandPos.z/2.0f); 
@@ -443,8 +528,29 @@ public class LeapWindow : EditorWindow {
 		
 	}
 	
+	/********************************************************************
+	* Resizes grid - Clockwise is increase, ccw decrease
+	*********************************************************************/
+	void resizeGrid(bool isClockwise) 
+	{
+		if(theGrid != null) 
+		{
+			if(isClockwise)
+			{
+				theGrid.setWidth(0.03f);
+				theGrid.setHeight(0.03f);
+			}
+			else 
+			{
+				theGrid.setWidth(-0.03f);
+				theGrid.setHeight(-0.03f);
+			}
+		}
+	}
+	
 	// rotates selected object(s)
-	void rotateObject(bool isClockwise) {
+	void rotateObject(bool isClockwise) 
+	{
 		if(Selection.activeGameObject != null) {
 			GameObject currentAsset = Selection.activeGameObject;
 			if(isClockwise)	currentAsset.transform.Rotate(Vector3.up*1);

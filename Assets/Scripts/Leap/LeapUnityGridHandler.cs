@@ -93,8 +93,8 @@ public class LeapUnityGridHandler : MonoBehaviour
 			
 			
 			// snap position to the center of the closest grid center
-			float x = Mathf.Floor(xBuffer/theGrid.width)*theGrid.width + theGrid.width/2.0f;
-			float z = Mathf.Floor(zBuffer/theGrid.height)*theGrid.height + theGrid.height/2.0f;
+			float x = Mathf.Floor(xBuffer/theGrid.getWidth())*theGrid.getWidth() + theGrid.getWidth()/2.0f;
+			float z = Mathf.Floor(zBuffer/theGrid.getHeight())*theGrid.getHeight() + theGrid.getHeight()/2.0f;
 			
 			// clamp values if needed
 			if(x >= theGrid.xMax) x = theGrid.xMax;

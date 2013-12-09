@@ -241,6 +241,7 @@ public class LeapUnityBridge : MonoBehaviour
 		GameObject palm = Instantiate(m_PalmTemplate) as GameObject;
 		palm.name = "Palm " + index;
 		palm.transform.parent = parent.transform;
+		palm.tag = "Palm";
 		
 		return palm;
 	}
