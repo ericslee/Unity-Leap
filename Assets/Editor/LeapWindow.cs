@@ -148,11 +148,14 @@ public class LeapWindow : EditorWindow {
 		SceneView.onSceneGUIDelegate += OnScene;
 	}
 	
+	
+	/********************************************************************
+	* called when window is destroyed
+	*********************************************************************/
 	void OnDestroy() {
-		// when closing the editor window
-		//lub = (LeapUnityBridge) leapController.GetComponent(typeof(LeapUnityBridge));
-		lub.SetFalse();
+		if(lub != null) { lub.SetFalse(); }
 		
+		// what does this do...
 		SceneView.onSceneGUIDelegate -= OnScene;
 		// delete hands (be careful with this...)
 		//GameObject handsGO = GameObject.FindWithTag("Hands");
@@ -203,6 +206,9 @@ public class LeapWindow : EditorWindow {
 		GUILayout.Label(helpText);
 	}
 	
+	/********************************************************************
+	* handles interactions when scene is in focus
+	*********************************************************************/
 	private static void OnScene(SceneView sceneview)
     {
         // for GUI only interactions, pressing a key
@@ -219,9 +225,9 @@ public class LeapWindow : EditorWindow {
 					leapActiveText = leapActive ? "True" : "False";
 					if(lub != null) Debug.Log("LeapActive:" + lub.leapActive);
 				}	
+				// switch modes
 				if (Event.current.keyCode == (KeyCode.S)) 
 				{
-					// switch modes
 					if(currentMode.Equals(Modes.leapSelection))	
 					{
 						currentMode = Modes.leapEdit;
@@ -235,6 +241,7 @@ public class LeapWindow : EditorWindow {
 						currentModeText = "Selection";
 					}					
 				}
+				// enable/disable multiple selection with Leap
 				if (Event.current.keyCode == (KeyCode.A)) 
 				{
 					canSelectMultiple = !canSelectMultiple;
@@ -244,12 +251,22 @@ public class LeapWindow : EditorWindow {
 					// handle multiple objects here (deselect all?)
 					Selection.objects = new UnityEngine.Object[0];				
 				}
+				// drop selected game asset(s)
+				if (Event.current.keyCode == (KeyCode.Z)) 
+				{
+					Selection.objects = new UnityEngine.Object[0];
+								
+					// we are not in hand selection mode anymore
+					lub.setSelectedWithLeap(false);			
+				}
                 break;
             }
         }
     }
 	
-	// Update function, called continuously
+	/********************************************************************
+	* Update function, called continuously
+	*********************************************************************/
 	void Update () 
 	{
 		// Don't remember why I need to do this...leave comments Eric

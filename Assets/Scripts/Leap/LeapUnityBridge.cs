@@ -80,10 +80,6 @@ public class LeapUnityBridge : MonoBehaviour
 		m_Created = false;	
 	}
 	
-	public void SetFalse() 
-	{
-		m_Created = false;	
-	}
 	void FixedUpdate()
 	{
 		if( m_UseFixedUpdate )
@@ -252,4 +248,5 @@ public class LeapUnityBridge : MonoBehaviour
 	
 	// Setters
 	public void setSelectedWithLeap(bool b) { selectedWithLeap = b; }
+	public void SetFalse() { m_Created = false;	}
 };
