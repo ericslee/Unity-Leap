@@ -42,7 +42,7 @@ public class LeapUnityBridge : MonoBehaviour
 	
 	private static bool m_Created = false;
 	
-	public int selectionDelay = 0;
+	public int selectionDelay = 55;
 	// current mode of the Leap interface
 	public enum Modes { leapSelection, leapEdit };
 	public enum EditModes { translate, scale, rotate };
@@ -124,20 +124,7 @@ public class LeapUnityBridge : MonoBehaviour
 			Debug.Log("No hands to transform");
 			return;
 		}
-		// translate hands to where the camera is
-		Vector3 normalizedLookAt = new Vector3(fowX, fowY, fowZ);
-		
-		/*
-		hands.transform.position = new Vector3(transX + 10*(normalizedLookAt.x), transY - 10, 
-			transZ + 50*(normalizedLookAt.z));
-		*/
-		//hands.transform.position = new Vector3(transX, transY, transZ);
-		//Debug.Log("Hands position: (" + hands.transform.position.x + ", " + hands.transform.position.y + ", " + hands.transform.position.z);
-		
-		// rotate hands to match where the scene view camera is pointing
-		//hands.transform.forward = new Vector3(fowX, fowY, fowZ);	
-		// get direction of look at vector
-		
+		// parent hands to perspective camera
 		hands.transform.parent = cameraTrans;
 	}
 	

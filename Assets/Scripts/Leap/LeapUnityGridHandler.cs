@@ -25,7 +25,7 @@ public class LeapUnityGridHandler : MonoBehaviour
 	private bool wiggleCW = true;
 	private int wiggleLimit = 10;
 	private int wiggleCount = 0;
-	private float initialXRot = 0.0f;
+	//private float initialXRot = 0.0f;
 	
 	// temp vars that store where the Leap translates the object too then 
 	public float rotBuffer = 0.0f;
@@ -63,7 +63,7 @@ public class LeapUnityGridHandler : MonoBehaviour
 				isGrounded = false;
 				
 				// save the initial x rotation
-				initialXRot = gameObject.transform.eulerAngles.x;
+				//initialXRot = gameObject.transform.eulerAngles.x;
 			}
 			// Make object wiggle
 			if(wiggleCW)

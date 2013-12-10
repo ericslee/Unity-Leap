@@ -257,7 +257,7 @@ public class LeapUnitySelectionController : MonoBehaviour
 	{
 		if( m_FocusedObject == true )
 		{
-			Material[] materials = m_FocusedObject.renderer.materials;
+			//Material[] materials = m_FocusedObject.renderer.materials;
 			//Material changeMat = Array.Find(materials, m => m.name == m_HighlightMaterial.name + " (Instance)" );
 			//changeMat.color = c;
 			//m_FocusedObject.renderer.materials = materials;

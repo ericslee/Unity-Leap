@@ -42,7 +42,7 @@ public class LeapWindow : EditorWindow {
 	enum Modes { leapSelection, leapEdit };
 	enum EditModes { translate, scale, rotate };
 	static Modes currentMode;
-	static EditModes currentEditMode;
+	//static EditModes currentEditMode;
 
 	/********************************************************************
 	* GUI variables
@@ -115,7 +115,7 @@ public class LeapWindow : EditorWindow {
 		currentMode = Modes.leapSelection;
 		// Make sure the bridge knows what mode to start in as well
 		if(lub != null) lub.currentMode = LeapUnityBridge.Modes.leapSelection;
-		currentEditMode = EditModes.translate;
+		//currentEditMode = EditModes.translate;
 		canSelectMultiple = false;
 		
 		
@@ -239,6 +239,15 @@ public class LeapWindow : EditorWindow {
 						currentMode = Modes.leapSelection;
 						if(lub != null) lub.currentMode = LeapUnityBridge.Modes.leapSelection;
 						currentModeText = "Selection";
+						
+						// we are not in hand selection mode anymore
+						lub.setSelectedWithLeap(false);
+						
+						// also drop whatever is currently selected
+						Selection.objects = new UnityEngine.Object[0];		
+
+						// set a delay so that the object is not immediately picked up again
+						lub.selectionDelay = 0;
 					}					
 				}
 				// enable/disable multiple selection with Leap
@@ -303,6 +312,15 @@ public class LeapWindow : EditorWindow {
 						currentMode = Modes.leapSelection;
 						if(lub != null) lub.currentMode = LeapUnityBridge.Modes.leapSelection;
 						currentModeText = "Selection";
+						
+						// we are not in hand selection mode anymore
+						lub.setSelectedWithLeap(false);	
+						
+						// also drop whatever is currently selected
+						Selection.objects = new UnityEngine.Object[0];		
+						
+						// set a delay so that the object is not immediately picked up again
+						lub.selectionDelay = 0;
 					}					
 				}
 				// enable/disable multiple selection with Leap
@@ -379,7 +397,6 @@ public class LeapWindow : EditorWindow {
 					numFingersText = fingers.Count.ToString();
 					
 					Vector handPos = new Vector();
-					Vector stableHandPos = new Vector();
 					Vector handNormal = new Vector();
 					Vector handVelocity = new Vector();
 					
@@ -388,8 +405,6 @@ public class LeapWindow : EditorWindow {
 						Hand hand1 = hands[0];
 						handPos = hand1.PalmPosition;
 						hand1PosText = handPos.ToString();
-						
-						stableHandPos = hand1.StabilizedPalmPosition;
 						
 						handNormal = hand1.PalmNormal;
 						hand1NormalText = handNormal.ToString();
@@ -618,10 +633,11 @@ public class LeapWindow : EditorWindow {
 				GameObject currentAsset = Selection.activeGameObject;
 				Vector3 translateVector = new Vector3(transX, transY, transZ);
 				//Vector3 unityTranslatedLeap = translateVector.ToUnityTranslated();
+				/*
 				Vector3 translateVector2 = new Vector3(currentAsset.transform.position.x + translateVector.x,
 													currentAsset.transform.position.y + translateVector.y, 
 													currentAsset.transform.position.z + translateVector.z);
-													
+				*/									
 													
 				LeapUnityGridHandler gridHandler = currentAsset.GetComponent<LeapUnityGridHandler>();
 				if(gridHandler != null) 

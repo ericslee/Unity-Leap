@@ -49,9 +49,10 @@ public class LeapUnityHandController : MonoBehaviour
 	{
 		foreach( Renderer component in obj.GetComponents<Renderer>() )
 			component.enabled = visible && m_DisplayHands;
-		
+		/*
 		foreach( Renderer child in obj.GetComponentsInChildren<Renderer>() )
 			child.enabled = visible && m_DisplayHands;
+		*/
 	}
 	
 	void Start()
@@ -154,7 +155,7 @@ public class LeapUnityHandController : MonoBehaviour
 	{
 		updateParent( fingerObject, pointable.Hand.Id );
 		
-		SetVisible(fingerObject, pointable.IsValid);
+		//SetVisible(fingerObject, pointable.IsValid);
 		SetCollidable(fingerObject, pointable.IsValid);
 		
 		if ( pointable.IsValid )
