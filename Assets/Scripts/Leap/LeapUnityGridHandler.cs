@@ -24,7 +24,7 @@ public class LeapUnityGridHandler : MonoBehaviour
 	// wiggle vars
 	private bool wiggleCW = true;
 	private int wiggleLimit = 10;
-	private int wiggleCount = 0;
+	private int wiggleCount = 5;
 	//private float initialXRot = 0.0f;
 	
 	// temp vars that store where the Leap translates the object too then 
@@ -120,6 +120,7 @@ public class LeapUnityGridHandler : MonoBehaviour
 			// reset wiggle rot
 			//gameObject.transform.rotation = Quaternion.Euler(initialXRot, gameObject.transform.eulerAngles.y, gameObject.transform.eulerAngles.z);
 			gameObject.transform.rotation = Quaternion.Euler(0.0f, gameObject.transform.eulerAngles.y, 0.0f); // hack, resetting x and z to 0 always
+			wiggleCount = 5;
 			
 			// reset selectedByHand
 			selectedByHand = false;

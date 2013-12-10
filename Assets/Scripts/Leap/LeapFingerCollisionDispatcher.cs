@@ -35,7 +35,6 @@ public class LeapFingerCollisionDispatcher : MonoBehaviour {
 			{
 				// let the system know the selection was through a hand
 				lub.setSelectedWithLeap(true);
-				
 				// Sets collided object as selected
 				if(lub.canSelectMultiple) 
 				{

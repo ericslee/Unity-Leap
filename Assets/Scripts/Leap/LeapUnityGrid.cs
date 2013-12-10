@@ -55,7 +55,7 @@ public class LeapUnityGrid : MonoBehaviour
 			// save the camera's current position
 			Vector3 pos = Camera.current.transform.position;
 			
-			Gizmos.color = Color.white;
+			Gizmos.color = Color.cyan;
 		 
 			// draw grid
 			for (float z = pos.z - 800.0f; z < pos.z + 800.0f; z+= height)

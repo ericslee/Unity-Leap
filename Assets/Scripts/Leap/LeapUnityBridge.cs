@@ -53,11 +53,11 @@ public class LeapUnityBridge : MonoBehaviour
 	// was the current selection selected from Leap controls
 	private bool selectedWithLeap = false;
 	
-	public void Awake()
+	public void setUp() 
 	{
 		if( m_Created )
 		{
-			throw new UnityException("A LeapUnityBridge has already been created!");
+			Debug.Log("A LeapUnityBridge has already been created!");
 		}
 		m_Created = true;
 		Leap.UnityVectorExtension.InputScale = m_LeapScaling;
@@ -75,6 +75,32 @@ public class LeapUnityBridge : MonoBehaviour
 		}
 		CreateSceneHands();
 	}
+	
+	public void Awake()
+	{
+		/*
+		if( m_Created )
+		{
+			Debug.Log("A LeapUnityBridge has already been created!");
+		}
+		m_Created = true;
+		Leap.UnityVectorExtension.InputScale = m_LeapScaling;
+		Leap.UnityVectorExtension.InputOffset = m_LeapOffset;
+		
+		if( !m_FingerTemplate )
+		{
+			Debug.LogError("No Finger template set!");
+			return;
+		}
+		if( !m_PalmTemplate )
+		{
+			Debug.LogError("No Palm template set!");
+			return;
+		}
+		CreateSceneHands();
+		*/
+	}
+
 	public void OnDestroy()
 	{
 		m_Created = false;	
@@ -97,15 +123,18 @@ public class LeapUnityBridge : MonoBehaviour
 			// increment delay
 			selectionDelay++;
 			
-			if( !m_UseFixedUpdate )
-				LeapInput.Update();
-			
-			if( Input.GetKeyDown(KeyCode.T) )
-				LeapInput.EnableTranslation = !LeapInput.EnableTranslation;
-			if( Input.GetKeyDown(KeyCode.R) )
-				LeapInput.EnableRotation = !LeapInput.EnableRotation;
-			if( Input.GetKeyDown(KeyCode.S) )
-				LeapInput.EnableScaling = !LeapInput.EnableScaling;
+			if(m_Created) 
+			{
+				if( !m_UseFixedUpdate )
+					LeapInput.Update();
+				
+				if( Input.GetKeyDown(KeyCode.T) )
+					LeapInput.EnableTranslation = !LeapInput.EnableTranslation;
+				if( Input.GetKeyDown(KeyCode.R) )
+					LeapInput.EnableRotation = !LeapInput.EnableRotation;
+				if( Input.GetKeyDown(KeyCode.S) )
+					LeapInput.EnableScaling = !LeapInput.EnableScaling;
+			}
 		}
 	}
 	
@@ -125,6 +154,7 @@ public class LeapUnityBridge : MonoBehaviour
 			return;
 		}
 		// parent hands to perspective camera
+		//if(!hands.transform
 		hands.transform.parent = cameraTrans;
 	}
 	
@@ -260,7 +290,7 @@ public class LeapUnityBridge : MonoBehaviour
 	
 	// Getters
 	public bool getSelectedWithLeap() { return selectedWithLeap; }
-	
+	public bool getCreated() { return m_Created; }
 	
 	// Setters
 	public void setSelectedWithLeap(bool b) { selectedWithLeap = b; }

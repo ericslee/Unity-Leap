@@ -28,13 +28,6 @@ public class LeapWindow : EditorWindow {
 	static GameObject leapController;
 	static LeapUnityBridge lub;
 	static LeapUnityGrid theGrid;
-		
-	//These arrays allow us to use our game object arrays much like pools.
-	//When a new hand/finger is found, we mark a game object by active
-	//by storing it's id, and when it goes out of scope we make the
-	//corresponding gameobject invisible & set the id to -1.
-	static int[]					m_fingerIDs = null;
-	static int[]					m_handIDs	= null;
 	
 	/********************************************************************
 	* current mode of the Leap interface
@@ -117,23 +110,12 @@ public class LeapWindow : EditorWindow {
 		if(lub != null) lub.currentMode = LeapUnityBridge.Modes.leapSelection;
 		//currentEditMode = EditModes.translate;
 		canSelectMultiple = false;
-		
-		
-		// init data structures to house fingers and hands
-		m_fingerIDs = new int[10];
-		for( int i = 0; i < m_fingerIDs.Length; i++ )
-		{
-			m_fingerIDs[i] = -1;	
-		}
-		
-		m_handIDs = new int[2];
-		for( int i = 0; i < m_handIDs.Length; i++ )
-		{
-			m_handIDs[i] = -1;	
-		}
 			
 		lub = (LeapUnityBridge) leapController.GetComponent(typeof(LeapUnityBridge));
-		lub.Awake();
+		//lub.Awake();
+		
+		// Create new hands
+		lub.setUp();
 		
 		// Transform hands to where camera is looking initially
 		if(Camera.current != null) 
@@ -159,12 +141,15 @@ public class LeapWindow : EditorWindow {
 	*********************************************************************/
 	void OnDestroy() {
 		if(lub != null) { lub.SetFalse(); }
+		Debug.Log(lub.getCreated());
 		
 		// what does this do...
 		SceneView.onSceneGUIDelegate -= OnScene;
+		
+		
 		// delete hands (be careful with this...)
 		//GameObject handsGO = GameObject.FindWithTag("Hands");
-		//DestroyImmediate(handsGO);
+		//if(handsGO != null) { DestroyImmediate(handsGO); }
 	}
 
 	/********************************************************************
