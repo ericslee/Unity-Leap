@@ -11,7 +11,7 @@ using System.Collections;
 
 // Window derives from EditorWindow
 public class LeapWindow : EditorWindow {
-	public static float hoverAmount = 30.0f;
+	public static float hoverAmount = 50.0f;
 
 	// Controller provides main interaction between Leap and the app (Unity in this case)
 	static Leap.Controller 		m_controller	= new Leap.Controller();
@@ -261,6 +261,15 @@ public class LeapWindow : EditorWindow {
 					canResizeGrid = !canResizeGrid;
 					canResizeGridText = canResizeGrid ? "True" : "False";	
 				}
+				// HOT KEYS FOR ASSET CREATION
+				if (Event.current.keyCode == (KeyCode.Alpha1)) { createGameObject(lub.hotkey1); }
+				if (Event.current.keyCode == (KeyCode.Alpha2)) { createGameObject(lub.hotkey2); }
+				if (Event.current.keyCode == (KeyCode.Alpha3)) { createGameObject(lub.hotkey3); }
+				if (Event.current.keyCode == (KeyCode.Alpha4)) { createGameObject(lub.hotkey4); }
+				if (Event.current.keyCode == (KeyCode.Alpha5)) 
+				{	
+					// ENTER TREE CREATION MODE
+				}
                 break;
             }
         }
@@ -335,53 +344,14 @@ public class LeapWindow : EditorWindow {
 					canResizeGridText = canResizeGrid ? "True" : "False";
 				}
 				// HOT KEYS FOR ASSET CREATION
-				if (Event.current.keyCode == (KeyCode.Alpha1)) 
-				{	
-					// make sure nothing is current selected and drop it if it is
-					
-					// create asset
-					if(lub.hotkey1 != null)
-					{
-						//Object prefab = AssetDatabase.LoadAssetAtPath("Assets/Seat001.prefab", typeof(GameObject));
-						GameObject handsGO = GameObject.FindWithTag("Palm");
-						Vector3 currentHandPos = new Vector3(0.0f, 0.0f, 0.0f);
-						if(handsGO != null)
-						{
-							//currentHandPos = new Vector3(handsGO.transform.position.x, handsGO.transform.position.y, handsGO.transform.position.z);
-							currentHandPos = new Vector3(handsGO.transform.position.x, 20.0f, handsGO.transform.position.z);
-						}
-						// set initial state
-						GameObject clone = Instantiate(lub.hotkey1, currentHandPos, Quaternion.identity) as GameObject;
-						
-						// set as selected
-						LeapUnityGridHandler gridHandlerScript = clone.GetComponent<LeapUnityGridHandler>();
-						// make sure the object is valid to be selected by Leap
-						if(gridHandlerScript != null) 
-						{
-							gridHandlerScript.setSelectedByHand(true);
-							Selection.activeGameObject = clone.gameObject;
-						}
-						// switch to edit mode
-						currentMode = Modes.leapEdit;
-						if(lub != null) lub.currentMode = LeapUnityBridge.Modes.leapEdit;
-						currentModeText = "Edit";
-					}
-				}
-				if (Event.current.keyCode == (KeyCode.Alpha2)) 
-				{	
-					
-				}
-				if (Event.current.keyCode == (KeyCode.Alpha3)) 
-				{	
-					
-				}
-				if (Event.current.keyCode == (KeyCode.Alpha4)) 
-				{	
-					
-				}
+				if (Event.current.keyCode == (KeyCode.Alpha1)) { createGameObject(lub.hotkey1); }
+				if (Event.current.keyCode == (KeyCode.Alpha2)) { createGameObject(lub.hotkey2); }
+				if (Event.current.keyCode == (KeyCode.Alpha3)) { createGameObject(lub.hotkey3); }
+				if (Event.current.keyCode == (KeyCode.Alpha4)) { createGameObject(lub.hotkey4); }
 				if (Event.current.keyCode == (KeyCode.Alpha5)) 
 				{	
 					// ENTER TREE CREATION MODE
+					//Debug.Log(lub.hotkey5.data);
 				}
                 break;
             }
@@ -704,14 +674,39 @@ public class LeapWindow : EditorWindow {
 	}
 	
 	/********************************************************************
-	* Skeleton method for asset creation later
+	* Create new game object
 	*********************************************************************/
-	private GameObject CreateCube() 
+	static void createGameObject(GameObject assetToCreate) 
 	{
-		GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-		Selection.activeGameObject = cube;
+		// make sure nothing is currently selected and drop it if it is
+		Selection.objects = new UnityEngine.Object[0];
 		
-		return cube;
+		// create asset
+		if(assetToCreate != null)
+		{
+			//Object prefab = AssetDatabase.LoadAssetAtPath("Assets/Seat001.prefab", typeof(GameObject));
+			GameObject handsGO = GameObject.FindWithTag("Palm");
+			Vector3 currentHandPos = new Vector3(0.0f, 0.0f, 0.0f);
+			if(handsGO != null)
+			{
+				//currentHandPos = new Vector3(handsGO.transform.position.x, handsGO.transform.position.y, handsGO.transform.position.z);
+				currentHandPos = new Vector3(handsGO.transform.position.x, 20.0f, handsGO.transform.position.z);
+			}
+			// set initial state
+			GameObject clone = Instantiate(assetToCreate, currentHandPos, Quaternion.identity) as GameObject;
+			// set as selected
+			LeapUnityGridHandler gridHandlerScript = clone.GetComponent<LeapUnityGridHandler>();
+			// make sure the object is valid to be selected by Leap
+			if(gridHandlerScript != null) 
+			{
+				gridHandlerScript.setSelectedByHand(true);
+				Selection.activeGameObject = clone.gameObject;
+			}
+			// switch to edit mode
+			currentMode = Modes.leapEdit;
+			if(lub != null) lub.currentMode = LeapUnityBridge.Modes.leapEdit;
+			currentModeText = "Edit";
+		}
 	}
 }
 

@@ -17,7 +17,7 @@ public class LeapUnityGridHandler : MonoBehaviour
 	public bool isSelected = false;
 
 	// hovering vars
-	public static float hoverAmount = 30.0f;
+	public static float hoverAmount = 50.0f;
 	private bool isHovered = false;
 	public bool isGrounded = true;
 	
@@ -44,6 +44,18 @@ public class LeapUnityGridHandler : MonoBehaviour
 	public void setSelectedByHand(bool selected) 
 	{
 		selectedByHand = selected;
+	}
+	
+	// Activated when other collider collides with this object (as long as this collider has Is Trigger set)
+	void OnTriggerEnter(Collider other)
+	{
+		//if(!other.transform.root.tag.Equals("Hands"))
+		if(!other.ToString().Equals("PalmSphere") && !other.ToString().Equals("Palm 0") && !other.ToString().Equals("Palm 1") 
+			&& !other.ToString().Equals("Palm 0 (UnityEngine.SphereCollider)") && !other.gameObject.tag.Equals("CollidableGO"))
+		{
+			Debug.Log("collided with plane");
+			isGrounded = true;
+		}
 	}
 
 	
@@ -109,12 +121,19 @@ public class LeapUnityGridHandler : MonoBehaviour
 		{
 			if(!isGrounded)
 			{
+				// drop object until it collides with something and onTrigger is hit, causing isGrounded to be true
+				yBuffer = gameObject.transform.position.y - 1.5f;
+				isHovered = false;
+				
+				gameObject.transform.position = new Vector3(gameObject.transform.position.x, yBuffer, gameObject.transform.position.z);
 				// lower object back down and update state
+				/*
 				yBuffer = gameObject.transform.position.y - hoverAmount;
 				isHovered = false;
 				isGrounded = true;
 				
 				gameObject.transform.position = new Vector3(gameObject.transform.position.x, yBuffer, gameObject.transform.position.z);
+				*/
 			}
 			
 			// reset wiggle rot

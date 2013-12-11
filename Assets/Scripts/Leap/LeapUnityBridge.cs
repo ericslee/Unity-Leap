@@ -169,8 +169,11 @@ public class LeapUnityBridge : MonoBehaviour
 	{
 		// check if hands already exist in the scene to avoid creating multiple hand game objects
 		GameObject hands = GameObject.FindWithTag("Hands");
-		if(hands != null) {
+		if(hands != null) 
+		{
 			Debug.Log("Hands exist already");
+			// For debugging purposes
+			//Selection.activeGameObject = hands;
 			return;
 		}
 		Debug.Log("Creating new hands");
@@ -219,6 +222,7 @@ public class LeapUnityBridge : MonoBehaviour
 			fingerTip.AddComponent(typeof(LeapFingerCollisionDispatcher));	
 		}
 		
+		// For debugging purposes
 		//Selection.activeGameObject = hands;
 	}
 	private GameObject CreateHand(GameObject parent, int index)
