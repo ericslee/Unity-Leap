@@ -191,6 +191,8 @@ public class LeapWindow : EditorWindow {
 							"To translate, just move your hand around. \n" +
 							"To deselect/drop the object, hit Z. \n" +
 							"To resize grid, toggle grid resizing on with G and draw circles to change the size. \n" +
+							"Press hotkeys 1-5 to create new assets and drop them in place. \n" +
+							"You can assign the assets in the Inspector for the Leap Unity Bridge. \n" +
 							"1cm of hand motion = .02m scene motion" : "";
         }
 		GUILayout.Label(helpText);
@@ -331,6 +333,55 @@ public class LeapWindow : EditorWindow {
 				{
 					canResizeGrid = !canResizeGrid;
 					canResizeGridText = canResizeGrid ? "True" : "False";
+				}
+				// HOT KEYS FOR ASSET CREATION
+				if (Event.current.keyCode == (KeyCode.Alpha1)) 
+				{	
+					// make sure nothing is current selected and drop it if it is
+					
+					// create asset
+					if(lub.hotkey1 != null)
+					{
+						//Object prefab = AssetDatabase.LoadAssetAtPath("Assets/Seat001.prefab", typeof(GameObject));
+						GameObject handsGO = GameObject.FindWithTag("Palm");
+						Vector3 currentHandPos = new Vector3(0.0f, 0.0f, 0.0f);
+						if(handsGO != null)
+						{
+							//currentHandPos = new Vector3(handsGO.transform.position.x, handsGO.transform.position.y, handsGO.transform.position.z);
+							currentHandPos = new Vector3(handsGO.transform.position.x, 20.0f, handsGO.transform.position.z);
+						}
+						// set initial state
+						GameObject clone = Instantiate(lub.hotkey1, currentHandPos, Quaternion.identity) as GameObject;
+						
+						// set as selected
+						LeapUnityGridHandler gridHandlerScript = clone.GetComponent<LeapUnityGridHandler>();
+						// make sure the object is valid to be selected by Leap
+						if(gridHandlerScript != null) 
+						{
+							gridHandlerScript.setSelectedByHand(true);
+							Selection.activeGameObject = clone.gameObject;
+						}
+						// switch to edit mode
+						currentMode = Modes.leapEdit;
+						if(lub != null) lub.currentMode = LeapUnityBridge.Modes.leapEdit;
+						currentModeText = "Edit";
+					}
+				}
+				if (Event.current.keyCode == (KeyCode.Alpha2)) 
+				{	
+					
+				}
+				if (Event.current.keyCode == (KeyCode.Alpha3)) 
+				{	
+					
+				}
+				if (Event.current.keyCode == (KeyCode.Alpha4)) 
+				{	
+					
+				}
+				if (Event.current.keyCode == (KeyCode.Alpha5)) 
+				{	
+					// ENTER TREE CREATION MODE
 				}
                 break;
             }

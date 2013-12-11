@@ -53,6 +53,13 @@ public class LeapUnityBridge : MonoBehaviour
 	// was the current selection selected from Leap controls
 	private bool selectedWithLeap = false;
 	
+	// Hot key game assets
+	public GameObject hotkey1;
+	public GameObject hotkey2;
+	public GameObject hotkey3;
+	public GameObject hotkey4;
+	public GameObject hotkey5; // maybe reserve this one for tree building
+	
 	public void setUp() 
 	{
 		if( m_Created )
@@ -211,6 +218,8 @@ public class LeapUnityBridge : MonoBehaviour
 			Debug.Log ("adding component...");
 			fingerTip.AddComponent(typeof(LeapFingerCollisionDispatcher));	
 		}
+		
+		//Selection.activeGameObject = hands;
 	}
 	private GameObject CreateHand(GameObject parent, int index)
 	{
