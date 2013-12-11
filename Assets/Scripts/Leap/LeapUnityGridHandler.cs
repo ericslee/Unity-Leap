@@ -55,6 +55,19 @@ public class LeapUnityGridHandler : MonoBehaviour
 		{
 			Debug.Log("collided with plane");
 			isGrounded = true;
+			
+			// play audio
+			GameObject audioPlayer = GameObject.FindWithTag("AudioPlayer");
+			if(audioPlayer != null) 
+			{ 
+				AudioSource ap = audioPlayer.GetComponent<AudioSource>(); 
+				// Playing it
+				if(ap != null)
+				{	
+					Debug.Log("Playing audio");
+					ap.Play(); 
+				}
+			}	
 		}
 	}
 
@@ -122,7 +135,7 @@ public class LeapUnityGridHandler : MonoBehaviour
 			if(!isGrounded)
 			{
 				// drop object until it collides with something and onTrigger is hit, causing isGrounded to be true
-				yBuffer = gameObject.transform.position.y - 1.5f;
+				yBuffer = gameObject.transform.position.y - 2.5f;
 				isHovered = false;
 				
 				gameObject.transform.position = new Vector3(gameObject.transform.position.x, yBuffer, gameObject.transform.position.z);

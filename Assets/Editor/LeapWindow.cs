@@ -132,6 +132,15 @@ public class LeapWindow : EditorWindow {
 		GameObject ground = GameObject.FindWithTag("Ground");
 		if(ground != null) theGrid = ground.GetComponent<LeapUnityGrid>();
 		
+		// Create audio player if it does not exist
+		/*
+		GameObject audioPlayer = GameObject.FindWithTag("AudioPlayer");
+		if(audioPlayer == null)
+		{
+			GameObject ap = new GameObject("AudioPlayer");
+			ap.transform.position = new Vector3(0,0,0);
+		}
+		*/
 		SceneView.onSceneGUIDelegate += OnScene;
 	}
 	
