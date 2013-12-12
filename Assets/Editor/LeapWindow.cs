@@ -32,15 +32,16 @@ public class LeapWindow : EditorWindow {
 	/********************************************************************
 	* current mode of the Leap interface
 	*********************************************************************/
-	enum Modes { leapSelection, leapEdit, leapTerrain, leapScale };
+	enum Modes { leapSelection, leapEdit, leapTerrain, leapScale, leapRotate };
 	enum EditModes { translate, scale, rotate };
 	static Modes currentMode;
 	//static EditModes currentEditMode;
 
 	/********************************************************************
-	* For scaling: -1.0f means baseSphereRadius is not set
+	* For scaling and rotation
 	*********************************************************************/
 	static System.Collections.Generic.LinkedList<Frame> previousFrames;
+	static int rotateDelay = 50;
 	
 	/********************************************************************
 	* GUI variables
@@ -278,14 +279,59 @@ public class LeapWindow : EditorWindow {
 					canResizeGrid = !canResizeGrid;
 					canResizeGridText = canResizeGrid ? "True" : "False";	
 				}
-				// HOT KEYS FOR ASSET CREATION
+				// HOT KEY FOR ASSET CREATION AND OTHER STUFF
+				// asset creation
 				if (Event.current.keyCode == (KeyCode.Alpha1)) { createGameObject(lub.hotkey1); }
-				if (Event.current.keyCode == (KeyCode.Alpha2)) { createGameObject(lub.hotkey2); }
+				if (Event.current.keyCode == (KeyCode.Alpha2)) 
+				{ 
+					// Enter or exit rotate mode
+					if(currentMode != Modes.leapRotate) 
+					{
+						currentModeText = "Rotate";
+						currentMode = Modes.leapRotate;
+						
+						// set rotate mode to true
+						if(Selection.activeGameObject != null) 
+						{
+							LeapUnityGridHandler gh = Selection.activeGameObject.GetComponent<LeapUnityGridHandler>();
+							if(gh != null)
+							{
+								gh.setRotateMode(true);
+							}
+						}
+					}
+					else 
+					{
+						currentMode = Modes.leapSelection;
+						if(lub != null) lub.currentMode = LeapUnityBridge.Modes.leapSelection;
+						currentModeText = "Selection";
+						
+						// we are not in hand selection mode anymore
+						lub.setSelectedWithLeap(false);	
+						
+						// set grid handler to not grounded
+						if(Selection.activeGameObject != null) 
+						{
+							LeapUnityGridHandler gh = Selection.activeGameObject.GetComponent<LeapUnityGridHandler>();
+							if(gh != null)
+							{
+								gh.isGrounded = false;
+							}
+						}
+						
+						// also drop whatever is currently selected
+						Selection.objects = new UnityEngine.Object[0];		
+						
+						// set a delay so that the object is not immediately picked up again
+						lub.selectionDelay = 0;
+					}
+				}
 				if (Event.current.keyCode == (KeyCode.Alpha3)) 
 				{
 					// Enter or exit scale mode
 					if(currentMode != Modes.leapScale) 
 					{
+						currentModeText = "Scale";
 						currentMode = Modes.leapScale;
 					}
 					else 
@@ -319,10 +365,12 @@ public class LeapWindow : EditorWindow {
 					// Enter or exit terrain altering mode
 					if(currentMode != Modes.leapTerrain) 
 					{
+						currentModeText = "Terrain Alter";
 						currentMode = Modes.leapTerrain;
 					}
 					else 
 					{
+						currentModeText = "Selection";
 						currentMode = Modes.leapSelection;
 					}
 				}
@@ -405,12 +453,56 @@ public class LeapWindow : EditorWindow {
 				}
 				// HOT KEYS FOR ASSET CREATION
 				if (Event.current.keyCode == (KeyCode.Alpha1)) { createGameObject(lub.hotkey1); }
-				if (Event.current.keyCode == (KeyCode.Alpha2)) { createGameObject(lub.hotkey2); }
+				if (Event.current.keyCode == (KeyCode.Alpha2)) 
+				{
+					// Enter or exit rotate mode
+					if(currentMode != Modes.leapRotate) 
+					{
+						currentModeText = "Rotate";
+						currentMode = Modes.leapRotate;
+						
+						// set rotate mode to true
+						if(Selection.activeGameObject != null) 
+						{
+							LeapUnityGridHandler gh = Selection.activeGameObject.GetComponent<LeapUnityGridHandler>();
+							if(gh != null)
+							{
+								gh.setRotateMode(true);
+							}
+						}
+					}
+					else 
+					{
+						currentMode = Modes.leapSelection;
+						if(lub != null) lub.currentMode = LeapUnityBridge.Modes.leapSelection;
+						currentModeText = "Selection";
+						
+						// we are not in hand selection mode anymore
+						lub.setSelectedWithLeap(false);	
+						
+						// set grid handler to not grounded
+						if(Selection.activeGameObject != null) 
+						{
+							LeapUnityGridHandler gh = Selection.activeGameObject.GetComponent<LeapUnityGridHandler>();
+							if(gh != null)
+							{
+								gh.isGrounded = false;
+							}
+						}
+						
+						// also drop whatever is currently selected
+						Selection.objects = new UnityEngine.Object[0];		
+						
+						// set a delay so that the object is not immediately picked up again
+						lub.selectionDelay = 0;
+					}
+				}
 				if (Event.current.keyCode == (KeyCode.Alpha3)) 
 				{
 					// Enter or exit scale mode
 					if(currentMode != Modes.leapScale) 
 					{
+						currentModeText = "Scale";
 						currentMode = Modes.leapScale;
 					}
 					else 
@@ -440,14 +532,16 @@ public class LeapWindow : EditorWindow {
 					}
 				}
 				if (Event.current.keyCode == (KeyCode.Alpha4)) 
-				{ 
+				{
 					// Enter or exit terrain altering mode
 					if(currentMode != Modes.leapTerrain) 
 					{
+						currentModeText = "Terrain Alter";
 						currentMode = Modes.leapTerrain;
 					}
 					else 
 					{
+						currentModeText = "Selection";
 						currentMode = Modes.leapSelection;
 					}
 				}
@@ -615,10 +709,41 @@ public class LeapWindow : EditorWindow {
 								Selection.activeGameObject.transform.localScale = new Vector3(currentScaleX, currentScaleY, currentScaleZ);
 							}
 						}
-					}					
+					}		
+
+					// rotation
+					if(currentMode.Equals(Modes.leapRotate))
+					{
+						Hand hand1;
+						if(hands.Count > 0)
+						{
+							hand1 = hands[0];
+							float pi = 3.14159265359f;
+							float rotDegrees = hand1.RotationAngle(previousFrames.First.Value, Leap.Vector.YAxis) * ( 180.0f / pi );
+							//Debug.Log(rotDegrees);
+							if(Selection.activeGameObject != null && Selection.activeGameObject.GetComponent<LeapUnityGridHandler>() != null && rotateDelay > 49)
+							{
+								// cw
+								if(rotDegrees > 25.0f) 
+								{
+									Selection.activeGameObject.transform.Rotate(0, 90, 0);
+									rotateDelay = 0;
+								}
+								
+								// ccw
+								if(rotDegrees < -25.0f) 
+								{
+									Selection.activeGameObject.transform.Rotate(0, -90, 0);
+									rotateDelay = 0;
+								}
+								
+							}
+						}
+					}		
 					
 					// increment delays here if using counters for delaying anything
-									
+					rotateDelay++;
+					
 					// handle gestures
 					if(m_Frame.Gestures().Count > 0) {					
 						for(int g = 0; g < m_Frame.Gestures().Count; g++)

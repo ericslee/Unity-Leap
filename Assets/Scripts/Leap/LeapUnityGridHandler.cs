@@ -36,6 +36,9 @@ public class LeapUnityGridHandler : MonoBehaviour
 	// distinguish between selection by hand and selection by mouse
 	private bool selectedByHand = false;
 	
+	// distinguish when the transformation mode is rotate
+	private bool rotateMode = false;
+	
 	// Object reference to the one grid for the scene
 	private LeapUnityGrid theGrid;
 	
@@ -91,25 +94,28 @@ public class LeapUnityGridHandler : MonoBehaviour
 				// save the initial x rotation
 				//initialXRot = gameObject.transform.eulerAngles.x;
 			}
-			// Make object wiggle
-			if(wiggleCW)
-			{	
-				gameObject.transform.Rotate(2, 0, 0);
-				wiggleCount++;
-				if(wiggleCount > wiggleLimit) 
-				{
-					wiggleCW = false;
-					wiggleCount = 0;
-				}
-			}
-			else 
+			// Make object wiggle (only if not in rotation transform mode)
+			if(!rotateMode)
 			{
-				gameObject.transform.Rotate(-2, 0, 0);
-				wiggleCount++;
-				if(wiggleCount > wiggleLimit) 
+				if(wiggleCW)
+				{	
+					gameObject.transform.Rotate(2, 0, 0);
+					wiggleCount++;
+					if(wiggleCount > wiggleLimit) 
+					{
+						wiggleCW = false;
+						wiggleCount = 0;
+					}
+				}
+				else 
 				{
-					wiggleCW = true;
-					wiggleCount = 0;
+					gameObject.transform.Rotate(-2, 0, 0);
+					wiggleCount++;
+					if(wiggleCount > wiggleLimit) 
+					{
+						wiggleCW = true;
+						wiggleCount = 0;
+					}
 				}
 			}
 			
@@ -157,6 +163,11 @@ public class LeapUnityGridHandler : MonoBehaviour
 			
 			// reset selectedByHand
 			selectedByHand = false;
+			
+			// reset rotateMode
+			rotateMode = false;
 		}
 	}
+	
+	public void setRotateMode(bool r) { rotateMode = r; }
 }
