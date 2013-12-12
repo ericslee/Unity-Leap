@@ -42,7 +42,7 @@ public class LeapUnityBridge : MonoBehaviour
 	
 	private static bool m_Created = false;
 	
-	public int selectionDelay = 55;
+	public int selectionDelay = 56;
 	// current mode of the Leap interface
 	public enum Modes { leapSelection, leapEdit };
 	public enum EditModes { translate, scale, rotate };

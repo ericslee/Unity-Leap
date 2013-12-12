@@ -39,6 +39,9 @@ public class LeapUnityGridHandler : MonoBehaviour
 	// Object reference to the one grid for the scene
 	private LeapUnityGrid theGrid;
 	
+	// Object reference to the bridge in the scene
+	static LeapUnityBridge lub;
+	
 	
 	// Setters
 	public void setSelectedByHand(bool selected) 
@@ -76,16 +79,23 @@ public class LeapUnityGridHandler : MonoBehaviour
 	// Handles updating position when moving using the Leap
 	void Update()
 	{
+		// find the lub
+		//GameObject leapController = GameObject.FindWithTag("LeapController");
+		//LeapUnityBridge lub = (LeapUnityBridge) leapController.GetComponent(typeof(LeapUnityBridge));
+		
 		// raise the object off the ground a little bit when translating
 		// only when selected using the Leap
 		if(isSelected && selectedByHand) 
 		{
+			//Debug.Log("Selected by Leap");
 			if(!isHovered)
 			{
 				// hover object and update state
 				yBuffer = gameObject.transform.position.y + hoverAmount;
 				isHovered = true;
 				isGrounded = false;
+				
+				//lub.selectionDelay = 0;
 				
 				// save the initial x rotation
 				//initialXRot = gameObject.transform.eulerAngles.x;
