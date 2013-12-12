@@ -56,7 +56,6 @@ public class LeapUnityGridHandler : MonoBehaviour
 		if(!other.ToString().Equals("PalmSphere") && !other.ToString().Equals("Palm 0") && !other.ToString().Equals("Palm 1") 
 			&& !other.ToString().Equals("Palm 0 (UnityEngine.SphereCollider)") && !other.gameObject.tag.Equals("CollidableGO"))
 		{
-			Debug.Log("collided with plane");
 			isGrounded = true;
 			
 			// play audio
@@ -67,7 +66,6 @@ public class LeapUnityGridHandler : MonoBehaviour
 				// Playing it
 				if(ap != null)
 				{	
-					Debug.Log("Playing audio");
 					ap.Play(); 
 				}
 			}	
@@ -78,24 +76,17 @@ public class LeapUnityGridHandler : MonoBehaviour
 	// Called continuously for whatever gameobject this is attached too
 	// Handles updating position when moving using the Leap
 	void Update()
-	{
-		// find the lub
-		//GameObject leapController = GameObject.FindWithTag("LeapController");
-		//LeapUnityBridge lub = (LeapUnityBridge) leapController.GetComponent(typeof(LeapUnityBridge));
-		
+	{	
 		// raise the object off the ground a little bit when translating
 		// only when selected using the Leap
 		if(isSelected && selectedByHand) 
 		{
-			//Debug.Log("Selected by Leap");
 			if(!isHovered)
 			{
 				// hover object and update state
 				yBuffer = gameObject.transform.position.y + hoverAmount;
 				isHovered = true;
 				isGrounded = false;
-				
-				//lub.selectionDelay = 0;
 				
 				// save the initial x rotation
 				//initialXRot = gameObject.transform.eulerAngles.x;

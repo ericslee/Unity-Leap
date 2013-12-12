@@ -32,7 +32,6 @@ public class LeapFingerCollisionDispatcher : MonoBehaviour {
 			GameObject leapController = GameObject.FindWithTag("LeapController");
 			LeapUnityBridge lub = (LeapUnityBridge) leapController.GetComponent(typeof(LeapUnityBridge));
 			if(lub.selectionDelay > 55 && lub.currentMode.Equals(LeapUnityBridge.Modes.leapSelection)) 
-			//if(lub.currentMode.Equals(LeapUnityBridge.Modes.leapSelection)) 
 			{
 				// let the system know the selection was through a hand
 				lub.setSelectedWithLeap(true);
@@ -58,7 +57,6 @@ public class LeapFingerCollisionDispatcher : MonoBehaviour {
 						Selection.activeGameObject = other.gameObject;
 					}
 				}
-				//lub.selectionDelay = 0;
 			}
 		}
 	}

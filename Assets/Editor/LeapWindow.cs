@@ -32,7 +32,7 @@ public class LeapWindow : EditorWindow {
 	/********************************************************************
 	* current mode of the Leap interface
 	*********************************************************************/
-	enum Modes { leapSelection, leapEdit };
+	enum Modes { leapSelection, leapEdit, leapTerrain };
 	enum EditModes { translate, scale, rotate };
 	static Modes currentMode;
 	//static EditModes currentEditMode;
@@ -274,7 +274,18 @@ public class LeapWindow : EditorWindow {
 				if (Event.current.keyCode == (KeyCode.Alpha1)) { createGameObject(lub.hotkey1); }
 				if (Event.current.keyCode == (KeyCode.Alpha2)) { createGameObject(lub.hotkey2); }
 				if (Event.current.keyCode == (KeyCode.Alpha3)) { createGameObject(lub.hotkey3); }
-				if (Event.current.keyCode == (KeyCode.Alpha4)) { createGameObject(lub.hotkey4); }
+				if (Event.current.keyCode == (KeyCode.Alpha4)) 
+				{
+					// Enter or exit terrain altering mode
+					if(currentMode != Modes.leapTerrain) 
+					{
+						currentMode = Modes.leapTerrain;
+					}
+					else 
+					{
+						currentMode = Modes.leapSelection;
+					}
+				}
 				if (Event.current.keyCode == (KeyCode.Alpha5)) 
 				{	
 					// ENTER TREE CREATION MODE
@@ -356,7 +367,18 @@ public class LeapWindow : EditorWindow {
 				if (Event.current.keyCode == (KeyCode.Alpha1)) { createGameObject(lub.hotkey1); }
 				if (Event.current.keyCode == (KeyCode.Alpha2)) { createGameObject(lub.hotkey2); }
 				if (Event.current.keyCode == (KeyCode.Alpha3)) { createGameObject(lub.hotkey3); }
-				if (Event.current.keyCode == (KeyCode.Alpha4)) { createGameObject(lub.hotkey4); }
+				if (Event.current.keyCode == (KeyCode.Alpha4)) 
+				{ 
+					// Enter or exit terrain altering mode
+					if(currentMode != Modes.leapTerrain) 
+					{
+						currentMode = Modes.leapTerrain;
+					}
+					else 
+					{
+						currentMode = Modes.leapSelection;
+					}
+				}
 				if (Event.current.keyCode == (KeyCode.Alpha5)) 
 				{	
 					// ENTER TREE CREATION MODE
@@ -429,6 +451,55 @@ public class LeapWindow : EditorWindow {
 					}
 					
 					currentGestureText = "None";
+					
+					// handle terrain transforming
+					// hard coded for current grass plane
+					if(currentMode.Equals(Modes.leapTerrain)) 
+					{
+						if(Selection.activeGameObject != null && Selection.activeGameObject.tag.Equals("handle"))
+						{
+							GameObject terrain = GameObject.FindWithTag("terrain");
+							if(terrain != null)
+							{
+								// get the nine handles
+								string handleName = Selection.activeGameObject.name;
+								int handleNum = System.Convert.ToInt32(handleName.Substring(6));
+								//Debug.Log(handleNum);
+								
+								VertHandler vertH = terrain.GetComponent<VertHandler>();
+								if(vertH != null)
+								{
+									GameObject handsGO = GameObject.FindWithTag("Palm");
+									if(handsGO != null)
+									{
+										// move the selected handle to the y of the palm
+										vertH.handles[handleNum].transform.position = new Vector3(
+											vertH.handles[handleNum].transform.position.x, handsGO.transform.position.y, vertH.handles[handleNum].transform.position.z);
+											
+										// move the eight surrounding handles to 75% of the y of the palm
+										int vert1 = handleNum - 10;
+										int vert2 = handleNum - 11;
+										int vert3 = handleNum - 12;
+										int vert4 = handleNum + 1;
+										int vert6 = handleNum - 1;
+										int vert7 = handleNum + 12;
+										int vert8 = handleNum + 11;
+										int vert9 = handleNum + 10;
+										
+										moveHandles(vert1, vertH, handsGO.transform.position.y);
+										moveHandles(vert2, vertH, handsGO.transform.position.y);
+										moveHandles(vert3, vertH, handsGO.transform.position.y);
+										moveHandles(vert4, vertH, handsGO.transform.position.y);
+										moveHandles(vert6, vertH, handsGO.transform.position.y);
+										moveHandles(vert7, vertH, handsGO.transform.position.y);
+										moveHandles(vert8, vertH, handsGO.transform.position.y);
+										moveHandles(vert9, vertH, handsGO.transform.position.y);
+									}	
+								}
+								
+							}
+						}
+					}
 					
 					// increment delays here if using counters for delaying anything
 									
@@ -716,6 +787,19 @@ public class LeapWindow : EditorWindow {
 			if(lub != null) lub.currentMode = LeapUnityBridge.Modes.leapEdit;
 			currentModeText = "Edit";
 		}
+	}
+	
+	/********************************************************************
+	* Move handles
+	*********************************************************************/
+	static void moveHandles(int vertNum, VertHandler vertH, float newY)
+	{
+		// check for invalid vertNum
+		if(vertNum < 0 || vertNum > vertH.handles.Length) return;
+		
+		// move the selected handle to the y of the palm
+		vertH.handles[vertNum].transform.position = new Vector3(
+			vertH.handles[vertNum].transform.position.x, newY * 0.65f, vertH.handles[vertNum].transform.position.z);
 	}
 }
 
