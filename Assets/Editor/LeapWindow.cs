@@ -32,11 +32,16 @@ public class LeapWindow : EditorWindow {
 	/********************************************************************
 	* current mode of the Leap interface
 	*********************************************************************/
-	enum Modes { leapSelection, leapEdit, leapTerrain };
+	enum Modes { leapSelection, leapEdit, leapTerrain, leapScale };
 	enum EditModes { translate, scale, rotate };
 	static Modes currentMode;
 	//static EditModes currentEditMode;
 
+	/********************************************************************
+	* For scaling: -1.0f means baseSphereRadius is not set
+	*********************************************************************/
+	static System.Collections.Generic.LinkedList<Frame> previousFrames;
+	
 	/********************************************************************
 	* GUI variables
 	*********************************************************************/
@@ -131,6 +136,9 @@ public class LeapWindow : EditorWindow {
 		// Get the grid
 		GameObject ground = GameObject.FindWithTag("Ground");
 		if(ground != null) theGrid = ground.GetComponent<LeapUnityGrid>();
+		
+		// Instantiate previous frames linked list
+		previousFrames = new System.Collections.Generic.LinkedList<Frame>();
 		
 		// Create audio player if it does not exist
 		/*
@@ -273,7 +281,39 @@ public class LeapWindow : EditorWindow {
 				// HOT KEYS FOR ASSET CREATION
 				if (Event.current.keyCode == (KeyCode.Alpha1)) { createGameObject(lub.hotkey1); }
 				if (Event.current.keyCode == (KeyCode.Alpha2)) { createGameObject(lub.hotkey2); }
-				if (Event.current.keyCode == (KeyCode.Alpha3)) { createGameObject(lub.hotkey3); }
+				if (Event.current.keyCode == (KeyCode.Alpha3)) 
+				{
+					// Enter or exit scale mode
+					if(currentMode != Modes.leapScale) 
+					{
+						currentMode = Modes.leapScale;
+					}
+					else 
+					{
+						currentMode = Modes.leapSelection;
+						if(lub != null) lub.currentMode = LeapUnityBridge.Modes.leapSelection;
+						currentModeText = "Selection";
+						
+						// we are not in hand selection mode anymore
+						lub.setSelectedWithLeap(false);	
+						
+						// set grid handler to not grounded
+						if(Selection.activeGameObject != null) 
+						{
+							LeapUnityGridHandler gh = Selection.activeGameObject.GetComponent<LeapUnityGridHandler>();
+							if(gh != null)
+							{
+								gh.isGrounded = false;
+							}
+						}
+						
+						// also drop whatever is currently selected
+						Selection.objects = new UnityEngine.Object[0];		
+						
+						// set a delay so that the object is not immediately picked up again
+						lub.selectionDelay = 0;
+					}
+				}
 				if (Event.current.keyCode == (KeyCode.Alpha4)) 
 				{
 					// Enter or exit terrain altering mode
@@ -366,7 +406,39 @@ public class LeapWindow : EditorWindow {
 				// HOT KEYS FOR ASSET CREATION
 				if (Event.current.keyCode == (KeyCode.Alpha1)) { createGameObject(lub.hotkey1); }
 				if (Event.current.keyCode == (KeyCode.Alpha2)) { createGameObject(lub.hotkey2); }
-				if (Event.current.keyCode == (KeyCode.Alpha3)) { createGameObject(lub.hotkey3); }
+				if (Event.current.keyCode == (KeyCode.Alpha3)) 
+				{
+					// Enter or exit scale mode
+					if(currentMode != Modes.leapScale) 
+					{
+						currentMode = Modes.leapScale;
+					}
+					else 
+					{
+						currentMode = Modes.leapSelection;
+						if(lub != null) lub.currentMode = LeapUnityBridge.Modes.leapSelection;
+						currentModeText = "Selection";
+						
+						// we are not in hand selection mode anymore
+						lub.setSelectedWithLeap(false);	
+						
+						// set grid handler to not grounded
+						if(Selection.activeGameObject != null) 
+						{
+							LeapUnityGridHandler gh = Selection.activeGameObject.GetComponent<LeapUnityGridHandler>();
+							if(gh != null)
+							{
+								gh.isGrounded = false;
+							}
+						}
+						
+						// also drop whatever is currently selected
+						Selection.objects = new UnityEngine.Object[0];		
+						
+						// set a delay so that the object is not immediately picked up again
+						lub.selectionDelay = 0;
+					}
+				}
 				if (Event.current.keyCode == (KeyCode.Alpha4)) 
 				{ 
 					// Enter or exit terrain altering mode
@@ -420,6 +492,13 @@ public class LeapWindow : EditorWindow {
 				{	
 					// grab the current frame
 					m_Frame	= m_controller.Frame();
+					
+					// update previous frames
+					if(previousFrames.Count > 25) 
+					{
+						previousFrames.RemoveFirst();
+					}
+					previousFrames.AddLast(m_Frame);
 					
 					// get data from the frame
 					HandList hands = m_Frame.Hands;
@@ -500,6 +579,43 @@ public class LeapWindow : EditorWindow {
 							}
 						}
 					}
+					
+					// scaling
+					if(currentMode.Equals(Modes.leapScale))
+					{
+						Hand hand1;
+						if(hands.Count > 0)
+						{
+							hand1 = hands[0];
+							//Debug.Log(hand1.ScaleFactor(previousFrames.First.Value));
+							if(Selection.activeGameObject != null && Selection.activeGameObject.GetComponent<LeapUnityGridHandler>() != null)
+							{
+								// scale the scaleFactor so it is not as dramatic of scaling			
+								float scaleFactor = hand1.ScaleFactor(previousFrames.First.Value);
+								if(scaleFactor > 1.0f)
+								{
+									float decimals = (scaleFactor - 1.0f) * 0.25f;
+									scaleFactor = 1.0f + decimals;
+								}
+								else if(scaleFactor < 1.0f) 
+								{
+									float decimals = (1.0f - scaleFactor) * 0.25f;
+									scaleFactor = 1.0f - decimals;
+								}
+								
+								float currentScaleX = Selection.activeGameObject.transform.localScale.x * scaleFactor;
+								float currentScaleY = Selection.activeGameObject.transform.localScale.y * scaleFactor;
+								float currentScaleZ = Selection.activeGameObject.transform.localScale.z * scaleFactor;
+								
+								// clamp scale values so asset remains visible
+								if(currentScaleX <= 0.2f) currentScaleX = 0.2f;
+								if(currentScaleY <= 0.2f) currentScaleY = 0.2f;
+								if(currentScaleZ <= 0.2f) currentScaleZ = 0.2f;	
+								
+								Selection.activeGameObject.transform.localScale = new Vector3(currentScaleX, currentScaleY, currentScaleZ);
+							}
+						}
+					}					
 					
 					// increment delays here if using counters for delaying anything
 									
