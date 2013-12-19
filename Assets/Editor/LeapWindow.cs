@@ -1,6 +1,9 @@
 ﻿/******************************************************************************\
 * Eric Lee
 * Unity Leap
+*
+* Main interface class between the Leap and the game environment
+* This is where keyboard input and global state is handled and kept.
 \******************************************************************************/
 
 using UnityEngine;
@@ -204,14 +207,15 @@ public class LeapWindow : EditorWindow {
         {
             // display help
 			displayHelp = !displayHelp;
-			helpText = displayHelp ? "Press S to switch between edit and selection modes. \n" +
+			helpText = displayHelp ? "Press S to switch between translation and selection modes. \n" +
 							"Press D to disable Leap control completely. \n" +
 							"To translate, just move your hand around. \n" +
 							"To deselect/drop the object, hit Z. \n" +
 							"To resize grid, toggle grid resizing on with G and draw circles to change the size. \n" +
-							"Press hotkeys 1-5 to create new assets and drop them in place. \n" +
+							"Press hotkey 1 to create a new asset and drop it in place. \n" +
 							"You can assign the assets in the Inspector for the Leap Unity Bridge. \n" +
-							"1cm of hand motion = .02m scene motion" : "";
+							"Press 2 to enable rotation mode and rotate your hand to rotate the game object. \n" +
+							"Press 3 to enable scaling mode and open or close your hand to grow or shrink the object respectively." : "";
         }
 		GUILayout.Label(helpText);
 		

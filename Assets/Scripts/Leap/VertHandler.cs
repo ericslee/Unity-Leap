@@ -1,3 +1,11 @@
+/******************************************************************************\
+* Eric Lee
+* Unity Leap
+*
+* Vert handler class for manipulating vertices from within the Unity environment
+* Used for creating hills using the Leap - feature not complete
+\******************************************************************************/
+
 using UnityEngine;
 using System.Collections;
  
@@ -24,7 +32,6 @@ public class VertHandler : MonoBehaviour
          handle.transform.position = vertPos;
          handle.transform.parent = transform;
          handle.tag = "handle";
-         //handle.AddComponent<Gizmo_Sphere>();
          //print(vertPos);
 		 i++;
        }

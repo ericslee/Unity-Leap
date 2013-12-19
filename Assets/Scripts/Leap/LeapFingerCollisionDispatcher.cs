@@ -9,9 +9,13 @@ using UnityEngine;
 using UnityEditor;
 using System.Collections;
 
-//This relatively simple classis added to fingertip objects by the LeapUnityBridge,
-//which allows our LeapSelectionController to be notified when a finger collides with any
-//object tagged as 'Touchable'
+/******************************************************************************\
+* Eric Lee
+* Unity Leap
+*
+* Built and modified on top of existing Leap code - handles collisions between
+* the primary palm and game objects
+\******************************************************************************/
 
 [ExecuteInEditMode]
 public class LeapFingerCollisionDispatcher : MonoBehaviour {
@@ -73,7 +77,6 @@ public class LeapFingerCollisionDispatcher : MonoBehaviour {
 	
 	void FixedUpdate()
 	{
-		//Debug.Log("COLLIDER UPDATING");
 		if( gameObject.collider.enabled )
 		{
 			Debug.DrawRay(transform.position, transform.forward, Color.green);

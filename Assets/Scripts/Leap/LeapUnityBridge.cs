@@ -6,17 +6,18 @@
 * Leap Motion and you, your company or other organization.                     *
 \******************************************************************************/
 
+/******************************************************************************\
+* Eric Lee
+* Unity Leap
+*
+* Built and modified on top of existing Leap code - this class is used to communicate between the 
+* Leap Window and the actual game environment.
+\******************************************************************************/
+
 using UnityEditor;
 using UnityEngine;
 using System.Collections;
 
-/// <summary>
-/// Attach one of these to one of the objects in your scene to use Leap input.
-/// It will take care of calling update on LeapInput and create hand objects
-/// to represent the hand data in the scene using LeapUnityHandController.
-/// It has a number of public fields so you can easily set the values from
-/// the Unity inspector. Hands will 
-/// </summary>
 [ExecuteInEditMode]
 public class LeapUnityBridge : MonoBehaviour
 {

@@ -2,6 +2,7 @@
 * Eric Lee
 * Unity Grid Asset Handler
 * 
+* Attach to Unity objects to allow them to be usable with the Leap system
 \******************************************************************************/
 
 using UnityEngine;
@@ -146,14 +147,6 @@ public class LeapUnityGridHandler : MonoBehaviour
 				isHovered = false;
 				
 				gameObject.transform.position = new Vector3(gameObject.transform.position.x, yBuffer, gameObject.transform.position.z);
-				// lower object back down and update state
-				/*
-				yBuffer = gameObject.transform.position.y - hoverAmount;
-				isHovered = false;
-				isGrounded = true;
-				
-				gameObject.transform.position = new Vector3(gameObject.transform.position.x, yBuffer, gameObject.transform.position.z);
-				*/
 			}
 			
 			// reset wiggle rot

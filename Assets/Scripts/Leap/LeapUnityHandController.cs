@@ -12,12 +12,14 @@ using System.Collections;
 using System.Collections.Generic;
 using Leap;
 
-/// <summary>
-/// This class manipulates the hand representation in the unity scene based on the
-/// input from the leap device. Fingers and Palm objects are moved around between
-/// higher level 'hand' objects that mainly serve to organize.  Be aware that when
-/// fingers are lost, unity does not dispatch OnTriggerExit events.
-/// </summary>
+/******************************************************************************\
+* Eric Lee
+* Unity Leap
+*
+* Built and modified on top of existing Leap code - this class is attached to the hand objects to
+* update system state depending on what state the physical hands are in
+\******************************************************************************/
+
 [ExecuteInEditMode]
 public class LeapUnityHandController : MonoBehaviour 
 {	
@@ -82,7 +84,6 @@ public class LeapUnityHandController : MonoBehaviour
 			r.material = m_materials[2];	
 		}
 		//do a pass to hide the objects.
-		// AND ADD COLLIDERS - WILL NEED TO FIX LATER
 		foreach( GameObject palm in m_palms )
 		{
 			updatePalm(Leap.Hand.Invalid, palm);

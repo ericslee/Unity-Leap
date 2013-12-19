@@ -10,6 +10,14 @@ using UnityEngine;
 using System.Collections;
 using Leap;
 
+/******************************************************************************\
+* Eric Lee
+* Unity Leap
+*
+* Built and modified on top of existing Leap code - some useful auxilary functions
+* used to map Unity coordinates to Leap coordinates
+\******************************************************************************/
+
 namespace Leap {
 	
 	//Extension to the unity vector class. Provides automatic scaling into unity scene space.

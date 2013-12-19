@@ -1,6 +1,8 @@
 /******************************************************************************\
 * Eric Lee
 * Unity Grid
+*
+* Attach to the ground plane of the scene to control the grid of the system
 \******************************************************************************/
 
 using UnityEngine;
@@ -33,14 +35,6 @@ public class LeapUnityGrid : MonoBehaviour
 	
 	void Update()
 	{
-		// dynamically set x and z min and max
-		// TODO: move these somewhere else in the script since a lot of redundant work is being done
-		/*
-		xMin = -((gameObject.transform.localScale.x)/2.0f);
-		xMax = -xMin;
-		zMin = -((gameObject.transform.localScale.z)/2.0f);
-		zMax = -zMin;
-		*/
 		
 	}
 	
@@ -69,14 +63,6 @@ public class LeapUnityGrid : MonoBehaviour
 				Gizmos.DrawLine(new Vector3(Mathf.Floor(x/width) * width, 15.5f, -1000.0f),
 								new Vector3(Mathf.Floor(x/width) * width, 15.5f, 1000.0f));
 			}
-			
-			// draw current mode
-			/*
-			if(selectionTexture != null)
-			{
-				Gizmos.DrawGUITexture(new Rect(10,10,100,100), selectionTexture);
-			}
-			*/
 		}
     }
 	

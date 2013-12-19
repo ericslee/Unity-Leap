@@ -12,12 +12,13 @@ using System.Collections;
 using System.Collections.Generic;
 using Leap;
 
-//Contains all the logic for the focusing, selecting, highlighting, and moving of objects
-//based on leap input.  Depends on The LeapUnityHandController & the LeapFingerCollisionDispatcher
-//to move the hand representations around and detect collisions.  Highlighting is achieved by adding
-//an highlight material to the object, then manipulating it's color based on how close it is to being
-//selected.  Also depends on LeapInput & LeapInputUnityBridge. Currently just a prototype, it is 
-//disabled in the scene by default.
+/******************************************************************************\
+* Eric Lee
+* Unity Leap
+*
+* Built and modified on top of existing Leap code - most of this functionality 
+* is unused. Only used to get collided object. 
+\******************************************************************************/
 
 [ExecuteInEditMode]
 public class LeapUnitySelectionController : MonoBehaviour 

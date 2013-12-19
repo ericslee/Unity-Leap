@@ -11,15 +11,14 @@ using System.Collections;
 using System.Collections.Generic;
 using Leap;
 
-/// <summary>
-/// This static class serves as a static wrapper to provide some helpful C# functionality.
-/// The main use is simply to provide the most recently grabbed frame as a singleton.
-/// Events on aquiring, moving or loosing hands are also provided.  If you want to do any
-/// global processing of data or input event dispatching, add the functionality here.
-/// It also stores leap input settings such as how you want to interpret data.
-/// To use it, you must call Update from your game's main loop.  It is not fully thread safe
-/// so take care when using it in a multithreaded environment.
-/// </summary>
+/******************************************************************************\
+* Eric Lee
+* Unity Leap
+*
+* Built and modified on top of existing Leap code - this class is used to dispatch events 
+* when hands appear and disappear
+\******************************************************************************/
+
 public static class LeapInput 
 {	
 	public static bool EnableTranslation = true;
